@@ -17,6 +17,7 @@ final class StudyHistoryViewController: UIViewController {
         view = studyHistroyView
     }
     
+    // DIContainer 추가 예정
     init(viewModel: StudyHistoryViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
