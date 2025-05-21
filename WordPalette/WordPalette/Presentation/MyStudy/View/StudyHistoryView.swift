@@ -7,6 +7,7 @@
 
 import UIKit
 
+// MARK: - 나의 학습기록 UIView
 final class StudyHistoryView: UIView {
     
     init() {

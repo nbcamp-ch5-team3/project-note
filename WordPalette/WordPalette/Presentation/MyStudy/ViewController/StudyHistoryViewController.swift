@@ -7,9 +7,18 @@
 
 import UIKit
 
+// MARK: - 나의 학습기록 UI 컨트롤러
 final class StudyHistoryViewController: UIViewController {
     
-    init() {
+    private let studyHistroyView = StudyHistoryView()
+    private let viewModel: StudyHistoryViewModel
+    
+    override func loadView() {
+        view = studyHistroyView
+    }
+    
+    init(viewModel: StudyHistoryViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     

@@ -7,9 +7,12 @@
 
 import Foundation
 
+// MARK: - 나의 학습기록 로직 처리를 위한 View Model
 final class StudyHistoryViewModel {
     
-    init() {
-        
+    private let useCase: StudyHistoryUseCase
+    
+    init(useCase: StudyHistoryUseCase) {
+        self.useCase = useCase
     }
 }
