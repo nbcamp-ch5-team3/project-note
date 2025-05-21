@@ -12,6 +12,6 @@ struct WordEntity {
     let word: String
     let meaning: String
     var example: String
-    let level: String
+    let level: Level
     var isCorrect: Bool?
 }
