@@ -13,7 +13,7 @@ import SnapKit
 class ProfileSectionView: UIView, UIViewGuide {
     
     /// 메달
-    private let profileLabel = PaddedLabel(top: -4, left: 8, bottom: 10, right: 8)
+    private let profileLabel = PaddingLabel(top: -4, left: 8, bottom: 10, right: 8)
     
     /// 티어
     private let tierLabel = UILabel()

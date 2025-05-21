@@ -7,7 +7,7 @@
 import UIKit
 
 // MARK: - PaddedLabel
-final class PaddedLabel: UILabel {
+final class PaddingLabel: UILabel {
     
     var padding: UIEdgeInsets
 
