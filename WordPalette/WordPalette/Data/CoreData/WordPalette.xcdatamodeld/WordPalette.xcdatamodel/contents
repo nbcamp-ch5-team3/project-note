@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="false" userDefinedModelVersionIdentifier="">
-    <elements/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788" systemVersion="24E263" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="StudyObject" representedClassName="StudyObject" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="solvedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserObject" inverseName="studys" inverseEntity="UserObject"/>
+        <relationship name="words" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="WordObject" inverseName="study" inverseEntity="WordObject"/>
+    </entity>
+    <entity name="UserObject" representedClassName="UserObject" syncable="YES" codeGenerationType="class">
+        <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="studys" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="StudyObject" inverseName="user" inverseEntity="StudyObject"/>
+    </entity>
+    <entity name="WordObject" representedClassName="WordObject" syncable="YES" codeGenerationType="class">
+        <attribute name="example" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isCorrect" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="level" optional="YES" attributeType="String"/>
+        <attribute name="meaning" optional="YES" attributeType="String"/>
+        <attribute name="word" optional="YES" attributeType="String"/>
+        <relationship name="study" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StudyObject" inverseName="words" inverseEntity="StudyObject"/>
+    </entity>
 </model>
