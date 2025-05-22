@@ -58,6 +58,9 @@ final class AddWordViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupTableViewCell()
+        setupConstraints()
+        setupDelegate()
         setupBinding()
     }
     
@@ -66,15 +69,16 @@ final class AddWordViewController: UIViewController {
         view.backgroundColor = .systemBackground
 
         [searchBar, tableView, floatingButton].forEach { view.addSubview($0) }
-        
-        setupTableViewCell()
-        setupConstraints()
     }
     
     private func setupTableViewCell() {
+        tableView.register(TableViewWordCell.self, forCellReuseIdentifier: TableViewWordCell.id)
+    }
+    
+    private func setupDelegate() {
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(TableViewWordCell.self, forCellReuseIdentifier: TableViewWordCell.id)
+        searchBar.delegate = self
     }
     
     private func setupConstraints() {
@@ -123,5 +127,11 @@ extension AddWordViewController: UITableViewDataSource, UITableViewDelegate {
         _ = cell.wordText
         _ = cell.exampleText
         return cell
+    }
+}
+
+extension AddWordViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
     }
 }

@@ -65,6 +65,8 @@ final class WordAddModalView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        setupDelegate()
+        setupConstraints()
     }
     
     required init?(coder: NSCoder) {
@@ -80,8 +82,12 @@ final class WordAddModalView: UIView {
         [closeButton, contentStack].forEach { self.addSubview($0) }
         
         [titleLabel, wordTextView, meaningTextView, exampleTextView, saveButton].forEach { contentStack.addArrangedSubview($0) }
-
-        setupConstraints()
+    }
+    
+    private func setupDelegate() {
+        wordTextView.delegate = self
+        meaningTextView.delegate = self
+        exampleTextView.delegate = self
     }
     
     private func setupConstraints() {
@@ -143,5 +149,23 @@ extension UITextView {
         }
         // 처음에는 텍스트가 비어있으면 보여주기
         placeholderLabel.isHidden = !self.text.isEmpty
+    }
+}
+
+extension WordAddModalView: UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            if textView == wordTextView {
+                meaningTextView.becomeFirstResponder()
+                return false
+            } else if textView == meaningTextView {
+                exampleTextView.becomeFirstResponder()
+                return false
+            } else if textView == exampleTextView {
+                exampleTextView.resignFirstResponder()
+                return false
+            }
+        }
+        return true
     }
 }

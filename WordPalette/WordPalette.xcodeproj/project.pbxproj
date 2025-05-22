@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		78983E2B2DDF314800868059 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 78983E2A2DDF314800868059 /* IQKeyboardManagerSwift */; };
 		815C58822DDD659400FC3F18 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 815C58812DDD659400FC3F18 /* Lottie */; };
 		E580A1442DDC4FFF008027F2 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E580A1432DDC4FFF008027F2 /* SnapKit */; };
 		E580A1472DDC501B008027F2 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = E580A1462DDC501B008027F2 /* RxCocoa */; };
@@ -90,6 +91,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E580A1832DDC7725008027F2 /* Then in Frameworks */,
+				78983E2B2DDF314800868059 /* IQKeyboardManagerSwift in Frameworks */,
 				815C58822DDD659400FC3F18 /* Lottie in Frameworks */,
 				E580A1492DDC501B008027F2 /* RxRelay in Frameworks */,
 				E580A1472DDC501B008027F2 /* RxCocoa in Frameworks */,
@@ -195,6 +197,7 @@
 				E580A1822DDC7725008027F2 /* Then */,
 				E580A1852DDC772F008027F2 /* RxDataSources */,
 				815C58812DDD659400FC3F18 /* Lottie */,
+				78983E2A2DDF314800868059 /* IQKeyboardManagerSwift */,
 			);
 			productName = WordPalette;
 			productReference = E580A10E2DDC4E27008027F2 /* WordPalette.app */;
@@ -238,6 +241,7 @@
 				E580A1812DDC7725008027F2 /* XCRemoteSwiftPackageReference "Then" */,
 				E580A1842DDC772F008027F2 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 				815C58802DDD659400FC3F18 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				78983E292DDF314800868059 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E580A10F2DDC4E27008027F2 /* Products */;
@@ -614,6 +618,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		78983E292DDF314800868059 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hackiftekhar/IQKeyboardManager.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.1;
+			};
+		};
 		815C58802DDD659400FC3F18 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
@@ -657,6 +669,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		78983E2A2DDF314800868059 /* IQKeyboardManagerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 78983E292DDF314800868059 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
+			productName = IQKeyboardManagerSwift;
+		};
 		815C58812DDD659400FC3F18 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 815C58802DDD659400FC3F18 /* XCRemoteSwiftPackageReference "lottie-ios" */;

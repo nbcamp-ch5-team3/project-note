@@ -19,15 +19,15 @@ final class WordAddModalViewController: UIViewController {
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupModalUI()
+        setupUI()
         setupActions()
+        setupConstraints()
     }
     
     // MARK: - Setup
-    private func setupModalUI() {
+    private func setupUI() {
         view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
         view.addSubview(modalView)
-        setupConstraints()
     }
     
     private func setupConstraints() {
@@ -35,9 +35,9 @@ final class WordAddModalViewController: UIViewController {
             make.center.equalToSuperview()
             make.width.equalTo(320)
             make.height.greaterThanOrEqualTo(400)
+            make.centerY.equalToSuperview()
         }
     }
-
     
     // MARK: - Rx Binding (Button Action)
     private func setupActions() {
@@ -57,5 +57,4 @@ final class WordAddModalViewController: UIViewController {
             }
             .disposed(by: disposeBag)
     }
-
 }
