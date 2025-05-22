@@ -36,21 +36,17 @@ final class ProfileSectionView: UIView, UIViewGuide {
         backgroundColor = .white
         
         profileLabel.do {
-            $0.text = "🥉"
-            $0.backgroundColor = .systemBrown.withAlphaComponent(0.5)
             $0.font = .systemFont(ofSize: 54, weight: .medium)
             $0.layer.cornerRadius = 35
             $0.clipsToBounds = true
         }
         
         tierLabel.do {
-            $0.text = "브론즈 IV"
             $0.textColor = .black
             $0.font = .systemFont(ofSize: 20, weight: .medium)
         }
         
         descriptionLabel.do {
-            $0.text = "브론즈 III 까지 10점"
             $0.textColor = .gray
             $0.font = .systemFont(ofSize: 16, weight: .medium)
         }
@@ -63,11 +59,9 @@ final class ProfileSectionView: UIView, UIViewGuide {
         remainingTierProgressView.do {
             $0.trackTintColor = .customMango.withAlphaComponent(0.25)
             $0.progressTintColor = .customMango
-            $0.progress = 130/140
         }
         
         remainingNextTierLabel.do {
-            $0.text = "130점 / 140점"
             $0.textColor = .black
             $0.font = .systemFont(ofSize: 14, weight: .medium)
         }
@@ -118,6 +112,23 @@ final class ProfileSectionView: UIView, UIViewGuide {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: 외부 접근 가능 메서드
+
+    /// 데이터 업데이트
+    func configure(_ tierType: TierType?, currentScore: Int) {
+        guard let tierType else { return }
+        
+        profileLabel.text = tierType.emoji
+        profileLabel.backgroundColor = tierType.backgroundColor
+        
+        tierLabel.text = tierType.rawValue
+        
+        if let nextTier = tierType.nextTier {
+            descriptionLabel.text = nextTier.rawValue + "까지 \(tierType.scoreRange.upperBound - currentScore)점"
+        } else {
+            descriptionLabel.text = "최고 레벨을 달성했습니다! 🎉🥳"
+        }
+        
+        remainingTierProgressView.progress = Float(currentScore) / Float(tierType.scoreRange.upperBound)
+        remainingNextTierLabel.text = "\(currentScore)점 / \(tierType.scoreRange.upperBound - 1)점"
+    }
 }

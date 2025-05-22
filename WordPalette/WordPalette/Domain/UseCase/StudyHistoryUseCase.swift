@@ -11,12 +11,18 @@ import Foundation
 final class StudyHistoryUseCase {
     
     /// 나의 학습기록 화면 appearing 될 때 학습기록 데이터 요청
-    func fetchStudyHistory()  {
-        
+    func fetchStudyHistory() -> Single<UserData>{
+        return Single.create { single in
+            single(.success(userDataMock))
+            return Disposables.create()
+        }
     }
     
     /// 캘린더에서 날짜 선택 시 해당 날짜의 통계 기록 요청
-    func fetchWords(id: UUID) {
-        
+    func fetchWords(id: UUID) -> Single<[WordEntity]>{
+        return Single.create { single in
+            single(.success(wordMocks))
+            return Disposables.create()
+        }
     }
 }

@@ -87,6 +87,8 @@ final class StudyHistoryView: UIView, UIViewGuide {
     }
     
     // MARK: 외부 접근 가능 메서드
-    
+    var getProfileSectionView: ProfileSectionView {
+        profileSectionView
+    }
 }
 
