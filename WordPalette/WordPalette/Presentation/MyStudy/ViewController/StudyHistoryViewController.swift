@@ -6,12 +6,15 @@
 //
 
 import UIKit
+import RxSwift
 
 // MARK: - 나의 학습기록 UI 컨트롤러
 final class StudyHistoryViewController: UIViewController {
     
     private let studyHistroyView = StudyHistoryView()
     private let viewModel: StudyHistoryViewModel
+    
+    private let disposeBag = DisposeBag()
     
     override func loadView() {
         view = studyHistroyView
@@ -29,6 +32,23 @@ final class StudyHistoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        bind()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.action.onNext(.viewDidAppear)
+        
+    }
+    
+    private func bind() {
+        
+        viewModel.state.userData
+            .subscribe(with: self) { owner, user in
+                owner.studyHistroyView.getProfileSectionView.configure(TierType(value: user.score), currentScore: user.score)
+            }
+            .disposed(by: disposeBag)
+        
+        
     }
 }
