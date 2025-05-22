@@ -23,6 +23,20 @@ actor CoreDataManager {
         self.context = container.newBackgroundContext()
     }
     
+    // 테스트용 생성자
+    init(forTesting: Bool) {
+        self.container = NSPersistentContainer(name: "WordPalette")
+        let description = NSPersistentStoreDescription()
+        description.type = NSInMemoryStoreType
+        self.container.persistentStoreDescriptions = [description]
+        self.container.loadPersistentStores { _, error in
+            if let error = error {
+                fatalError("테스트용 Core Data 로딩 실패: \(error)")
+            }
+        }
+        self.context = container.newBackgroundContext()
+    }
+    
     // MARK: - Private Method
 
     private func fetchOrCreateTodayStudy(for user: UserObject) throws -> StudyObject {
