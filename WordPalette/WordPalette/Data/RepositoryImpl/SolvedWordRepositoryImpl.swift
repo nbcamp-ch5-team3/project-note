@@ -16,6 +16,9 @@ final class SolvedWordRepositoryImpl: SolvedWordRepository {
         self.coreDataManager = coredataManager
     }
     
+    // MARK: - Private Method
+    
+    /// Core Data 모델 객체를 도메인 모델로 변환    
     private func toEntity(_ object: SolvedWordObject) -> WordEntity? {
         guard let level = Level(korean: object.level) else { return nil }
         
@@ -29,7 +32,9 @@ final class SolvedWordRepositoryImpl: SolvedWordRepository {
         )
     }
     
-    /// 푼 문제 저장하기
+    // MARK: - 단어 저장
+    
+    /// 푼 문제 저장
     func saveWord(word: WordEntity) -> Single<Bool> {
         return Single.create { observer in
             Task {
@@ -40,11 +45,14 @@ final class SolvedWordRepositoryImpl: SolvedWordRepository {
                     observer(.success(false))
                 }
             }
+            
             return Disposables.create()
         }
     }
     
-    /// StudyHistoryID를 통해 해당 일자 푼 문제 불러오기
+    // MARK: - 단어 조회
+    
+    /// StudyHistory ID로 해당 일자의 푼 문제 불러오기
     func fetchWords(id: UUID) -> Single<[WordEntity]> {
         return Single.create { observer in
             Task {
@@ -56,6 +64,7 @@ final class SolvedWordRepositoryImpl: SolvedWordRepository {
                     observer(.failure(error))
                 }
             }
+            
             return Disposables.create()
         }
     }
