@@ -39,12 +39,22 @@ final class HomeView: UIView {
         return button
     }
 
+    /// 내 단어장 label
+    private let myWordLabel = UILabel().then {
+        $0.text = "내 단어장"
+        $0.font = .boldSystemFont(ofSize: 32)
+        $0.textColor = .black
+    }
+
+    /// 선택된 버튼만 배경색이 바뀌는 레벨별 버튼
+    private let levelButtonView = LevelButtonView()
+
     //MARK: - Initialize
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureUI()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -52,9 +62,11 @@ final class HomeView: UIView {
     private func configureUI() {
         [
             addWordLabel,
-            levelSearchButtonStackView
+            levelSearchButtonStackView,
+            myWordLabel,
+            levelButtonView
         ].forEach { addSubview($0) }
-        
+
         addWordLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(24)
             $0.leading.equalToSuperview().offset(16)
@@ -64,6 +76,17 @@ final class HomeView: UIView {
             $0.top.equalTo(addWordLabel.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(levelSearchButtonStackView.snp.width).dividedBy(4)
+        }
+
+        myWordLabel.snp.makeConstraints {
+            $0.top.equalTo(levelSearchButtonStackView.snp.bottom).offset(24)
+            $0.leading.equalToSuperview().offset(16)
+        }
+
+        levelButtonView.snp.makeConstraints {
+            $0.top.equalTo(myWordLabel.snp.bottom).offset(16)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(28)
         }
     }
 }
