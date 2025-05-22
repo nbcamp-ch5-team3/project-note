@@ -3,7 +3,7 @@
     <entity name="SolvedWordObject" representedClassName="SolvedWordObject" syncable="YES">
         <attribute name="example" attributeType="String" defaultValueString=""/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="isCorrect" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isCorrect" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="level" attributeType="String" defaultValueString=""/>
         <attribute name="meaning" attributeType="String" defaultValueString=""/>
         <attribute name="word" attributeType="String" defaultValueString=""/>
@@ -18,7 +18,7 @@
     <entity name="UnsolvedWordObject" representedClassName="UnsolvedWordObject" syncable="YES">
         <attribute name="example" attributeType="String"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="isCorrect" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isCorrect" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="level" attributeType="String"/>
         <attribute name="meaning" attributeType="String"/>
         <attribute name="word" attributeType="String"/>
