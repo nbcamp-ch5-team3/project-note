@@ -14,6 +14,8 @@ final class StudyStatisticsViewController: UIViewController {
     
     var disposeBag = DisposeBag()
     private let studyHistroyView = StudyStatisticsView()
+    
+    private let id: UUID
     private let viewModel: StudyStatisticsViewModel
     
     override func loadView() {
@@ -21,7 +23,8 @@ final class StudyStatisticsViewController: UIViewController {
     }
     
     // DIContainer 추가 예정
-    init(viewModel: StudyStatisticsViewModel) {
+    init(id: UUID, viewModel: StudyStatisticsViewModel) {
+        self.id = id
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         configureRegister()

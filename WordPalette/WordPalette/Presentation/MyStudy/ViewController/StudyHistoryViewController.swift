@@ -15,7 +15,7 @@ final class StudyHistoryViewController: UIViewController {
     private let viewModel: StudyHistoryViewModel
     
     private let disposeBag = DisposeBag()
-    private var dateComponents: [DateComponents] = []
+    private var studyHistory: [StudyHistory] = []
     
     override func loadView() {
         view = studyHistroyView
@@ -46,6 +46,7 @@ final class StudyHistoryViewController: UIViewController {
     /// 델리게이트 설정
     private func configureDelegate() {
         studyHistroyView.getCalendarView.delegate = self
+        studyHistroyView.getCalendarView.selectionBehavior = UICalendarSelectionSingleDate(delegate: self)
     }
     
     private func bind() {
@@ -54,29 +55,49 @@ final class StudyHistoryViewController: UIViewController {
         // 프로필 업데이트 및 캘린더 마킹
         viewModel.state.userData
             .subscribe(with: self) { owner, user in
-                owner.dateComponents = user.studyHistorys.map { Calendar.current.dateComponents([.year, .month, .day], from: $0.solvedAt) }
+                let dateComponents = user.studyHistorys.map { Calendar.current.dateComponents([.year, .month, .day], from: $0.solvedAt) }
+                owner.studyHistory = user.studyHistorys
+                
                 owner.studyHistroyView.getProfileSectionView.configure(TierType(value: user.score), currentScore: user.score)
-                owner.studyHistroyView.getCalendarView.reloadDecorations(forDateComponents: owner.dateComponents, animated: true)
+                owner.studyHistroyView.getCalendarView.reloadDecorations(forDateComponents: dateComponents, animated: true)
             }
             .disposed(by: disposeBag)
         
     }
 }
 
-// MARK: - 날짜 리스트로 캘린더에 마킹
-extension StudyHistoryViewController: UICalendarViewDelegate {
+// MARK: - 달력 관련 Delegate
+extension StudyHistoryViewController: UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate {
+    
+    /// 날짜 리스트로 캘린더에 마킹
     func calendarView(_ calendarView: UICalendarView,
                       decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
 
         // Date 타입으로 변환
         guard let date = Calendar.current.date(from: dateComponents) else { return nil }
-        let dates = self.dateComponents.compactMap { Calendar.current.date(from: $0) }
+        let isStudyDate = self.studyHistory.contains {
+            Calendar.current.isDate($0.solvedAt, inSameDayAs: date)
+        }
         
-        // 학습한 날 여부 판단
-        guard dates.contains(date) else { return nil }
+        guard isStudyDate else { return nil }
         
         // 원형 dot 마커 표시
         return .image(UIImage(systemName: "pencil.tip.crop.circle.fill"), color: .customMango, size: .large)
             
+    }
+    
+    /// 학습한 날 달력 선택 시 모달 표시
+    func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
+        // Date 타입으로 변환
+        guard let dateComponents,
+              let date = Calendar.current.date(from: dateComponents),
+              let id = self.studyHistory.first(where: { Calendar.current.isDate($0.solvedAt, inSameDayAs: date) })?.id
+        else { return }
+        
+        // DIContainer 추가하면 바뀔 예정
+        let useCase = StudyHistoryUseCase()
+        let vc = StudyStatisticsViewController(id: id, viewModel: StudyStatisticsViewModel(useCase: useCase))
+        vc.modalPresentationStyle = .fullScreen
+        present(vc, animated: true)
     }
 }
