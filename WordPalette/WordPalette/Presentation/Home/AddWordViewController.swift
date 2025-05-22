@@ -8,8 +8,13 @@
 import UIKit
 import SnapKit
 import Then
+import RxSwift
+import RxCocoa
 
-class AddWordViewController: UIViewController {
+final class AddWordViewController: UIViewController {
+    
+    //MARK: - Properties
+    private let disposeBag = DisposeBag()
     
     // MARK: - Test Data
     let words: [(word: String, example: String)] = [
@@ -47,13 +52,13 @@ class AddWordViewController: UIViewController {
         $0.layer.cornerRadius = 10
         $0.layer.shadowColor = UIColor.black.cgColor
         $0.layer.masksToBounds = true
-        
     }
     
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupBinding()
     }
     
     // MARK: - Setup
@@ -89,6 +94,17 @@ class AddWordViewController: UIViewController {
             make.height.equalTo(55)
         }
     }
+    
+    //MARK: - addButton Action(RX)
+    private func setupBinding() {
+        floatingButton.rx.tap
+            .bind { [weak self] in
+                let modal = WordAddModalViewController()
+                modal.modalPresentationStyle = .overFullScreen
+                self?.present(modal, animated: true)
+            }
+            .disposed(by: disposeBag)
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -102,6 +118,7 @@ extension AddWordViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
         let data = words[indexPath.row]
+        cell.selectionStyle = .none
         cell.configure(word: data.word, example: data.example)
         _ = cell.wordText
         _ = cell.exampleText
