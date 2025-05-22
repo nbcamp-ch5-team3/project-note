@@ -9,7 +9,7 @@ import RxSwift
 import Foundation
 
 // MARK: - 로컬 데이터에서 단어를 검색어(keyword)로 필터링해서 반환
-class WordRepositoryImpl: WordRepository {
+final class WordRepositoryImpl: WordRepository {
     private let localDataSource: WordLocalDataSource
     
     ///의존성 주입 사용 (생성자 주입)
@@ -35,7 +35,7 @@ class WordRepositoryImpl: WordRepository {
                     word: item.en,
                     meaning: item.ko,
                     example: item.example,
-                    level: level.rawValue,
+                    level: level,
                     isCorrect: nil
                 )
             }
