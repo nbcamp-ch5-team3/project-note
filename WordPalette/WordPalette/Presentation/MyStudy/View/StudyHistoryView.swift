@@ -90,5 +90,9 @@ final class StudyHistoryView: UIView, UIViewGuide {
     var getProfileSectionView: ProfileSectionView {
         profileSectionView
     }
+    
+    var getCalendarView: UICalendarView {
+        calendarView
+    }
 }
 
