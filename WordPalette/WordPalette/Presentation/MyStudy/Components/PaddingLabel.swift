@@ -6,8 +6,8 @@
 //
 import UIKit
 
-// MARK: - PaddedLabel
-final class PaddedLabel: UILabel {
+// MARK: - 라벨의 패딩을 줄 수 있는 커스텀 라벨
+final class PaddingLabel: UILabel {
     
     var padding: UIEdgeInsets
 

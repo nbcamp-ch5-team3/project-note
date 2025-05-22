@@ -16,7 +16,7 @@ final class StudyHistoryView: UIView, UIViewGuide {
     private let backGroundView = UIView()
     
     /// 타이틀
-    private let titleLabel = PaddedLabel(top: 24, left: 24, bottom: 24, right: 0)
+    private let titleLabel = PaddingLabel(top: 24, left: 24, bottom: 24, right: 0)
     
     /// 프로필 섹션 뷰
     private let profileSectionView = ProfileSectionView()

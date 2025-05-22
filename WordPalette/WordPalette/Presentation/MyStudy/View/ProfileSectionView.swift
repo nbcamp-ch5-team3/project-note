@@ -10,10 +10,10 @@ import Then
 import SnapKit
 
 // MARK: - 프로필 정보 섹션 뷰
-class ProfileSectionView: UIView, UIViewGuide {
+final class ProfileSectionView: UIView, UIViewGuide {
     
     /// 메달
-    private let profileLabel = PaddedLabel(top: -4, left: 8, bottom: 10, right: 8)
+    private let profileLabel = PaddingLabel(top: -4, left: 8, bottom: 10, right: 8)
     
     /// 티어
     private let tierLabel = UILabel()
