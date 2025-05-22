@@ -16,7 +16,7 @@ actor CoreDataManager {
     init() {
         self.container = NSPersistentContainer(name: "WordPalette")
         self.container.loadPersistentStores { _, error in
-            if let error = error {
+            if let error {
                 fatalError("Core Data 로딩 실패: \(error)")
             }
         }
@@ -30,7 +30,7 @@ actor CoreDataManager {
         description.type = NSInMemoryStoreType
         self.container.persistentStoreDescriptions = [description]
         self.container.loadPersistentStores { _, error in
-            if let error = error {
+            if let error {
                 fatalError("테스트용 Core Data 로딩 실패: \(error)")
             }
         }
