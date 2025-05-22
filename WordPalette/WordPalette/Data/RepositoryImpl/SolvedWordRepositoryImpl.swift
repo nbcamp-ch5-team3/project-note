@@ -16,14 +16,16 @@ final class SolvedWordRepositoryImpl: SolvedWordRepository {
         self.coreDataManager = coredataManager
     }
     
-    private func toEntity(_ object: SolvedWordObject) -> WordEntity {
+    private func toEntity(_ object: SolvedWordObject) -> WordEntity? {
+        guard let level = Level(korean: object.level) else { return nil }
+        
         return WordEntity(
             id: object.id,
             word: object.word,
             meaning: object.meaning,
             example: object.example,
-            level: .init(korean: object.level) ?? .advanced,
-            iscorrect: object.isCorrect
+            level: level,
+            isCorrect: object.isCorrect
         )
     }
     
@@ -48,7 +50,7 @@ final class SolvedWordRepositoryImpl: SolvedWordRepository {
             Task {
                 do {
                     let words = try await self.coreDataManager.fetchSolvedWords(for: id)
-                    let entities = words.map { self.toEntity($0) }
+                    let entities = words.compactMap { self.toEntity($0) }
                     observer(.success(entities))
                 } catch {
                     observer(.failure(error))

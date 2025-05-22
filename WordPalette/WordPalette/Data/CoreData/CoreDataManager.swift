@@ -74,8 +74,8 @@ actor CoreDataManager {
             object.example = word.example
             object.level = word.level.rawValue
             
-            if let iscorrect = word.iscorrect {
-                object.isCorrect = iscorrect
+            if let isCorrect = word.isCorrect {
+                object.isCorrect = isCorrect
             }
 
             study.addToWords(object)
