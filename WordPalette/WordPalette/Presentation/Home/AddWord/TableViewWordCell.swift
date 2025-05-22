@@ -24,14 +24,14 @@ class TableViewWordCell: UITableViewCell {
     private let wordLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         $0.numberOfLines = 0
-        $0.lineBreakMode = .byWordWrapping
+        $0.lineBreakMode = .byCharWrapping
     }
     
     private let exampleLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         $0.textColor = .secondaryLabel
         $0.numberOfLines = 0
-        $0.lineBreakMode = .byWordWrapping
+        $0.lineBreakMode = .byCharWrapping
     }
     
     private let addButton = UIButton(type: .system).then {

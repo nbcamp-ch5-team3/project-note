@@ -7,15 +7,15 @@
 
 import UIKit
 import SnapKit
-import Then
 import RxSwift
 import RxCocoa
 
 final class AddWordViewController: UIViewController {
-    
-    //MARK: - Properties
+
+    // MARK: - Properties
     private let disposeBag = DisposeBag()
-    
+    private let addWordView = AddWordView()
+
     // MARK: - Test Data
     let words: [(word: String, example: String)] = [
         ("apple 사과", "I ate an apple this morning."),
@@ -23,85 +23,33 @@ final class AddWordViewController: UIViewController {
         ("cat 고양이", "The cat is sleeping."),
         ("dog 개ddddddddddsgfdgfsdgfsgdfsgdfgsdfgsfgsfdgfsdg", "My dog loves to playbbbbbbbbjgnbownbofnboiniorbnoiwbnionoinoirnboienbiownbioenrbiobrw.")
     ]
-    
-    // MARK: - UI Components
-    let searchBar = UISearchBar().then {
-        $0.placeholder = "단어를 검색해보세요"
-        $0.tintColor = .label
-        $0.searchBarStyle = .minimal
-        $0.backgroundImage = UIImage()
-        $0.backgroundColor = .clear
-        
-        let textField = $0.searchTextField
-        textField.layer.cornerRadius = 10
-        textField.clipsToBounds = true
-        textField.font = UIFont.systemFont(ofSize: 17)
-    }
-    
-    let tableView = UITableView().then {
-        $0.separatorStyle = .none
-        $0.rowHeight = UITableView.automaticDimension
-        $0.estimatedRowHeight = 70
-    }
-    
-    let floatingButton = UIButton().then {
-        $0.backgroundColor = .customOrange
-        $0.setTitle("단어 직접 추가하기", for: .normal)
-        $0.setTitleColor(.white, for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
-        $0.layer.cornerRadius = 10
-        $0.layer.shadowColor = UIColor.black.cgColor
-        $0.layer.masksToBounds = true
-    }
-    
+
     // MARK: - Life Cycle
+    override func loadView() {
+        self.view = addWordView
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
         setupTableViewCell()
-        setupConstraints()
         setupDelegate()
         setupBinding()
     }
-    
-    // MARK: - Setup
-    private func setupUI() {
-        view.backgroundColor = .systemBackground
 
-        [searchBar, tableView, floatingButton].forEach { view.addSubview($0) }
-    }
-    
+    // MARK: - Setup
     private func setupTableViewCell() {
-        tableView.register(TableViewWordCell.self, forCellReuseIdentifier: TableViewWordCell.id)
+        addWordView.tableView.register(TableViewWordCell.self, forCellReuseIdentifier: TableViewWordCell.id)
     }
-    
+
     private func setupDelegate() {
-        tableView.dataSource = self
-        tableView.delegate = self
-        searchBar.delegate = self
+        addWordView.tableView.dataSource = self
+        addWordView.tableView.delegate = self
+        addWordView.searchBar.delegate = self
     }
-    
-    private func setupConstraints() {
-        searchBar.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(5)
-            make.leading.trailing.equalToSuperview().inset(16)
-        }
-        
-        tableView.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom).offset(5)
-            make.leading.trailing.bottom.equalToSuperview()
-        }
-        
-        floatingButton.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(25)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(10)
-            make.height.equalTo(55)
-        }
-    }
-    
+
     //MARK: - addButton Action(RX)
     private func setupBinding() {
-        floatingButton.rx.tap
+        addWordView.floatingButton.rx.tap
             .bind { [weak self] in
                 let modal = WordAddModalViewController()
                 modal.modalPresentationStyle = .overFullScreen
@@ -111,12 +59,12 @@ final class AddWordViewController: UIViewController {
     }
 }
 
-// MARK: - UITableViewDataSource
+// MARK: - UITableViewDataSource, UITableViewDelegate
 extension AddWordViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return words.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TableViewWordCell.id, for: indexPath) as? TableViewWordCell else {
             return UITableViewCell()
@@ -124,8 +72,6 @@ extension AddWordViewController: UITableViewDataSource, UITableViewDelegate {
         let data = words[indexPath.row]
         cell.selectionStyle = .none
         cell.configure(word: data.word, example: data.example)
-        _ = cell.wordText
-        _ = cell.exampleText
         return cell
     }
 }
