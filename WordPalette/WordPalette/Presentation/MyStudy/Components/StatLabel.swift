@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import Then
 
+// MARK: - 통계 기록에 적히는 스탯 라벨 (예시: 6개, 암기완료 등)
 final class StatLabel: UIStackView {
     
     /// 숫자 라벨
