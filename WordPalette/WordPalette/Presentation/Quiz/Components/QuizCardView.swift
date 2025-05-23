@@ -1,5 +1,5 @@
 //
-//  WordCardView.swift
+//  QuizCardView.swift
 //  WordPalette
 //
 //  Created by 박주성 on 5/22/25.
@@ -11,19 +11,19 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-final class WordCardView: UIView {
+final class QuizCardView: UIView {
     
-    // MARK: - Propeties
+    // MARK: - Properties
     
     private let disposeBag = DisposeBag()
     
+    /// 카드 뷰의 앞 뒤 상태
     private var isFront: Bool = true
     
     // MARK: - UI Components
     
     /// 단어 (ex. Apple)
     private let wordLabel = UILabel().then {
-        $0.text = "Apple"
         $0.textColor = .black
         $0.textAlignment = .center
         $0.font = .systemFont(ofSize: 32, weight: .bold)
@@ -31,10 +31,16 @@ final class WordCardView: UIView {
     
     /// 에문 (ex. I ate an apple)
     private let exampleLabel = UILabel().then {
-        $0.text = "I ate an apple"
         $0.textColor = .darkGray
         $0.textAlignment = .center
         $0.font = .systemFont(ofSize: 15)
+    }
+    
+    private let meaningLable = UILabel().then {
+        $0.textColor = .black
+        $0.textAlignment = .center
+        $0.font = .systemFont(ofSize: 32, weight: .bold)
+        $0.isHidden = true
     }
     
     /// 수직 스택뷰 (단어, 예문)
@@ -74,13 +80,26 @@ final class WordCardView: UIView {
             duration: 0.5,
             options: isFront ? .transitionFlipFromRight : .transitionFlipFromLeft) {
                 self.backgroundColor = self.isFront ? .white : .customMango
+                self.updateCardFace()
             }
+    }
+    
+    private func updateCardFace() {
+        wordLabel.isHidden = !isFront   // 뒷면일때 Hidden
+        exampleLabel.isHidden = !isFront
+        meaningLable.isHidden = isFront // 앞면일때 Hidden
+    }
+
+    func update(word: String, example: String, meaning: String) {
+        wordLabel.text = word
+        exampleLabel.text = example
+        meaningLable.text = meaning
     }
 }
 
 // MARK: - Configure
 
-private extension WordCardView {
+private extension QuizCardView {
     func configure() {
         setAttributes()
         setHierarchy()
@@ -100,7 +119,11 @@ private extension WordCardView {
     }
     
     func setHierarchy() {
-        [wordStackView, translationHintButton].forEach { addSubview($0) }
+        [
+            wordStackView,
+            translationHintButton,
+            meaningLable
+        ].forEach { addSubview($0) }
     }
     
     func setConstraints() {
@@ -113,6 +136,11 @@ private extension WordCardView {
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview()
             $0.height.equalTo(60)
+        }
+        
+        meaningLable.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.centerY.equalToSuperview()
         }
     }
     

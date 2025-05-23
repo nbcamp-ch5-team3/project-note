@@ -8,8 +8,17 @@
 import UIKit
 import SnapKit
 import Then
+import RxSwift
 
 final class QuizView: UIView {
+    
+    // MARK: - Properties
+    
+    /// 퀴즈 정답 여부
+    var isCorrectQuiz: Observable<Bool> {
+        return quizCardStackView.swipeResult.asObservable()
+    }
+    private let disposeBag = DisposeBag()
     
     // MARK: - UI Components
     
@@ -22,7 +31,7 @@ final class QuizView: UIView {
     }
     
     /// 단어 카드 뷰 (퀴즈 문제 출제 영역)
-    private let wordCardView = WordCardView()
+    private let quizCardStackView = QuizCardStackView()
     
     /// 사용자가 "외웠어요!" 선택 시 누르는 버튼 (정답 처리용)
     private let correctButton = UIButton().then {
@@ -65,6 +74,24 @@ final class QuizView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Update
+    
+    /// 초기 UI 업데이트
+    func update(with quizInfo: QuizViewInfo) {
+        let cards = quizInfo.words.map {
+            let card = QuizCardView()
+            card.update(word: $0.word, example: $0.example, meaning: $0.meaning)
+            return card
+        }
+        quizCardStackView.setCards(cards)
+        quizStatusView.update(with: quizInfo)
+    }
+    
+    /// 퀴즈를 풀고 난 후 UI 업데이트
+    func updateAfterAnswer(with isCorrect: Bool) {
+        quizStatusView.updateAfterAnswer(with: isCorrect)
+    }
+
 }
 
 // MARK: - Configure
@@ -74,6 +101,7 @@ private extension QuizView {
         setAttributes()
         setHierarchy()
         setConstraints()
+        setBindings()
     }
     
     func setAttributes() {
@@ -83,7 +111,7 @@ private extension QuizView {
     func setHierarchy() {
         [
             titleLabel,
-            wordCardView,
+            quizCardStackView,
             choiceStackView,
             quizStatusView,
         ].forEach { addSubview($0) }
@@ -95,14 +123,14 @@ private extension QuizView {
             $0.centerX.equalToSuperview()
         }
         
-        wordCardView.snp.makeConstraints {
+        quizCardStackView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(20)
             $0.horizontalEdges.equalToSuperview().inset(50)
-            $0.height.equalTo(wordCardView.snp.width).multipliedBy(1.6).priority(.low)
+            $0.height.equalTo(quizCardStackView.snp.width).multipliedBy(1.6).priority(.low)
         }
         
         choiceStackView.snp.makeConstraints {
-            $0.top.equalTo(wordCardView.snp.bottom).offset(15)
+            $0.top.equalTo(quizCardStackView.snp.bottom).offset(15)
             $0.horizontalEdges.equalToSuperview().inset(30)
         }
         
@@ -111,5 +139,19 @@ private extension QuizView {
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().inset(100)
         }
+    }
+    
+    func setBindings() {
+        correctButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.quizCardStackView.answerTopCard(toLeft: true)
+            }
+            .disposed(by: disposeBag)
+
+        incorrectButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.quizCardStackView.answerTopCard(toLeft: false)
+            }
+            .disposed(by: disposeBag)
     }
 }

@@ -62,6 +62,10 @@ final class DIContainer {
         StudyStatisticsViewModel(useCase: makeStudyHistoryUseCase)
     }
     
+    private var makeQuizViewModel: QuizViewModel {
+        QuizViewModel()
+    }
+    
 //    ///
 //    var makeAddWordViewModel: AddWordViewModel {
 //        AddWordViewModel(useCase: makeAddWordUseCase)
@@ -77,7 +81,7 @@ final class DIContainer {
     
     /// 퀴즈 ViewController
     public func makeQuizViewController() -> QuizViewController {
-        QuizViewController()
+        QuizViewController(viewModel: makeQuizViewModel)
     }
     
     /// 나의 학습 기록 ViewController

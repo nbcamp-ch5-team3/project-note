@@ -15,7 +15,6 @@ final class QuizStatusView: UIView {
     
     /// 남은 단어 수
     private let remainingWordCountLabel = UILabel().then {
-        $0.text = "10개"
         $0.font = .boldSystemFont(ofSize: 24)
         $0.textColor = .black
         $0.textAlignment = .center
@@ -31,7 +30,6 @@ final class QuizStatusView: UIView {
     
     /// 맞춘 단어 수
     private let correctWordCountLabel = UILabel().then {
-        $0.text = "5개"
         $0.font = .boldSystemFont(ofSize: 24)
         $0.textColor = .black
         $0.textAlignment = .center
@@ -47,7 +45,6 @@ final class QuizStatusView: UIView {
     
     /// 틀린 단어 수
     private let incorrectWordCountLabel = UILabel().then {
-        $0.text = "3개"
         $0.font = .boldSystemFont(ofSize: 24)
         $0.textColor = .black
         $0.textAlignment = .center
@@ -110,7 +107,32 @@ final class QuizStatusView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Update
+    
+    /// 초기 UI 업데이트
+    func update(with quizInfo: QuizViewInfo) {
+        remainingWordCountLabel.text = "\(quizInfo.words.count)"
+        correctWordCountLabel.text = "\(quizInfo.correctCount)"
+        incorrectWordCountLabel.text = "\(quizInfo.incorrectCount)"
+    }
+    
+    /// 퀴즈를 풀고 난 후 UI 업데이트
+    func updateAfterAnswer(with isCorrect: Bool) {
+        let remaining = max(0, Int(remainingWordCountLabel.text ?? "0")! - 1)
+        let correct = Int(correctWordCountLabel.text ?? "0")!
+        let incorrect = Int(incorrectWordCountLabel.text ?? "0")!
+        
+        remainingWordCountLabel.text = "\(remaining)"
+        
+        if isCorrect {
+            correctWordCountLabel.text = "\(correct + 1)"
+        } else {
+            incorrectWordCountLabel.text = "\(incorrect + 1)"
+        }
+    }
 }
+
+// MARK: - Configure
 
 private extension QuizStatusView {
     func configure() {
