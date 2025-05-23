@@ -72,6 +72,7 @@ final class StudyHistoryView: UIView, UIViewGuide {
         calendarView.snp.makeConstraints {
             $0.top.equalTo(profileSectionView.snp.bottom).offset(16)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide)
+            $0.bottom.equalTo(safeAreaLayoutGuide).inset(18)
         }
     }
     

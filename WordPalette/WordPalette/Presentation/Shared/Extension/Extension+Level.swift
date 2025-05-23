@@ -7,6 +7,7 @@
 
 import UIKit
 
+// MARK: - 레벨 별 부여 색상
 extension Level {
     var color: UIColor {
         switch self {
