@@ -13,6 +13,7 @@ final class StudyHistoryViewController: UIViewController {
     
     private let studyHistroyView = StudyHistoryView()
     private let viewModel: StudyHistoryViewModel
+    private let DIContainer: DIContainer
     
     private let disposeBag = DisposeBag()
     private var studyHistory: [StudyHistory] = []
@@ -22,8 +23,9 @@ final class StudyHistoryViewController: UIViewController {
     }
     
     // DIContainer 추가 예정
-    init(viewModel: StudyHistoryViewModel) {
+    init(viewModel: StudyHistoryViewModel, DIContainer: DIContainer) {
         self.viewModel = viewModel
+        self.DIContainer = DIContainer
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -54,6 +56,7 @@ final class StudyHistoryViewController: UIViewController {
         // 유저정보 요청 구독
         // 프로필 업데이트 및 캘린더 마킹
         viewModel.state.userData
+            .observe(on: MainScheduler.asyncInstance)
             .subscribe(with: self) { owner, user in
                 let dateComponents = user.studyHistorys.map { Calendar.current.dateComponents([.year, .month, .day], from: $0.solvedAt) }
                 owner.studyHistory = user.studyHistorys
@@ -95,11 +98,7 @@ extension StudyHistoryViewController: UICalendarViewDelegate, UICalendarSelectio
         else { return }
         
         // DIContainer 추가하면 바뀔 예정
-        let manager = CoreDataManager()
-        let solvedRepository = SolvedWordRepositoryImpl(coredataManager: manager)
-        let userRepository = UserRepositoryImpl(coredataManager: manager)
-        let useCase = StudyHistoryUseCase(userRepository: userRepository, solvedRepository: solvedRepository)
-        let vc = StudyStatisticsViewController(studyHistory: studyHistory, viewModel: StudyStatisticsViewModel(useCase: useCase))
+        let vc = DIContainer.makeStudyStatisticsViewContoller(studyHistory: studyHistory)
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
     }
