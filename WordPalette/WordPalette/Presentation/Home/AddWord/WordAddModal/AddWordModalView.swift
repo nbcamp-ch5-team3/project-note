@@ -172,6 +172,17 @@ extension AddWordModalView: UITextViewDelegate {
             }
         }
         
+        // wordTextView: 영어 소문자만 (대문자, 특수문자, 숫자 모두 불가)
+        if textView == wordTextView {
+            let allowed = CharacterSet.lowercaseLetters
+            for scalar in text.unicodeScalars {
+                if !allowed.contains(scalar) && text != "" {
+                    return false
+                }
+            }
+            return true
+        }
+        
         // meaningTextView: 한글만 허용
         if textView == meaningTextView {
             for scalar in text.unicodeScalars {
