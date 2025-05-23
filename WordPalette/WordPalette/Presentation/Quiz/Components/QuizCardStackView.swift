@@ -7,10 +7,13 @@
 
 import UIKit
 import SnapKit
+import RxRelay
 
 final class QuizCardStackView: UIView {
     
     // MARK: - Properties
+    
+    let swipeResult = PublishRelay<Bool>()
     
     private var cardViews: [QuizCardView] = []
     
@@ -43,6 +46,9 @@ final class QuizCardStackView: UIView {
                     card.removeFromSuperview()
                     self.cardViews.removeLast()
                     self.addPanGestureToTopCard()
+                    
+                    let isLeftSwipe = translation.x < 0
+                    self.swipeResult.accept(isLeftSwipe)
                 })
             } else {
                 UIView.animate(withDuration: 0.3) {

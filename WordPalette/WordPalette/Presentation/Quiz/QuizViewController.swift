@@ -60,5 +60,12 @@ private extension QuizViewController {
                 }
             }
             .disposed(by: disposeBag)
+        
+        quizView.isCorrectQuiz
+            .bind(with: self) { owner, isCorrect in
+                owner.viewModel.action.accept(.answer(isCorrect))
+                owner.quizView.updateAfterAnswer(with: isCorrect)
+            }
+            .disposed(by: disposeBag)
     }
 }

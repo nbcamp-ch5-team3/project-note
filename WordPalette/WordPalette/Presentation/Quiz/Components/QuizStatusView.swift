@@ -114,6 +114,20 @@ final class QuizStatusView: UIView {
         correctWordCountLabel.text = "\(quizInfo.correctCount)"
         incorrectWordCountLabel.text = "\(quizInfo.incorrectCount)"
     }
+    
+    func updateAfterAnswer(with isCorrect: Bool) {
+        let remaining = max(0, Int(remainingWordCountLabel.text ?? "0")! - 1)
+        let correct = Int(correctWordCountLabel.text ?? "0")!
+        let incorrect = Int(incorrectWordCountLabel.text ?? "0")!
+        
+        remainingWordCountLabel.text = "\(remaining)"
+        
+        if isCorrect {
+            correctWordCountLabel.text = "\(correct + 1)"
+        } else {
+            incorrectWordCountLabel.text = "\(incorrect + 1)"
+        }
+    }
 }
 
 // MARK: - Configure

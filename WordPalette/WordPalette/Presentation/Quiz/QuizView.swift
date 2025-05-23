@@ -8,8 +8,15 @@
 import UIKit
 import SnapKit
 import Then
+import RxSwift
 
 final class QuizView: UIView {
+    
+    // MARK: - Properties
+    
+    var isCorrectQuiz: Observable<Bool> {
+        return quizCardStackView.swipeResult.asObservable()
+    }
     
     // MARK: - UI Components
     
@@ -22,7 +29,7 @@ final class QuizView: UIView {
     }
     
     /// 단어 카드 뷰 (퀴즈 문제 출제 영역)
-    private let cardStackView = QuizCardStackView()
+    private let quizCardStackView = QuizCardStackView()
     
     /// 사용자가 "외웠어요!" 선택 시 누르는 버튼 (정답 처리용)
     private let correctButton = UIButton().then {
@@ -73,9 +80,14 @@ final class QuizView: UIView {
             card.update(word: $0.word, example: $0.example)
             return card
         }
-        cardStackView.setCards(cards)
+        quizCardStackView.setCards(cards)
         quizStatusView.update(with: quizInfo)
     }
+    
+    func updateAfterAnswer(with isCorrect: Bool) {
+        quizStatusView.updateAfterAnswer(with: isCorrect)
+    }
+
 }
 
 // MARK: - Configure
@@ -94,7 +106,7 @@ private extension QuizView {
     func setHierarchy() {
         [
             titleLabel,
-            cardStackView,
+            quizCardStackView,
             choiceStackView,
             quizStatusView,
         ].forEach { addSubview($0) }
@@ -106,14 +118,14 @@ private extension QuizView {
             $0.centerX.equalToSuperview()
         }
         
-        cardStackView.snp.makeConstraints {
+        quizCardStackView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(20)
             $0.horizontalEdges.equalToSuperview().inset(50)
-            $0.height.equalTo(cardStackView.snp.width).multipliedBy(1.6).priority(.low)
+            $0.height.equalTo(quizCardStackView.snp.width).multipliedBy(1.6).priority(.low)
         }
         
         choiceStackView.snp.makeConstraints {
-            $0.top.equalTo(cardStackView.snp.bottom).offset(15)
+            $0.top.equalTo(quizCardStackView.snp.bottom).offset(15)
             $0.horizontalEdges.equalToSuperview().inset(30)
         }
         

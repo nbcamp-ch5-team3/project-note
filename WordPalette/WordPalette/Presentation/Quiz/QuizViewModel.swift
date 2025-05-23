@@ -45,6 +45,7 @@ final class QuizViewModel {
     
     enum Action {
         case viewWillAppear
+        case answer(Bool)
     }
     
     // MARK: - Properties
@@ -70,9 +71,10 @@ final class QuizViewModel {
                 case .viewWillAppear:
                     let quizViewInfo = QuizViewInfo(words: owner.mockData, correctCount: 2, incorrectCount: 5)
                     owner.state.accept(.quizViewInfo(quizViewInfo))
+                case .answer(let isCorrect):
+                    print(isCorrect)
                 }
             }
             .disposed(by: disposeBag)
     }
-    
 }
