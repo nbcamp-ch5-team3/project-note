@@ -10,24 +10,12 @@ import SnapKit
 
 final class QuizCardStackView: UIView {
     
+    // MARK: - Properties
+    
     private var cardViews: [QuizCardView] = []
     
-    func setCards(_ cards: [QuizCardView]) {
-        cardViews = cards.reversed()
-        subviews.forEach { $0.removeFromSuperview() }
+    // MARK: - Gesture
         
-        for card in cardViews {
-            addSubview(card)
-            
-            card.snp.makeConstraints {
-                $0.center.equalToSuperview()
-                $0.size.equalToSuperview()
-            }
-        }
-        
-        addPanGestureToTopCard()
-    }
-    
     private func addPanGestureToTopCard() {
         guard let topCard = cardViews.last else { return }
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
@@ -62,5 +50,23 @@ final class QuizCardStackView: UIView {
                 }
             }
         }
+    }
+    
+    // MARK: - SetCards
+    
+    func setCards(_ cards: [QuizCardView]) {
+        cardViews = cards.reversed()
+        subviews.forEach { $0.removeFromSuperview() }
+        
+        for card in cardViews {
+            addSubview(card)
+            
+            card.snp.makeConstraints {
+                $0.center.equalToSuperview()
+                $0.size.equalToSuperview()
+            }
+        }
+        
+        addPanGestureToTopCard()
     }
 }

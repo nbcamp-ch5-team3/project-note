@@ -9,7 +9,7 @@ import UIKit
 
 final class QuizViewController: UIViewController {
     
-    // MARK: - Propeties
+    // MARK: - Properties
     
     private let mockData = [
         WordEntity(

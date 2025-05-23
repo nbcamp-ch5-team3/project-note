@@ -13,7 +13,7 @@ import RxCocoa
 
 final class QuizCardView: UIView {
     
-    // MARK: - Propeties
+    // MARK: - Properties
     
     private let disposeBag = DisposeBag()
     
