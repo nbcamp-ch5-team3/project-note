@@ -36,20 +36,12 @@ final class AddWordRepositoryImpl: AddWordRepository {
         return .just(entities)
     }
     
-    // 랜덤 추천 20개 (json)
+    // 랜덤 추천 20개 (json+DB)
     func recommendRandomWords(level: Level) -> Single<[WordEntity]> {
-        let items = localDataSource.loadWords(level: level)
-        let entities = items.map {
-            WordEntity(
-                id: UUID(),
-                word: $0.en,
-                meaning: $0.ko,
-                example: $0.example,
-                level: level,
-                isCorrect: nil
-            )
-        }
-        return .just(Array(entities.shuffled().prefix(20)))
+        return fetchAllWordsMerged(level: level)
+            .map { allWords in
+                Array(allWords.shuffled().prefix(20))
+            }
     }
     
     // 검색 (json 기준)
@@ -133,4 +125,35 @@ final class AddWordRepositoryImpl: AddWordRepository {
         unsolvedWordRepository.saveWord(word: word)
     }
     
+    // JSON+DB 반환
+    func fetchAllWordsMerged(level: Level) -> Single<[WordEntity]> {
+        Single.zip(
+            fetchAllWords(level: level), // JSON
+            fetchDBWords(level: level)   // DB
+        )
+        .map { jsonWords, dbWords in
+            // 중복 제거 (영어단어 기준)
+            let allWords = (jsonWords + dbWords)
+            var seen = Set<String>()
+            return allWords.filter { seen.insert($0.word.lowercased()).inserted }
+        }
+    }
+    
+    // JSON+DB 반환 (검색용)
+    func searchWordsMerged(keyword: String, level: Level) -> Single<[WordEntity]> {
+        Single.zip(
+            searchWords(keyword: keyword, level: level), // JSON
+            fetchDBWords(level: level).map { dbWords in
+                dbWords.filter {
+                    $0.word.localizedCaseInsensitiveContains(keyword) ||
+                    $0.meaning.localizedCaseInsensitiveContains(keyword)
+                }
+            }
+        )
+        .map { jsonWords, dbWords in
+            let allWords = (jsonWords + dbWords)
+            var seen = Set<String>()
+            return allWords.filter { seen.insert($0.word.lowercased()).inserted }
+        }
+    }
 }

@@ -100,6 +100,7 @@ final class AddWordViewModel {
                 self.currentLevel = level
                 return self.useCase.recommendRandomWords(level: level).asObservable()
             }
+            .observe(on: MainScheduler.asyncInstance)
             .bind(to: wordsSubject)
             .disposed(by: disposeBag)
     }
@@ -111,6 +112,7 @@ final class AddWordViewModel {
                 guard let self = self else { return .empty() }
                 return self.useCase.recommendRandomWords(level: self.currentLevel).asObservable()
             }
+            .observe(on: MainScheduler.asyncInstance)
             .bind(to: wordsSubject)
             .disposed(by: disposeBag)
     }
@@ -122,11 +124,12 @@ final class AddWordViewModel {
             .flatMapLatest { [weak self] keyword -> Observable<[WordEntity]> in
                 guard let self = self else { return .empty() }
                 if keyword.isEmpty {
-                    return self.useCase.recommendRandomWords(level: self.currentLevel).asObservable()
+                    return self.useCase.fetchAllWordsMerged(level: self.currentLevel).asObservable()
                 } else {
-                    return self.useCase.searchWords(keyword: keyword, level: self.currentLevel).asObservable()
+                    return self.useCase.searchWordsMerged(keyword: keyword, level: self.currentLevel).asObservable()
                 }
             }
+            .observe(on: MainScheduler.asyncInstance)
             .bind(to: wordsSubject)
             .disposed(by: disposeBag)
     }
@@ -166,11 +169,15 @@ final class AddWordViewModel {
             .flatMapLatest { [weak self] (en, ko, example) -> Observable<AddWordResult> in
                 guard let self = self else { return .empty() }
                 print("📝 [커스텀 단어 추가 시도] \(en): \(ko)")
+                
+                // 저장 시 앞,뒤 공백 제거
+                let trimmedEn = en.trimmingCharacters(in: .whitespacesAndNewlines)
+                let trimmedKo = ko.trimmingCharacters(in: .whitespacesAndNewlines)
 
                 let word = WordEntity(
                     id: UUID(),
-                    word: en,
-                    meaning: ko,
+                    word: trimmedEn,
+                    meaning: trimmedKo,
                     example: example ?? "",
                     level: self.currentLevel,
                     isCorrect: nil
@@ -196,7 +203,7 @@ final class AddWordViewModel {
                     self.showAlertSubject.onNext("저장에 실패했습니다. 다시 시도해 주세요.")
                 case .duplicate:
                     self.showAlertSubject.onNext("이미 등록된 단어입니다.")
-                case .duplicateInLevel(let word, let level):
+                case .duplicateInLevel(_, _):
                     break
                 }
             })

@@ -26,4 +26,8 @@ protocol AddWordUseCase {
     
     // 중복 체크 (json + DB)
     func checkDuplicate(word: String) -> Single<(exists: Bool, level: Level?)>
+    
+    func fetchAllWordsMerged(level: Level) -> Single<[WordEntity]>
+    
+    func searchWordsMerged(keyword: String, level: Level) -> Single<[WordEntity]>
 }

@@ -104,20 +104,19 @@ final class AddWordModalViewController: UIViewController {
     }
     
     // MARK: - Helper Methods
-    
+    // 단어 저장 시 중복 체크 확인
     private func checkDuplicateAndSave(word: String, meaning: String, example: String?) {
         guard let checkDuplicate = onCheckDuplicate else {
             dismissAndSave(word: word, meaning: meaning, example: example)
             return
         }
         
-        // 중복 체크
         checkDuplicate(word) { [weak self] (isDuplicate, level) in
             DispatchQueue.main.async {
                 if isDuplicate {
                     let message: String
                     if let level = level {
-                        message = "\(word)는 \(level.rawValue)에 이미 있는 단어입니다."
+                        message = "\(level.rawValue)에 이미 있는 단어입니다."
                     } else {
                         message = "이미 등록된 단어입니다."
                     }
@@ -130,16 +129,13 @@ final class AddWordModalViewController: UIViewController {
     }
     
     private func showConfirmationAlert(word: String, meaning: String, example: String?) {
-        let exampleText = example?.isEmpty == false ? "\n예문: \(example!)" : ""
-        let message = "\(word): \(meaning)\(exampleText)\n\n단어를 추가하시겠습니까?"
-        
+        let message = "단어를 추가하시겠습니까?"
         let alert = UIAlertController(title: "단어 추가", message: message, preferredStyle: .alert)
-        
+
         alert.addAction(UIAlertAction(title: "취소", style: .cancel))
         alert.addAction(UIAlertAction(title: "추가", style: .default) { [weak self] _ in
             self?.dismissAndSave(word: word, meaning: meaning, example: example)
         })
-        
         present(alert, animated: true)
     }
     

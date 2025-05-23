@@ -24,4 +24,8 @@ protocol AddWordRepository {
     // DB 관련 메서드는 내부적으로 UnsolvedWordRepository 사용
     func fetchDBWords(level: Level) -> Single<[WordEntity]>
     func saveWord(word: WordEntity) -> Single<Bool>
+    
+    // 검색 (json+DB)
+    func fetchAllWordsMerged(level: Level) -> Single<[WordEntity]>
+    func searchWordsMerged(keyword: String, level: Level) -> Single<[WordEntity]>
 }
