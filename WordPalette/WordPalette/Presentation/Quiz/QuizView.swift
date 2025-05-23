@@ -18,6 +18,7 @@ final class QuizView: UIView {
     var isCorrectQuiz: Observable<Bool> {
         return quizCardStackView.swipeResult.asObservable()
     }
+    private let disposeBag = DisposeBag()
     
     // MARK: - UI Components
     
@@ -100,6 +101,7 @@ private extension QuizView {
         setAttributes()
         setHierarchy()
         setConstraints()
+        setBindings()
     }
     
     func setAttributes() {
@@ -137,5 +139,19 @@ private extension QuizView {
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().inset(100)
         }
+    }
+    
+    func setBindings() {
+        correctButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.quizCardStackView.answerTopCard(toLeft: true)
+            }
+            .disposed(by: disposeBag)
+
+        incorrectButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.quizCardStackView.answerTopCard(toLeft: false)
+            }
+            .disposed(by: disposeBag)
     }
 }

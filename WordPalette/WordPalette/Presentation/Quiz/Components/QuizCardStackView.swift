@@ -43,7 +43,7 @@ final class QuizCardStackView: UIView {
     /// 사용자가 스와이프 중일 때 카드 회전 + 이동 적용
     private func applyTransform(to card: UIView, with translation: CGPoint) {
         let percent = translation.x / self.bounds.width
-        let rotation = percent * 0.2
+        let rotation = percent * 0.4
         card.transform = CGAffineTransform(translationX: translation.x, y: 0)
             .rotated(by: rotation)
     }
@@ -62,9 +62,17 @@ final class QuizCardStackView: UIView {
     
     /// 카드 삭제 애니메이션 실행 + 다음 카드에 제스처 추가 + 결과 전파
     private func dismissCard(_ card: UIView, toLeft: Bool) {
+        guard !cardViews.isEmpty else { return }
+        
         let direction: CGFloat = toLeft ? -1 : 1
-        UIView.animate(withDuration: 0.3, animations: {
-            card.transform = CGAffineTransform(translationX: direction * 1000, y: 0)
+        let translationX: CGFloat = direction * 1000
+        let rotation: CGFloat = direction * 0.4
+        
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+
+        UIView.animate(withDuration: 0.6, animations: {
+            card.transform = CGAffineTransform(translationX: translationX, y: 0)
+                .rotated(by: rotation)
             card.alpha = 0
         }, completion: { _ in
             card.removeFromSuperview()
@@ -97,5 +105,11 @@ final class QuizCardStackView: UIView {
         }
         
         addPanGestureToTopCard()
+    }
+    
+    /// 버튼 탭 시 스와이프처럼 카드 제거 처리
+    func answerTopCard(toLeft: Bool) {
+        guard let topCard = cardViews.last else { return }
+        dismissCard(topCard, toLeft: toLeft)
     }
 }
