@@ -8,8 +8,16 @@
 import UIKit
 import Then
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class WordCardView: UIView {
+    
+    // MARK: - Propeties
+    
+    private let disposeBag = DisposeBag()
+    
+    private var isFront: Bool = true
     
     // MARK: - UI Components
     
@@ -57,6 +65,17 @@ final class WordCardView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    private func handleCardFlip() {
+        isFront.toggle()
+        
+        UIView.transition(
+            with: self,
+            duration: 0.5,
+            options: isFront ? .transitionFlipFromRight : .transitionFlipFromLeft) {
+                self.backgroundColor = self.isFront ? .white : .customMango
+            }
+    }
 }
 
 // MARK: - Configure
@@ -66,6 +85,7 @@ private extension WordCardView {
         setAttributes()
         setHierarchy()
         setConstraints()
+        setBindings()
     }
     
     func setAttributes() {
@@ -94,5 +114,13 @@ private extension WordCardView {
             $0.bottom.equalToSuperview()
             $0.height.equalTo(60)
         }
+    }
+    
+    private func setBindings() {
+        translationHintButton.rx.tap
+            .bind(with: self) { owner, _  in
+                owner.handleCardFlip()
+            }
+            .disposed(by: disposeBag)
     }
 }
