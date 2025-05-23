@@ -36,6 +36,13 @@ final class QuizCardView: UIView {
         $0.font = .systemFont(ofSize: 15)
     }
     
+    private let meaningLable = UILabel().then {
+        $0.textColor = .black
+        $0.textAlignment = .center
+        $0.font = .systemFont(ofSize: 32, weight: .bold)
+        $0.isHidden = true
+    }
+    
     /// 수직 스택뷰 (단어, 예문)
     private lazy var wordStackView = UIStackView(
         arrangedSubviews: [
@@ -73,12 +80,20 @@ final class QuizCardView: UIView {
             duration: 0.5,
             options: isFront ? .transitionFlipFromRight : .transitionFlipFromLeft) {
                 self.backgroundColor = self.isFront ? .white : .customMango
+                self.updateCardFace()
             }
     }
     
-    func update(word: String, example: String) {
+    private func updateCardFace() {
+        wordLabel.isHidden = !isFront   // 뒷면일때 Hidden
+        exampleLabel.isHidden = !isFront
+        meaningLable.isHidden = isFront // 앞면일때 Hidden
+    }
+
+    func update(word: String, example: String, meaning: String) {
         wordLabel.text = word
         exampleLabel.text = example
+        meaningLable.text = meaning
     }
 }
 
@@ -104,7 +119,11 @@ private extension QuizCardView {
     }
     
     func setHierarchy() {
-        [wordStackView, translationHintButton].forEach { addSubview($0) }
+        [
+            wordStackView,
+            translationHintButton,
+            meaningLable
+        ].forEach { addSubview($0) }
     }
     
     func setConstraints() {
@@ -117,6 +136,11 @@ private extension QuizCardView {
             $0.horizontalEdges.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview()
             $0.height.equalTo(60)
+        }
+        
+        meaningLable.snp.makeConstraints {
+            $0.horizontalEdges.equalToSuperview().inset(20)
+            $0.centerY.equalToSuperview()
         }
     }
     

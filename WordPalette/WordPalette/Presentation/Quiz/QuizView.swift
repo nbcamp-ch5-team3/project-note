@@ -79,7 +79,7 @@ final class QuizView: UIView {
     func update(with quizInfo: QuizViewInfo) {
         let cards = quizInfo.words.map {
             let card = QuizCardView()
-            card.update(word: $0.word, example: $0.example)
+            card.update(word: $0.word, example: $0.example, meaning: $0.meaning)
             return card
         }
         quizCardStackView.setCards(cards)
