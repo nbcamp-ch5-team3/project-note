@@ -1,18 +1,18 @@
 //
-//  StudyHistoryUseCase.swift
+//  StudyHistoryUseCaseImpl.swift
 //  WordPalette
 //
-//  Created by Quarang on 5/21/25.
+//  Created by Quarang on 5/23/25.
 //
-import RxSwift
-import Foundation
 
-// MARK: - 나의 학습 기록 관련 유즈케이스
-final class StudyHistoryUseCase {
+import Foundation
+import RxSwift
+
+// MARK: - 나의 학습 기록 관련 유즈케이스 구현체
+final class StudyHistoryUseCaseImpl: StudyHistoryUseCase {
     
     private let userRepository: UserRepository
     private let solvedRepository: SolvedWordRepository
-    private let disposeBag = DisposeBag()
     
     init(userRepository: UserRepository, solvedRepository: SolvedWordRepository) {
         self.userRepository = userRepository
