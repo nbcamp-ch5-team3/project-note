@@ -15,7 +15,7 @@ final class StudyStatisticsViewController: UIViewController {
     var disposeBag = DisposeBag()
     private let studyHistroyView = StudyStatisticsView()
     
-    private let id: UUID
+    private let studyHistory: StudyHistory
     private let viewModel: StudyStatisticsViewModel
     
     override func loadView() {
@@ -23,12 +23,10 @@ final class StudyStatisticsViewController: UIViewController {
     }
     
     // DIContainer 추가 예정
-    init(id: UUID, viewModel: StudyStatisticsViewModel) {
-        self.id = id
+    init(studyHistory: StudyHistory, viewModel: StudyStatisticsViewModel) {
+        self.studyHistory = studyHistory
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        configureRegister()
-        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -37,7 +35,8 @@ final class StudyStatisticsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        configureRegister()
+        bind()
     }
     
     /// 테이블 뷰 셀 설정
@@ -47,21 +46,43 @@ final class StudyStatisticsViewController: UIViewController {
     
     /// 뷰 바인딩
     private func bind() {
+        // MARK: - 구독
         
+        // 닫기 버튼 바인딩
         studyHistroyView.getDismissButton.rx.tap
             .bind(with: self) { owner, _ in
                 owner.dismiss(animated: true)
             }
             .disposed(by: disposeBag)
         
-        let items = Observable.of(wordMocks)
-        
-        items
+        // 단어 리스트 바인딩
+        viewModel.state.statisticData
             .bind(to: studyHistroyView.getWordTableView.rx.items(
                 cellIdentifier: StudyWordCell.identifier,
-                cellType: StudyWordCell.self)) { row, word, cell in
+                cellType: StudyWordCell.self)) { _, word, cell in
                     cell.configure(word)
                 }
                 .disposed(by: disposeBag)
+        
+        // 암기/미암기 수량
+        viewModel.state.memoStateData
+            .bind(with: self) { owner, data in
+                let (memo, unMemo) = data
+                owner.studyHistroyView.configure(date: owner.studyHistory.solvedAt, memo: memo, unMemo: unMemo)
+            }
+            .disposed(by: disposeBag)
+        
+        // MARK: - 방출
+        
+        // viewDidLoad 시 이벤트 emit
+        viewModel.action.onNext(.viewDidLoad(id: studyHistory.id))
+        
+        // 세그먼트 컨트롤 변경 시 이벤트 emit
+        studyHistroyView.getSegmentControl
+            .rx.selectedSegmentIndex
+            .bind(with: self) { owner, index in
+                owner.viewModel.action.onNext(.didChangedSegmentIndex(index: index))
+            }
+            .disposed(by: disposeBag)
     }
 }

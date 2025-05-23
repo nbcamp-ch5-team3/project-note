@@ -91,12 +91,12 @@ extension StudyHistoryViewController: UICalendarViewDelegate, UICalendarSelectio
         // Date 타입으로 변환
         guard let dateComponents,
               let date = Calendar.current.date(from: dateComponents),
-              let id = self.studyHistory.first(where: { Calendar.current.isDate($0.solvedAt, inSameDayAs: date) })?.id
+              let studyHistory = self.studyHistory.first(where: { Calendar.current.isDate($0.solvedAt, inSameDayAs: date) })
         else { return }
         
         // DIContainer 추가하면 바뀔 예정
         let useCase = StudyHistoryUseCase()
-        let vc = StudyStatisticsViewController(id: id, viewModel: StudyStatisticsViewModel(useCase: useCase))
+        let vc = StudyStatisticsViewController(studyHistory: studyHistory, viewModel: StudyStatisticsViewModel(useCase: useCase))
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
     }
