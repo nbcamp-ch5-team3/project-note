@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Then
 
-class TableViewWordCell: UITableViewCell {
+final class TableViewWordCell: UITableViewCell {
     
     // MARK: - Properties
     static let id = "AddWordCell"
@@ -84,7 +84,7 @@ class TableViewWordCell: UITableViewCell {
         addButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().inset(16)
-            make.width.height.equalTo(28)
+            make.width.height.equalTo(30)
         }
     }
     

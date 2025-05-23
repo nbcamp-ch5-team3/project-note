@@ -75,6 +75,7 @@ final class AddWordRepositoryImpl: AddWordRepository {
     // 중복 체크 (json + DB)
     func checkDuplicate(word: String) -> Single<(exists: Bool, level: Level?)> {
         let levels: [Level] = [.beginner, .intermediate, .advanced]
+        let searchWord = word.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         
         // 1. json에서 체크
         let jsonChecks = levels.map { level in
@@ -94,8 +95,12 @@ final class AddWordRepositoryImpl: AddWordRepository {
         
         return Single.zip(jsonChecks)
             .flatMap { jsonList -> Single<(exists: Bool, level: Level?)> in
+                // 대소문자 무시하고 단어 매칭
                 for (words, level) in jsonList {
-                    if words.contains(where: { $0.word == word || $0.meaning == word }) {
+                    if words.contains(where: {
+                        $0.word.lowercased() == searchWord ||
+                        $0.meaning.lowercased() == searchWord
+                    }) {
                         return .just((true, level))
                     }
                 }
@@ -106,7 +111,10 @@ final class AddWordRepositoryImpl: AddWordRepository {
                 return Single.zip(dbChecks)
                     .map { dbList in
                         for (words, level) in dbList {
-                            if words.contains(where: { $0.word == word || $0.meaning == word }) {
+                            if words.contains(where: {
+                                $0.word.lowercased() == searchWord ||
+                                $0.meaning.lowercased() == searchWord
+                            }) {
                                 return (true, level)
                             }
                         }

@@ -104,6 +104,21 @@ final class AddWordViewController: UIViewController {
                 let modal = AddWordModalViewController()
                 modal.modalPresentationStyle = .overFullScreen
                 
+                modal.onCheckDuplicate = { [weak owner] word, completion in
+                    guard let owner = owner else { return }
+                    
+                    // VM을 통해 중복 체크만 수행
+                    owner.viewModel.checkDuplicateOnly(word: word)
+                        .observe(on: MainScheduler.instance)
+                        .subscribe(onSuccess: { (exists, level) in
+                                completion(exists, level)
+                        }, onFailure: { error in
+                            print("❌ [중복 체크 실패] \(error.localizedDescription)")
+                            completion(false, nil) // 에러 시 중복 없음으로 처리
+                        })
+                        .disposed(by: self.disposeBag)
+                }
+                
                 // 모달에서 저장 버튼 탭 시 처리
                 modal.onSaveButtonTap = { [weak owner] en, ko, example in
                     owner?.addCustomWordTapSubject.onNext((en: en, ko: ko, example: example))
@@ -188,6 +203,14 @@ final class AddWordViewController: UIViewController {
     }
 
     private func showAlert(message: String) {
+        // 이미 Alert가 표시 중인지 확인
+        if presentedViewController != nil {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.showAlert(message: message)
+            }
+            return
+        }
+        
         let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default))
         present(alert, animated: true)

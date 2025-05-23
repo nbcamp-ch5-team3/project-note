@@ -23,6 +23,7 @@ final class AddWordModalViewController: UIViewController {
     
     // MARK: - Callback
     var onSaveButtonTap: ((String, String, String?) -> Void)?
+    var onCheckDuplicate: ((String, @escaping (Bool, Level?) -> Void) -> Void)?
     
     // MARK: - Life Cycle
     override func viewDidLoad() {
@@ -97,17 +98,50 @@ final class AddWordModalViewController: UIViewController {
                     return
                 }
                 
-                // 클로저 호출해서 데이터 전달
-                self.onSaveButtonTap?(word, meaning, self.modalView.exampleText)
-                self.dismiss(animated: true)
+                self.checkDuplicateAndSave(word: word, meaning: meaning, example: self.modalView.exampleText)
             }
             .disposed(by: disposeBag)
     }
     
-    // MARK: - Helper Methods (Alert)
+    // MARK: - Helper Methods
+    
+    private func checkDuplicateAndSave(word: String, meaning: String, example: String?) {
+        guard let checkDuplicate = onCheckDuplicate else {
+            dismissAndSave(word: word, meaning: meaning, example: example)
+            return
+        }
+        
+        // 중복 체크
+        checkDuplicate(word) { [weak self] (isDuplicate, level) in
+            DispatchQueue.main.async {
+                if isDuplicate {
+                    let message: String
+                    if let level = level {
+                        message = "\(word)는 \(level.rawValue)에 이미 있는 단어입니다."
+                    } else {
+                        message = "이미 등록된 단어입니다."
+                    }
+                    self?.showAlert(message: message)
+                } else {
+                    self?.dismissAndSave(word: word, meaning: meaning, example: example)
+                }
+            }
+        }
+    }
+    
+    private func dismissAndSave(word: String, meaning: String, example: String?) {
+        dismiss(animated: true) { [weak self] in
+            self?.onSaveButtonTap?(word, meaning, example)
+        }
+    }
+    
     private func showAlert(message: String) {
-        let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default))
-        present(alert, animated: true)
+        view.endEditing(true)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default))
+            self?.present(alert, animated: true)
+        }
     }
 }

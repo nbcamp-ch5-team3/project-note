@@ -59,11 +59,36 @@ final class AddWordViewModel {
         bindAddCustomWord(input: input)
         bindAlert()
         
+        // DB 저장 확인용 로그
+        loadAndLogDBWords()
+        
         return Output(
             words: wordsSubject.asObservable(),
             addResult: addResultSubject.asObservable(),
             showAlert: showAlertSubject.asObservable()
         )
+    }
+    
+    // 중복 체크만 수행하는 public 메서드
+    func checkDuplicateOnly(word: String) -> Single<(Bool, Level?)> {
+        return useCase.checkDuplicate(word: word)
+            .map { result in
+                return (result.exists, result.level)
+            }
+    }
+    
+    // DB에 저장된 단어 로드 및 로그 출력
+    private func loadAndLogDBWords() {
+        useCase.fetchDBWords(level: currentLevel)
+            .subscribe(onSuccess: { words in
+                print("⭕️ [DB 로드] \(self.currentLevel.rawValue) 레벨 저장된 단어 수: \(words.count)개")
+                words.forEach { word in
+                    print("  - \(word.word): \(word.meaning)")
+                }
+            }, onFailure: { error in
+                print("❌ [DB 로드 실패] \(error.localizedDescription)")
+            })
+            .disposed(by: disposeBag)
     }
     
     // 1. 레벨 선택/화면 진입 시 단어 로드
@@ -111,10 +136,13 @@ final class AddWordViewModel {
         input.addWordTap
             .flatMapLatest { [weak self] word -> Observable<AddWordResult> in
                 guard let self = self else { return .empty() }
+                print("➕ [단어 추가 시도] \(word.word)")
+
                 return self.useCase.checkDuplicate(word: word.word)
                     .asObservable()
                     .flatMap { (exists, level) -> Observable<AddWordResult> in
                         if exists {
+                            print("⚠️ [중복 확인] \(word.word)는 이미 존재")
                             if let level = level {
                                 return .just(.duplicateInLevel(word: word.word, level: level))
                             } else {
@@ -137,6 +165,8 @@ final class AddWordViewModel {
         input.addCustomWordTap
             .flatMapLatest { [weak self] (en, ko, example) -> Observable<AddWordResult> in
                 guard let self = self else { return .empty() }
+                print("📝 [커스텀 단어 추가 시도] \(en): \(ko)")
+
                 let word = WordEntity(
                     id: UUID(),
                     word: en,
@@ -145,21 +175,10 @@ final class AddWordViewModel {
                     level: self.currentLevel,
                     isCorrect: nil
                 )
-                return self.useCase.checkDuplicate(word: en)
+                
+                return self.useCase.saveWord(word: word)
+                    .map { $0 ? .success : .fail }
                     .asObservable()
-                    .flatMap { (exists, level) -> Observable<AddWordResult> in
-                            if exists {
-                                if let level = level {
-                                    return .just(.duplicateInLevel(word: en, level: level))
-                                } else {
-                                    return .just(.duplicate)
-                                }
-                            } else {
-                                return self.useCase.saveWord(word: word)
-                                    .map { $0 ? .success : .fail }
-                                    .asObservable()
-                            }
-                    }
             }
             .bind(to: addResultSubject)
             .disposed(by: disposeBag)
@@ -178,7 +197,7 @@ final class AddWordViewModel {
                 case .duplicate:
                     self.showAlertSubject.onNext("이미 등록된 단어입니다.")
                 case .duplicateInLevel(let word, let level):
-                    self.showAlertSubject.onNext("\(word)는 \(level.rawValue)에 이미 있는 단어입니다.")
+                    break
                 }
             })
             .disposed(by: disposeBag)
