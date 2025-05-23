@@ -65,15 +65,17 @@ final class QuizView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func update(words: [WordEntity]) {
-        let cards = words.map {
+    // MARK: - Update
+    
+    func update(with quizInfo: QuizViewInfo) {
+        let cards = quizInfo.words.map {
             let card = QuizCardView()
             card.update(word: $0.word, example: $0.example)
             return card
         }
         cardStackView.setCards(cards)
+        quizStatusView.update(with: quizInfo)
     }
-    
 }
 
 // MARK: - Configure
