@@ -1,5 +1,5 @@
 //
-//  WordAddModalView.swift
+//  AddWordModalView.swift
 //  WordPalette
 //
 //  Created by iOS study on 5/22/25.
@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class WordAddModalView: UIView {
+final class AddWordModalView: UIView {
     
     //MARK: - UI Components
     private let titleLabel = UILabel().then {
@@ -153,7 +153,7 @@ extension UITextView {
     }
 }
 
-extension WordAddModalView: UITextViewDelegate {
+extension AddWordModalView: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             if textView == wordTextView {

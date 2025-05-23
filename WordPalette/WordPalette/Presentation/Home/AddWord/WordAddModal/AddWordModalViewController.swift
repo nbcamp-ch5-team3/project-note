@@ -1,5 +1,5 @@
 //
-//  WordAddModalViewController.swift
+//  AddWordModalViewController.swift
 //  WordPalette
 //
 //  Created by iOS study on 5/22/25.
@@ -10,11 +10,11 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-final class WordAddModalViewController: UIViewController {
+final class AddWordModalViewController: UIViewController {
     
     // MARK: - Properties
     private let disposeBag = DisposeBag()
-    private let modalView = WordAddModalView()
+    private let modalView = AddWordModalView()
     
     // MARK: - Life Cycle
     override func viewDidLoad() {
