@@ -38,6 +38,11 @@ final class AddWordView: UIView {
         $0.layer.cornerRadius = 10
         $0.clipsToBounds = true
     }
+    
+    let refreshControl = UIRefreshControl().then {
+        $0.tintColor = .clear 
+        $0.backgroundColor = .clear
+    }
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -54,6 +59,8 @@ final class AddWordView: UIView {
     private func setupUI() {
         backgroundColor = .systemBackground
         [searchBar, tableView, floatingButton].forEach { addSubview($0) }
+        
+        tableView.refreshControl = refreshControl
     }
 
     private func setupConstraints() {

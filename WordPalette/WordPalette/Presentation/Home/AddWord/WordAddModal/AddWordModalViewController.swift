@@ -16,20 +16,26 @@ final class AddWordModalViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private let modalView = AddWordModalView()
     
+    // MARK: - Input Subjects
+    private let saveButtonTapSubject = PublishSubject<Void>()
+    private let closeButtonTabSubject = PublishSubject<Void>()
+    
+    
+    // MARK: - Callback
     var onSaveButtonTap: ((String, String, String?) -> Void)?
-
+    
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupActions()
-        setupConstraints()
+        bind()
     }
     
     // MARK: - Setup
     private func setupUI() {
         view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
         view.addSubview(modalView)
+        setupConstraints()
     }
     
     private func setupConstraints() {
@@ -37,29 +43,57 @@ final class AddWordModalViewController: UIViewController {
             make.center.equalToSuperview()
             make.width.equalTo(320)
             make.height.greaterThanOrEqualTo(400)
-            make.centerY.equalToSuperview()
         }
     }
     
-    // MARK: - Rx Binding (Button Action)
-    private func setupActions() {
+    // MARK: - Bind
+    private func bind() {
+        bindInput()
+        bindOutput()
+    }
+    
+    // MARK: - Input Binding
+    private func bindInput() {
+        bindCloseButton()
+        bindSaveButton()
+    }
+    
+    // MARK: - Output Binding
+    private func bindOutput() {
+        bindCloseAction()
+        bindSaveAction()
+    }
+    
+    private func bindCloseButton() {
         modalView.closeButton.rx.tap
-            .bind { [weak self] in
-                self?.dismiss(animated: true)
+            .bind(to: closeButtonTabSubject)
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindSaveButton() {
+        modalView.saveButton.rx.tap
+            .bind(to: saveButtonTapSubject)
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindCloseAction() {
+        closeButtonTabSubject
+            .bind(with: self) { owner, _ in
+                owner.dismiss(animated: true)
             }
             .disposed(by: disposeBag)
-        
-        modalView.saveButton.rx.tap
-            .bind { [weak self] in
-                guard let self = self else { return }
-                
+    }
+    
+    private func bindSaveAction() {
+        saveButtonTapSubject
+            .bind(with: self) { owner, _ in
                 // 입력값 검증
                 guard let word = self.modalView.wordText,
                       !word.isEmpty,
                       let meaning = self.modalView.meaningText,
                       !meaning.isEmpty else {
                     // 필수 입력값이 없으면 Alert
-                    self.showAlert(message: "영단어와 한글 뜻은 필수 입력사항입니다.")
+                    owner.showAlert(message: "영단어와 한글 뜻은 필수 입력사항입니다.")
                     return
                 }
                 

@@ -121,12 +121,9 @@ final class AddWordViewController: UIViewController {
     }
     
     private func bindRefreshControl() {
-        // AddWordView에 refreshControl 구현 후 활성화 예정
-        /*
-        addWordView.tableView.refreshControl?.rx.controlEvent(.valueChanged)
+        addWordView.refreshControl.rx.controlEvent(.valueChanged)
             .bind(to: refreshSubject)
             .disposed(by: disposeBag)
-        */
     }
 
     private func bindLevelSegmentControl() {
@@ -185,13 +182,9 @@ final class AddWordViewController: UIViewController {
 
     // MARK: - Helper Methods
     private func endRefreshingIfNeeded() {
-        // Pull-to-Refresh 종료 (refreshControl 구현 후 활성화 예정)
-        /*
-        if let refreshControl = addWordView.tableView.refreshControl,
-           refreshControl.isRefreshing {
-            refreshControl.endRefreshing()
+        if addWordView.refreshControl.isRefreshing {
+            addWordView.refreshControl.endRefreshing()
         }
-        */
     }
 
     private func showAlert(message: String) {
