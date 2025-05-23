@@ -4,7 +4,7 @@ import Then
 
 final class HomeView: UIView {
     /// Level 배열
-    private let levels: [Level] = [.beginner, .intermediate, .advanced]
+    let levels: [Level] = [.beginner, .intermediate, .advanced]
 
     /// 단어 추가 label
     private let addWordLabel = UILabel().then {
@@ -21,7 +21,7 @@ final class HomeView: UIView {
     }
 
     /// 레벨별 검색 페이지 버튼 배열 (초급, 중급, 고급)
-    private lazy var levelSearchButtons: [UIButton] = levels.map { level in
+    lazy var levelSearchButtons: [UIButton] = levels.map { level in
         let button = UIButton().then {
             $0.setTitle(level.rawValue, for: .normal)
             $0.setTitleColor(.white, for: .normal)

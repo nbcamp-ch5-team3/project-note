@@ -18,7 +18,9 @@ final class HomeViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureNavigationBackButton()
         bindLevelButtonView()
+        bindToSearchButton()
     }
 
     private func bindLevelButtonView() {
@@ -33,6 +35,23 @@ final class HomeViewController: UIViewController {
             .bind(with: self) { owner, selected in
                 owner.homeView.levelButtonView.updateButtonSelection(selected: selected)
             }.disposed(by: disposeBag)
+    }
+
+    /// 단어 검색 페이지로 넘어가는 메서드
+    private func bindToSearchButton() {
+        zip(homeView.levelSearchButtons, homeView.levels).forEach { button, level in
+            button.rx.tap
+                .bind(with: self) { owner, _ in
+                    let addWordVC = AddWordViewController()
+                    owner.navigationController?.pushViewController(addWordVC, animated: true)
+                }.disposed(by: disposeBag)
+        }
+    }
+
+    /// navigation backButton의 UI를 설정하는 메서드
+    private func configureNavigationBackButton() {
+        navigationItem.backButtonTitle = ""
+        navigationController?.navigationBar.tintColor = .customOrange
     }
 }
 
