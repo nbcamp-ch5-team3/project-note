@@ -123,10 +123,24 @@ final class AddWordModalViewController: UIViewController {
                     }
                     self?.showAlert(message: message)
                 } else {
-                    self?.dismissAndSave(word: word, meaning: meaning, example: example)
+                    self?.showConfirmationAlert(word: word, meaning: meaning, example: example)
                 }
             }
         }
+    }
+    
+    private func showConfirmationAlert(word: String, meaning: String, example: String?) {
+        let exampleText = example?.isEmpty == false ? "\n예문: \(example!)" : ""
+        let message = "\(word): \(meaning)\(exampleText)\n\n단어를 추가하시겠습니까?"
+        
+        let alert = UIAlertController(title: "단어 추가", message: message, preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: "추가", style: .default) { [weak self] _ in
+            self?.dismissAndSave(word: word, meaning: meaning, example: example)
+        })
+        
+        present(alert, animated: true)
     }
     
     private func dismissAndSave(word: String, meaning: String, example: String?) {
