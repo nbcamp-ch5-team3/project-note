@@ -8,12 +8,6 @@ final class LevelButtonView: UIView {
     /// Level 배열
     private let levels: [Level] = [.beginner, .intermediate, .advanced]
 
-    /// Rx를 사용하기 위한 disposeBag
-    private let disposeBag = DisposeBag()
-
-    /// 선택된 버튼의 초기값은 초급 버튼
-    let selectedLevelRelay = BehaviorRelay<Level>(value: .beginner)
-
     /// 레벨별 버튼을 모아놓은 스택 뷰
     private lazy var levelButtonStackView = UIStackView(arrangedSubviews: levelButtons).then {
         $0.axis = .horizontal
@@ -38,8 +32,6 @@ final class LevelButtonView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureUI()
-        bindButtonTapped()
-        updateButtonSelection(selected: selectedLevelRelay.value) // 초기 선택 표시
     }
 
     required init?(coder: NSCoder) {
@@ -56,22 +48,19 @@ final class LevelButtonView: UIView {
     }
 
     /// 버튼의 배경색이 선택되었을 때, 선택되지 않았을 때의 배경색을 분리하기 위한 메서드
-    private func updateButtonSelection(selected: Level) {
+    func updateButtonSelection(selected: Level) {
         for (index, button) in levelButtons.enumerated() {
             let level = levels[index]
             button.backgroundColor = (level == selected) ? .customMango : .systemGray5
         }
     }
 
-    /// Rx로 선택된 Level에 따라 버튼 눌렸음을 바인딩하는 메서드
-    private func bindButtonTapped() {
-        zip(levelButtons, levels).forEach { button, level in
-            button.rx.tap
-                .map { level }
-                .bind(with: self) { owner, selected in
-                    owner.selectedLevelRelay.accept(selected)
-                    owner.updateButtonSelection(selected: selected)
-                }.disposed(by: disposeBag)
-        }
+    // 버튼이 눌렸음을 Rx로 나타내는 메서드
+    func bindButtonTapped() -> Observable<Level> {
+        return Observable.merge(
+            zip(levelButtons, levels).map { button, level in
+                button.rx.tap.map { level }
+            }
+        )
     }
 }

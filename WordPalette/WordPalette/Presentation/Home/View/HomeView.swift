@@ -47,7 +47,7 @@ final class HomeView: UIView {
     }
 
     /// 선택된 버튼만 배경색이 바뀌는 레벨별 버튼
-    private let levelButtonView = LevelButtonView()
+    let levelButtonView = LevelButtonView()
 
     //MARK: - Initialize
     override init(frame: CGRect) {
