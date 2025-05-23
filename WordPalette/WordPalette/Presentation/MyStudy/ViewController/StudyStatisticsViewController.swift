@@ -47,6 +47,13 @@ final class StudyStatisticsViewController: UIViewController {
     
     /// 뷰 바인딩
     private func bind() {
+        
+        studyHistroyView.getDismissButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.dismiss(animated: true)
+            }
+            .disposed(by: disposeBag)
+        
         let items = Observable.of(wordMocks)
         
         items

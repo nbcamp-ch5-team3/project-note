@@ -39,6 +39,8 @@ final class StudyStatisticsView: UIView, UIViewGuide {
     /// 테이블 뷰
     private let wordTableView = UITableView()
     
+    /// 닫기 버튼
+    private let dismissButton = UIButton()
     
     func configureAttributes() {
         
@@ -79,6 +81,11 @@ final class StudyStatisticsView: UIView, UIViewGuide {
             $0.rowHeight = 64
         }
         
+        dismissButton.do {
+            $0.setImage(UIImage(systemName: "xmark"), for: .normal)
+            $0.tintColor = .black
+        }
+        
     }
     
     func configureLayout() {
@@ -111,6 +118,10 @@ final class StudyStatisticsView: UIView, UIViewGuide {
             $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
+        
+        dismissButton.snp.makeConstraints {
+            $0.top.trailing.equalTo(safeAreaLayoutGuide).inset(24)
+        }
     
     }
     
@@ -119,7 +130,7 @@ final class StudyStatisticsView: UIView, UIViewGuide {
         [memorizationLabel, unMemorizationLabel, memorizationRateLabel]
             .forEach { statStackView.addArrangedSubview($0) }
         
-        [dateLabel, statStackView, cheeringLabel, wordLabel, wordSegmentControl, wordTableView]
+        [dateLabel, statStackView, cheeringLabel, wordLabel, wordSegmentControl, wordTableView, dismissButton]
             .forEach { addSubview($0) }
     }
     
@@ -147,6 +158,10 @@ final class StudyStatisticsView: UIView, UIViewGuide {
     // MARK: 외부 접근 가능 메서드
     var getWordTableView: UITableView {
         wordTableView
+    }
+    
+    var getDismissButton: UIButton {
+        dismissButton
     }
 }
 
