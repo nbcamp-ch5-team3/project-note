@@ -10,19 +10,27 @@ import Foundation
 // MARK: - 나의 학습 기록 관련 유즈케이스
 final class StudyHistoryUseCase {
     
+    private let userRepository: UserRepository
+    private let solvedRepository: SolvedWordRepository
+    private let disposeBag = DisposeBag()
+    
+    init(userRepository: UserRepository, solvedRepository: SolvedWordRepository) {
+        self.userRepository = userRepository
+        self.solvedRepository = solvedRepository
+    }
+    
     /// 나의 학습기록 화면 appearing 될 때 학습기록 데이터 요청
     func fetchStudyHistory() -> Single<UserData>{
-        return Single.create { single in
-            single(.success(userDataMock))
-            return Disposables.create()
-        }
+        return userRepository.fetchUserData()
     }
     
     /// 캘린더에서 날짜 선택 시 해당 날짜의 통계 기록 요청
-    func fetchWords(id: UUID) -> Single<[WordEntity]>{
-        return Single.create { single in
-            single(.success(wordMocks))
-            return Disposables.create()
-        }
+    func fetchWords(id: UUID) -> Single<(all: [WordEntity], memos: [WordEntity], unMemos: [WordEntity])>{
+        return solvedRepository.fetchWords(id: id)
+            .map { words in
+                let memos = words.filter { $0.isCorrect == true }
+                let unMemos = words.filter { $0.isCorrect != true }
+                return (all: words, memos: memos, unMemos: unMemos)
+            }
     }
 }

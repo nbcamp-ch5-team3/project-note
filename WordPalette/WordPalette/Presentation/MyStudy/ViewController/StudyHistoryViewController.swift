@@ -95,7 +95,10 @@ extension StudyHistoryViewController: UICalendarViewDelegate, UICalendarSelectio
         else { return }
         
         // DIContainer 추가하면 바뀔 예정
-        let useCase = StudyHistoryUseCase()
+        let manager = CoreDataManager()
+        let solvedRepository = SolvedWordRepositoryImpl(coredataManager: manager)
+        let userRepository = UserRepositoryImpl(coredataManager: manager)
+        let useCase = StudyHistoryUseCase(userRepository: userRepository, solvedRepository: solvedRepository)
         let vc = StudyStatisticsViewController(studyHistory: studyHistory, viewModel: StudyStatisticsViewModel(useCase: useCase))
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
