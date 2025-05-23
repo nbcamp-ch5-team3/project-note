@@ -91,7 +91,7 @@ final class StudyWordCell: UITableViewCell, UIViewGuide {
     }
     
     /// 셀 컴포넌트 설정
-    func configure(_ word: WordMock) {
+    func configure(_ word: WordEntity) {
         guard let isCorrect = word.isCorrect else { return }
         
         let text = NSMutableAttributedString(string: "\(isCorrect ? "O" : "X") \(word.meaning)")

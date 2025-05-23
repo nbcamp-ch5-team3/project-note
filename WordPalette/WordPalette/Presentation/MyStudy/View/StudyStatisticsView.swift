@@ -39,13 +39,14 @@ final class StudyStatisticsView: UIView, UIViewGuide {
     /// 테이블 뷰
     private let wordTableView = UITableView()
     
+    /// 닫기 버튼
+    private let dismissButton = UIButton()
     
     func configureAttributes() {
         
         backgroundColor = .white
         
         dateLabel.do {
-            $0.text = "2023.04.04"
             $0.textColor = .black
             $0.font = .systemFont(ofSize: 24, weight: .semibold)
         }
@@ -56,7 +57,6 @@ final class StudyStatisticsView: UIView, UIViewGuide {
         }
         
         cheeringLabel.do {
-            $0.text = "아직 더 분발하셔야 해요 😅"
             $0.textColor = .black
             $0.textAlignment = .center
             $0.backgroundColor = .gray.withAlphaComponent(0.1)
@@ -77,6 +77,11 @@ final class StudyStatisticsView: UIView, UIViewGuide {
         
         wordTableView.do {
             $0.rowHeight = 64
+        }
+        
+        dismissButton.do {
+            $0.setImage(UIImage(systemName: "xmark"), for: .normal)
+            $0.tintColor = .black
         }
         
     }
@@ -111,6 +116,10 @@ final class StudyStatisticsView: UIView, UIViewGuide {
             $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
+        
+        dismissButton.snp.makeConstraints {
+            $0.top.trailing.equalTo(safeAreaLayoutGuide).inset(24)
+        }
     
     }
     
@@ -119,7 +128,7 @@ final class StudyStatisticsView: UIView, UIViewGuide {
         [memorizationLabel, unMemorizationLabel, memorizationRateLabel]
             .forEach { statStackView.addArrangedSubview($0) }
         
-        [dateLabel, statStackView, cheeringLabel, wordLabel, wordSegmentControl, wordTableView]
+        [dateLabel, statStackView, cheeringLabel, wordLabel, wordSegmentControl, wordTableView, dismissButton]
             .forEach { addSubview($0) }
     }
     
@@ -128,9 +137,6 @@ final class StudyStatisticsView: UIView, UIViewGuide {
         configureAttributes()
         configureSubView()
         configureLayout()
-        
-        configure()   // 나중에 지울 예정
-        
     }
     
     required init?(coder: NSCoder) {
@@ -138,15 +144,30 @@ final class StudyStatisticsView: UIView, UIViewGuide {
     }
     
     /// 뷰 컴포넌트 데이터 설정
-    func configure() {
-        memorizationLabel.configure(num: "6개", text: "암기 완료")
-        unMemorizationLabel.configure(num: "12개", text: "미암기")
-        memorizationRateLabel.configure(num: "30%", text: "암기율", color: .systemPink.withAlphaComponent(0.8))
+    func configure(date:Date, memo: Int, unMemo: Int) {
+        dateLabel.text = date.toString()
+        memorizationLabel.configure(num: "\(memo)개", text: "암기 완료")
+        unMemorizationLabel.configure(num: "\(unMemo)", text: "미암기")
+        
+        let total = memo + unMemo
+        let rate = total == 0 ? 0 : Int((Double(memo) / Double(total)) * 100)
+        
+        // 암기율 50% 기준으로 표시
+        memorizationRateLabel.configure(num: "\(rate)%", text: "암기율", color: rate > 50 ? .systemGreen : .systemPink.withAlphaComponent(0.8))
+        cheeringLabel.text = rate > 50  ? "아주 잘하고 있어요! 🎉" : "아직 더 분발하셔야 해요 😅"
     }
     
     // MARK: 외부 접근 가능 메서드
     var getWordTableView: UITableView {
         wordTableView
+    }
+    
+    var getDismissButton: UIButton {
+        dismissButton
+    }
+    
+    var getSegmentControl: UISegmentedControl {
+        wordSegmentControl
     }
 }
 

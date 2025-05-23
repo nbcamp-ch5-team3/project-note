@@ -72,6 +72,7 @@ final class StudyHistoryView: UIView, UIViewGuide {
         calendarView.snp.makeConstraints {
             $0.top.equalTo(profileSectionView.snp.bottom).offset(16)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide)
+            $0.bottom.equalTo(safeAreaLayoutGuide).inset(18)
         }
     }
     
@@ -87,6 +88,12 @@ final class StudyHistoryView: UIView, UIViewGuide {
     }
     
     // MARK: 외부 접근 가능 메서드
+    var getProfileSectionView: ProfileSectionView {
+        profileSectionView
+    }
     
+    var getCalendarView: UICalendarView {
+        calendarView
+    }
 }
 
