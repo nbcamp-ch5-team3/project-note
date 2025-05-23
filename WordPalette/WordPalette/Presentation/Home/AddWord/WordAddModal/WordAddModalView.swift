@@ -77,8 +77,8 @@ final class WordAddModalView: UIView {
     private func setupUI() {
         backgroundColor = .systemBackground
         layer.cornerRadius = 20
-        layer.masksToBounds = true
-        
+        clipsToBounds = true
+
         [closeButton, contentStack].forEach { self.addSubview($0) }
         
         [titleLabel, wordTextView, meaningTextView, exampleTextView, saveButton].forEach { contentStack.addArrangedSubview($0) }
@@ -147,6 +147,7 @@ extension UITextView {
         NotificationCenter.default.addObserver(forName: UITextView.textDidChangeNotification, object: self, queue: .main) { [weak self] _ in
             placeholderLabel.isHidden = !(self?.text?.isEmpty ?? true)
         }
+        
         // 처음에는 텍스트가 비어있으면 보여주기
         placeholderLabel.isHidden = !self.text.isEmpty
     }

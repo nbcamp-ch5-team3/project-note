@@ -50,10 +50,10 @@ final class AddWordViewController: UIViewController {
     //MARK: - addButton Action(RX)
     private func setupBinding() {
         addWordView.floatingButton.rx.tap
-            .bind { [weak self] in
+            .bind(with: self) { owner, _ in
                 let modal = WordAddModalViewController()
                 modal.modalPresentationStyle = .overFullScreen
-                self?.present(modal, animated: true)
+                owner.present(modal, animated: true)
             }
             .disposed(by: disposeBag)
     }

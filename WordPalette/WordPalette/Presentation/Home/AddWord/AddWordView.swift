@@ -36,7 +36,7 @@ final class AddWordView: UIView {
         $0.setTitleColor(.white, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
         $0.layer.cornerRadius = 10
-        $0.layer.masksToBounds = true
+        $0.clipsToBounds = true
     }
 
     // MARK: - Init
