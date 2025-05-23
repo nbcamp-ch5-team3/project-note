@@ -34,8 +34,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let DIContainer = DIContainer()
         
         let homeVC = DIContainer.makeHomeViewController()
-        homeVC.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
-        
+        let homeNV = UINavigationController(rootViewController: homeVC)
+        homeNV.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
+
         let quizVC = DIContainer.makeQuizViewController()
         quizVC.tabBarItem = UITabBarItem(title: "퀴즈", image: UIImage(systemName: "questionmark.circle.fill"), tag: 1)
         
@@ -44,8 +45,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         tabBar.selectedIndex = 0
         tabBar.tabBar.tintColor = .customMango
-        tabBar.viewControllers = [homeVC, quizVC, studyHistoryVC]
-        
+        tabBar.viewControllers = [homeNV, quizVC, studyHistoryVC]
+
         return tabBar
     }
 }
