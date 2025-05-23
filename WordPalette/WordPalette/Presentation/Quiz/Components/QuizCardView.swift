@@ -17,6 +17,7 @@ final class QuizCardView: UIView {
     
     private let disposeBag = DisposeBag()
     
+    /// 카드 뷰의 앞 뒤 상태
     private var isFront: Bool = true
     
     // MARK: - UI Components

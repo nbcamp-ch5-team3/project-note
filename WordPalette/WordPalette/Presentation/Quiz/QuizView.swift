@@ -14,6 +14,7 @@ final class QuizView: UIView {
     
     // MARK: - Properties
     
+    /// 퀴즈 정답 여부
     var isCorrectQuiz: Observable<Bool> {
         return quizCardStackView.swipeResult.asObservable()
     }
@@ -74,6 +75,7 @@ final class QuizView: UIView {
     
     // MARK: - Update
     
+    /// 초기 UI 업데이트
     func update(with quizInfo: QuizViewInfo) {
         let cards = quizInfo.words.map {
             let card = QuizCardView()
@@ -84,6 +86,7 @@ final class QuizView: UIView {
         quizStatusView.update(with: quizInfo)
     }
     
+    /// 퀴즈를 풀고 난 후 UI 업데이트
     func updateAfterAnswer(with isCorrect: Bool) {
         quizStatusView.updateAfterAnswer(with: isCorrect)
     }

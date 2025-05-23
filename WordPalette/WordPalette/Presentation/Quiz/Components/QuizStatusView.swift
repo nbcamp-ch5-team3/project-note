@@ -109,12 +109,14 @@ final class QuizStatusView: UIView {
     
     // MARK: - Update
     
+    /// 초기 UI 업데이트
     func update(with quizInfo: QuizViewInfo) {
         remainingWordCountLabel.text = "\(quizInfo.words.count)"
         correctWordCountLabel.text = "\(quizInfo.correctCount)"
         incorrectWordCountLabel.text = "\(quizInfo.incorrectCount)"
     }
     
+    /// 퀴즈를 풀고 난 후 UI 업데이트
     func updateAfterAnswer(with isCorrect: Bool) {
         let remaining = max(0, Int(remainingWordCountLabel.text ?? "0")! - 1)
         let correct = Int(correctWordCountLabel.text ?? "0")!
