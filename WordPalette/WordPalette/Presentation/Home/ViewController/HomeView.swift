@@ -16,7 +16,7 @@ final class HomeView: UIView {
     /// 레벨별로 단어를 검색해서 추가하는 페이지로 가기 위한 버튼 묶음 stackView
     private lazy var levelSearchButtonStackView = UIStackView(arrangedSubviews: levelSearchButtons).then {
         $0.axis = .horizontal
-        $0.spacing = 32
+        $0.spacing = 40
         $0.distribution = .fillEqually
     }
 
@@ -59,7 +59,10 @@ final class HomeView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Constraints
     private func configureUI() {
+        backgroundColor = .white
+
         [
             addWordLabel,
             levelSearchButtonStackView,
@@ -68,24 +71,24 @@ final class HomeView: UIView {
         ].forEach { addSubview($0) }
 
         addWordLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(24)
-            $0.leading.equalToSuperview().offset(16)
+            $0.top.equalTo(safeAreaLayoutGuide).offset(24)
+            $0.leading.equalTo(safeAreaLayoutGuide).offset(18)
         }
 
         levelSearchButtonStackView.snp.makeConstraints {
-            $0.top.equalTo(addWordLabel.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.top.equalTo(addWordLabel.snp.bottom).offset(18)
+            $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(18)
             $0.height.equalTo(levelSearchButtonStackView.snp.width).dividedBy(4)
         }
 
         myWordLabel.snp.makeConstraints {
             $0.top.equalTo(levelSearchButtonStackView.snp.bottom).offset(24)
-            $0.leading.equalToSuperview().offset(16)
+            $0.leading.equalTo(safeAreaLayoutGuide).offset(18)
         }
 
         levelButtonView.snp.makeConstraints {
-            $0.top.equalTo(myWordLabel.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.top.equalTo(myWordLabel.snp.bottom).offset(18)
+            $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(18)
             $0.height.equalTo(28)
         }
     }
