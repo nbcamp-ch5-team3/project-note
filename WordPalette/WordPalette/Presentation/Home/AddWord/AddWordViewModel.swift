@@ -60,9 +60,9 @@ final class AddWordViewModel {
         bindAlert()
         
         return Output(
-            words: wordsSubject.asObserver(),
-            addResult: addResultSubject.asObserver(),
-            showAlert: showAlertSubject.asObserver()
+            words: wordsSubject.asObservable(),
+            addResult: addResultSubject.asObservable(),
+            showAlert: showAlertSubject.asObservable()
         )
     }
     

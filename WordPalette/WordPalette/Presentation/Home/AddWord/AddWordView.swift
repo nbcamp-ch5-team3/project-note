@@ -64,7 +64,8 @@ final class AddWordView: UIView {
 
         tableView.snp.makeConstraints { make in
             make.top.equalTo(searchBar.snp.bottom).offset(5)
-            make.leading.trailing.bottom.equalToSuperview()
+            make.bottom.equalTo(floatingButton.snp.top).offset(-15)
+            make.leading.trailing.equalToSuperview()
         }
 
         floatingButton.snp.makeConstraints { make in
