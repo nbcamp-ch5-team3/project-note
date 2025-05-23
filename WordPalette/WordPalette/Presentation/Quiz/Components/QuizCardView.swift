@@ -1,5 +1,5 @@
 //
-//  WordCardView.swift
+//  QuizCardView.swift
 //  WordPalette
 //
 //  Created by 박주성 on 5/22/25.
@@ -11,7 +11,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-final class WordCardView: UIView {
+final class QuizCardView: UIView {
     
     // MARK: - Propeties
     
@@ -23,7 +23,6 @@ final class WordCardView: UIView {
     
     /// 단어 (ex. Apple)
     private let wordLabel = UILabel().then {
-        $0.text = "Apple"
         $0.textColor = .black
         $0.textAlignment = .center
         $0.font = .systemFont(ofSize: 32, weight: .bold)
@@ -31,7 +30,6 @@ final class WordCardView: UIView {
     
     /// 에문 (ex. I ate an apple)
     private let exampleLabel = UILabel().then {
-        $0.text = "I ate an apple"
         $0.textColor = .darkGray
         $0.textAlignment = .center
         $0.font = .systemFont(ofSize: 15)
@@ -76,11 +74,16 @@ final class WordCardView: UIView {
                 self.backgroundColor = self.isFront ? .white : .customMango
             }
     }
+    
+    func update(word: String, example: String) {
+        wordLabel.text = word
+        exampleLabel.text = example
+    }
 }
 
 // MARK: - Configure
 
-private extension WordCardView {
+private extension QuizCardView {
     func configure() {
         setAttributes()
         setHierarchy()

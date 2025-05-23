@@ -9,6 +9,35 @@ import UIKit
 
 final class QuizViewController: UIViewController {
     
+    // MARK: - Propeties
+    
+    private let mockData = [
+        WordEntity(
+            id: UUID(),
+            word: "hello",
+            meaning: "안녕",
+            example: "hello world",
+            level: .beginner,
+            isCorrect: nil
+        ),WordEntity(
+            id: UUID(),
+            word: "hello",
+            meaning: "안녕",
+            example: "hello world",
+            level: .beginner,
+            isCorrect: nil
+        )
+        ,WordEntity(
+            id: UUID(),
+            word: "hello",
+            meaning: "안녕",
+            example: "hello world",
+            level: .beginner,
+            isCorrect: nil
+        )
+    ]
+
+    
     // MARK: - UI Components
     
     private let quizView = QuizView()
@@ -22,9 +51,12 @@ final class QuizViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
+        quizView.update(words: mockData)
     }
 
 }
+
+// MARK: - Configure
 
 private extension QuizViewController {
     func configure() {

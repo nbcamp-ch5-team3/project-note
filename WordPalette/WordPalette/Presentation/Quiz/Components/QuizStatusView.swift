@@ -112,6 +112,8 @@ final class QuizStatusView: UIView {
     
 }
 
+// MARK: - Configure
+
 private extension QuizStatusView {
     func configure() {
         setAttributes()

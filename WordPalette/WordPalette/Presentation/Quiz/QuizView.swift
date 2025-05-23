@@ -22,7 +22,7 @@ final class QuizView: UIView {
     }
     
     /// 단어 카드 뷰 (퀴즈 문제 출제 영역)
-    private let wordCardView = WordCardView()
+    private let cardStackView = QuizCardStackView()
     
     /// 사용자가 "외웠어요!" 선택 시 누르는 버튼 (정답 처리용)
     private let correctButton = UIButton().then {
@@ -65,6 +65,15 @@ final class QuizView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func update(words: [WordEntity]) {
+        let cards = words.map {
+            let card = QuizCardView()
+            card.update(word: $0.word, example: $0.example)
+            return card
+        }
+        cardStackView.setCards(cards)
+    }
+    
 }
 
 // MARK: - Configure
@@ -83,7 +92,7 @@ private extension QuizView {
     func setHierarchy() {
         [
             titleLabel,
-            wordCardView,
+            cardStackView,
             choiceStackView,
             quizStatusView,
         ].forEach { addSubview($0) }
@@ -95,14 +104,14 @@ private extension QuizView {
             $0.centerX.equalToSuperview()
         }
         
-        wordCardView.snp.makeConstraints {
+        cardStackView.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(20)
             $0.horizontalEdges.equalToSuperview().inset(50)
-            $0.height.equalTo(wordCardView.snp.width).multipliedBy(1.6).priority(.low)
+            $0.height.equalTo(cardStackView.snp.width).multipliedBy(1.6).priority(.low)
         }
         
         choiceStackView.snp.makeConstraints {
-            $0.top.equalTo(wordCardView.snp.bottom).offset(15)
+            $0.top.equalTo(cardStackView.snp.bottom).offset(15)
             $0.horizontalEdges.equalToSuperview().inset(30)
         }
         
