@@ -214,7 +214,6 @@ final class AddWordViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "확인", style: .default))
         present(alert, animated: true)
     }
-    
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate

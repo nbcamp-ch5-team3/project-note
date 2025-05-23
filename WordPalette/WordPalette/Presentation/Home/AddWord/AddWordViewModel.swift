@@ -181,6 +181,7 @@ final class AddWordViewModel {
                 guard let self = self else { return }
                 switch result {
                 case .success:
+                    self.printAllWords() // TODO: 나중에 삭제(확인용)
                     self.showAlertSubject.onNext("단어가 저장되었습니다.")
                 case .fail:
                     self.showAlertSubject.onNext("저장에 실패했습니다. 다시 시도해 주세요.")
@@ -192,4 +193,17 @@ final class AddWordViewModel {
             })
             .disposed(by: disposeBag)
     }
+    
+    // DB 저장 확인용 프린트 메서드
+    private func printAllWords() {
+        useCase.fetchAllWordsMerged(level: currentLevel)
+            .subscribe(onSuccess: { words in
+                print("[현재 저장 단어 목록] (\(words.count)개)")
+                for word in words {
+                    print("전체 단어: - \(word.word) : \(word.meaning)")
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+
 }

@@ -24,22 +24,26 @@ final class AddWordModalView: UIView {
         $0.clipsToBounds = true
         $0.backgroundColor = UIColor.systemGray6
         $0.font = UIFont.systemFont(ofSize: 16)
+        $0.autocapitalizationType = .none
+        $0.keyboardType = .asciiCapable
     }
-
+    
     private let meaningTextView = UITextView().then {
         $0.setPlaceholder("한글 뜻을 입력하세요")
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
         $0.backgroundColor = UIColor.systemGray6
         $0.font = UIFont.systemFont(ofSize: 16)
+        $0.keyboardType = .default
     }
-
+    
     private let exampleTextView = UITextView().then {
         $0.setPlaceholder("예문을 입력하세요 (선택)")
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
         $0.backgroundColor = UIColor.systemGray6
         $0.font = UIFont.systemFont(ofSize: 16)
+        $0.keyboardType = .default
     }
     
     private let _saveButton = UIButton().then {
@@ -78,7 +82,7 @@ final class AddWordModalView: UIView {
         backgroundColor = .systemBackground
         layer.cornerRadius = 20
         clipsToBounds = true
-
+        
         [closeButton, contentStack].forEach { self.addSubview($0) }
         
         [titleLabel, wordTextView, meaningTextView, exampleTextView, saveButton].forEach { contentStack.addArrangedSubview($0) }
@@ -136,7 +140,7 @@ extension UITextView {
         placeholderLabel.font = UIFont.systemFont(ofSize: 16)
         placeholderLabel.numberOfLines = 0
         self.addSubview(placeholderLabel)
-
+        
         placeholderLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(8)
             make.leading.equalToSuperview().offset(8)
@@ -167,6 +171,21 @@ extension AddWordModalView: UITextViewDelegate {
                 return false
             }
         }
+        
+        // meaningTextView: 한글만 허용
+        if textView == meaningTextView {
+            for scalar in text.unicodeScalars {
+                let v = scalar.value
+                // 완성형 한글, 자음, 모음 모두 허용
+                let isHangul = (v >= 0xAC00 && v <= 0xD7A3)
+                    || (v >= 0x3131 && v <= 0x318E)    
+                if !isHangul && text != "" {
+                    return false
+                }
+            }
+            return true
+        }
+        
         return true
     }
 }
