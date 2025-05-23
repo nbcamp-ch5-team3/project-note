@@ -12,13 +12,12 @@ import RxCocoa
 
 final class AddWordViewController: UIViewController {
     
+    // 임시 DI (나중에 DI컨테이너로 대체)
     private let viewModel: AddWordViewModel = {
-        // 임시 DI (나중에 DI컨테이너로 대체)
         let localDataSource = WordLocalDataSource()
         let coreDataManager = CoreDataManager()
         let unsolvedRepo = UnsolvedWordRepositoryImpl(localDataSource: localDataSource, coredataManager: coreDataManager)
-        let addWordRepo = AddWordRepositoryImpl(localDataSource: localDataSource, unsolvedWordRepository: unsolvedRepo)
-        let useCase = AddWordUseCaseImpl(repository: addWordRepo)
+        let useCase = AddWordUseCaseImpl(repository: unsolvedRepo)
         return AddWordViewModel(useCase: useCase)
     }()
     

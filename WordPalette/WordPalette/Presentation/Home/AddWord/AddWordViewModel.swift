@@ -59,9 +59,6 @@ final class AddWordViewModel {
         bindAddCustomWord(input: input)
         bindAlert()
         
-        // DB 저장 확인용 로그
-        loadAndLogDBWords()
-        
         return Output(
             words: wordsSubject.asObservable(),
             addResult: addResultSubject.asObservable(),
@@ -75,20 +72,6 @@ final class AddWordViewModel {
             .map { result in
                 return (result.exists, result.level)
             }
-    }
-    
-    // DB에 저장된 단어 로드 및 로그 출력
-    private func loadAndLogDBWords() {
-        useCase.fetchDBWords(level: currentLevel)
-            .subscribe(onSuccess: { words in
-                print("⭕️ [DB 로드] \(self.currentLevel.rawValue) 레벨 저장된 단어 수: \(words.count)개")
-                words.forEach { word in
-                    print("  - \(word.word): \(word.meaning)")
-                }
-            }, onFailure: { error in
-                print("❌ [DB 로드 실패] \(error.localizedDescription)")
-            })
-            .disposed(by: disposeBag)
     }
     
     // 1. 레벨 선택/화면 진입 시 단어 로드
