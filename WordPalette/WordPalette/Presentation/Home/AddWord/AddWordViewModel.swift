@@ -16,7 +16,7 @@ enum AddWordResult {
     case duplicateInLevel(word: String, level: Level)
 }
 
-class AddWordViewModel {
+final class AddWordViewModel {
     
     // MARK: - Input
     struct Input {
