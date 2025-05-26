@@ -36,11 +36,12 @@ final class TableViewWordCell: UITableViewCell {
         $0.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         $0.numberOfLines = 0
         $0.lineBreakMode = .byCharWrapping
+        $0.textColor = .black
     }
     
     private let exampleLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        $0.textColor = .secondaryLabel
+        $0.textColor = .black
         $0.numberOfLines = 0
         $0.lineBreakMode = .byCharWrapping
     }

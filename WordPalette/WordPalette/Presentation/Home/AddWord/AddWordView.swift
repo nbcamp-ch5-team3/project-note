@@ -13,7 +13,7 @@ final class AddWordView: UIView {
     // MARK: - UI Components
     let searchBar = UISearchBar().then {
         $0.placeholder = "단어를 검색해보세요"
-        $0.tintColor = .label
+        $0.tintColor = .systemGray3
         $0.searchBarStyle = .minimal
         $0.backgroundImage = UIImage()
         $0.backgroundColor = .clear
@@ -42,6 +42,11 @@ final class AddWordView: UIView {
     let refreshControl = UIRefreshControl().then {
         $0.tintColor = .clear 
         $0.backgroundColor = .clear
+    }
+    
+    let levelSegmentControl = UISegmentedControl(items: ["초급", "중급", "고급"]).then {
+        $0.selectedSegmentIndex = 0
+        $0.backgroundColor = .systemGray6
     }
 
     // MARK: - Init

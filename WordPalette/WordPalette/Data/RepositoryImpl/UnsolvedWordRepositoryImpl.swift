@@ -106,12 +106,12 @@ final class UnsolvedWordRepositoryImpl: UnsolvedWordRepository {
         return .just(entities)
     }
     
-    // 저장된 단어를 레벨 기준으로 조회 ( DB)
+    // 저장된 단어를 레벨 기준으로 조회 ( DB )
     func fetchWords(for level: Level) -> Single<[WordEntity]> {
         Single.create { observer in
             Task {
                 do {
-                    let words = try await self.coreDataManager.fetchUnsolvedWords(for: level)
+                    let words = try await self.coreDataManager.fetchUnsolvedWordsByLevel(level)
                     let entities = words.compactMap { self.toEntity($0) }
                     observer(.success(entities))
                 } catch {

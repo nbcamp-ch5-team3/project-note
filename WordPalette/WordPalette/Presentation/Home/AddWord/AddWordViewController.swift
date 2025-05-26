@@ -25,6 +25,7 @@ final class AddWordViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private let addWordView = AddWordView()
     private var addedWordIndexPath: IndexPath?
+    private let selectedLevel: Level
     
     // MARK: - Input Subjects
     private let viewWillAppearSubject = PublishSubject<Void>()
@@ -32,10 +33,18 @@ final class AddWordViewController: UIViewController {
     private let searchTextSubject = BehaviorSubject<String>(value: "")
     private let addWordTapSubject = PublishSubject<WordEntity>()
     private let addCustomWordTapSubject = PublishSubject<(en: String, ko: String, example: String?)>()
-    private let selectedLevelSubject = BehaviorRelay<Level>(value: .beginner)
-    
+    private let selectedLevelSubject: BehaviorRelay<Level>
+
     // MARK: - Output Properties
     private var words: [WordEntity] = []
+    
+    // MARK: - Init
+    init(selectedLevel: Level) {
+        self.selectedLevel = selectedLevel
+        self.selectedLevelSubject = BehaviorRelay<Level>(value: selectedLevel)
+        super.init(nibName: nil, bundle: nil)
+    }
+    required init?(coder: NSCoder) { fatalError() }
     
     // MARK: - Life Cycle
     override func loadView() {
@@ -46,6 +55,7 @@ final class AddWordViewController: UIViewController {
         super.viewDidLoad()
         setupTableViewCell()
         setupDelegate()
+        setTitleByLevel()
         bind()
     }
     
@@ -63,6 +73,17 @@ final class AddWordViewController: UIViewController {
         addWordView.tableView.dataSource = self
         addWordView.tableView.delegate = self
         addWordView.searchBar.delegate = self
+    }
+    
+    private func setTitleByLevel() {
+        switch selectedLevel {
+        case .beginner:
+            title = "초급 단어 추가"
+        case .intermediate:
+            title = "중급 단어 추가"
+        case .advanced:
+            title = "고급 단어 추가"
+        }
     }
     
     // MARK: - Bind
@@ -87,7 +108,6 @@ final class AddWordViewController: UIViewController {
         bindFloatingButton()
         bindSearchBar()
         bindRefreshControl()
-        bindLevelSegmentControl()
     }
     
     // MARK: - Output Binding
@@ -139,23 +159,6 @@ final class AddWordViewController: UIViewController {
         addWordView.refreshControl.rx.controlEvent(.valueChanged)
             .bind(to: refreshSubject)
             .disposed(by: disposeBag)
-    }
-    
-    private func bindLevelSegmentControl() {
-        // 요기서 사용 X 임의로 틀만 만들어둠
-        /*
-         addWordView.levelSegmentControl?.rx.selectedSegmentIndex
-         .map { index -> Level in
-         switch index {
-         case 0: return .beginner
-         case 1: return .intermediate
-         case 2: return .advanced
-         default: return .beginner
-         }
-         }
-         .bind(to: selectedLevelSubject)
-         .disposed(by: disposeBag)
-         */
     }
     
     // MARK: - Individual Output Bindings
