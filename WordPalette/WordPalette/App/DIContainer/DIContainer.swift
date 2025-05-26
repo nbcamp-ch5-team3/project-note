@@ -45,16 +45,8 @@ final class DIContainer {
         StudyHistoryUseCaseImpl(userRepository: makeUserRepository, solvedRepository: makeSolveddRepository)
     }
     
-    private var makeFetchUnsolvedUseCase: FetchUnsolvedWordsUseCase {
-        FetchUnsolvedWordsUseCase(repository: makeUnsolvedRepository)
-    }
-    
-    private var makeFetchTodayStudyHistoryUseCase: FetchTodayStudyHistoryUseCase {
-        FetchTodayStudyHistoryUseCase(repository: makeSolveddRepository)
-    }
-    
-    private var makeAnswerQuizUseCase: AnswerQuizUseCase {
-        AnswerQuizUseCase(
+    private var makeQuizUseCase: QuizUseCase {
+        QuizUseCaseImpl(
             unsolvedWordRepository: makeUnsolvedRepository,
             solvedWordRepository: makeSolveddRepository
         )
@@ -78,11 +70,7 @@ final class DIContainer {
     }
     
     private var makeQuizViewModel: QuizViewModel {
-        QuizViewModel(
-            fetchWordsUseCase: makeFetchUnsolvedUseCase,
-            fetchTodayStudyHistoryUseCase: makeFetchTodayStudyHistoryUseCase,
-            answerQuizUseCase: makeAnswerQuizUseCase
-        )
+        QuizViewModel(useCase: makeQuizUseCase)
     }
     
 //    ///

@@ -1,14 +1,13 @@
 //
-//  AnswerQuizUseCase.swift
+//  QuizUseCaseImpl.swift
 //  WordPalette
 //
 //  Created by 박주성 on 5/26/25.
 //
 
-import Foundation
 import RxSwift
 
-final class AnswerQuizUseCase {
+final class QuizUseCaseImpl: QuizUseCase {
     
     private let unsolvedWordRepository: UnsolvedWordRepository
     private let solvedWordRepository: SolvedWordRepository
@@ -20,8 +19,16 @@ final class AnswerQuizUseCase {
         self.unsolvedWordRepository = unsolvedWordRepository
         self.solvedWordRepository = solvedWordRepository
     }
+
+    func fetchUnsolvedWords(level: Level) -> Single<[WordEntity]> {
+        unsolvedWordRepository.fetchWords(for: level)
+    }
     
-    func execute(word: WordEntity) -> Single<Bool> {
+    func fetchTodayWords() -> Single<[WordEntity]> {
+        solvedWordRepository.fetchTodayWords()
+    }
+    
+    func answerQuiz(word: WordEntity) -> Single<Bool> {
         guard let isCorrect = word.isCorrect else {
             return .just(false)
         }

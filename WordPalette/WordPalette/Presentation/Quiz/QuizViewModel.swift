@@ -31,20 +31,12 @@ final class QuizViewModel {
     let state = PublishRelay<State>()
     let action = PublishRelay<Action>()
     
-    private let fetchWordsUseCase: FetchUnsolvedWordsUseCase
-    private let fetchTodayStudyHistoryUseCase: FetchTodayStudyHistoryUseCase
-    private let answerQuizUseCase: AnswerQuizUseCase
+    private let useCase: QuizUseCase
     
     // MARK: - Initailizer
     
-    init(
-        fetchWordsUseCase: FetchUnsolvedWordsUseCase,
-        fetchTodayStudyHistoryUseCase: FetchTodayStudyHistoryUseCase,
-        answerQuizUseCase: AnswerQuizUseCase
-    ) {
-        self.fetchWordsUseCase = fetchWordsUseCase
-        self.fetchTodayStudyHistoryUseCase = fetchTodayStudyHistoryUseCase
-        self.answerQuizUseCase = answerQuizUseCase
+    init(useCase: QuizUseCase) {
+        self.useCase = useCase
         bind()
     }
     
@@ -65,8 +57,8 @@ final class QuizViewModel {
     
     private func fetchQuizViewInfo() {
         Single.zip(
-            fetchWordsUseCase.execute(for: .advanced),
-            fetchTodayStudyHistoryUseCase.execute()
+            useCase.fetchUnsolvedWords(level: .advanced),
+            useCase.fetchTodayWords()
         )
         .map { [weak self] unsolvedWords, todaySolvedWords in
             self?.unsolvedWords = unsolvedWords
@@ -92,7 +84,7 @@ final class QuizViewModel {
         guard var word = unsolvedWords.first else { return }
         word.isCorrect = isCorrect
 
-        answerQuizUseCase.execute(word: word)
+        useCase.answerQuiz(word: word)
             .subscribe(onSuccess: { [weak self] success in
                 if success {
                     print("저장 성공")
