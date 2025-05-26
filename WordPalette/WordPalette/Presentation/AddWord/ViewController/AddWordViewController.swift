@@ -12,16 +12,8 @@ import RxCocoa
 
 final class AddWordViewController: UIViewController {
     
-    // 임시 DI (나중에 DI컨테이너로 대체)
-    private let viewModel: AddWordViewModel = {
-        let localDataSource = WordLocalDataSource()
-        let coreDataManager = CoreDataManager()
-        let unsolvedRepo = UnsolvedWordRepositoryImpl(localDataSource: localDataSource, coredataManager: coreDataManager)
-        let useCase = AddWordUseCaseImpl(repository: unsolvedRepo)
-        return AddWordViewModel(useCase: useCase)
-    }()
-    
     // MARK: - Properties
+    private let viewModel: AddWordViewModel
     private let disposeBag = DisposeBag()
     private let addWordView = AddWordView()
     private var addedWordIndexPath: IndexPath?
@@ -39,8 +31,9 @@ final class AddWordViewController: UIViewController {
     private var words: [WordEntity] = []
     
     // MARK: - Init
-    init(selectedLevel: Level) {
+    init(selectedLevel: Level, viewModel: AddWordViewModel) {
         self.selectedLevel = selectedLevel
+        self.viewModel = viewModel
         self.selectedLevelSubject = BehaviorRelay<Level>(value: selectedLevel)
         super.init(nibName: nil, bundle: nil)
     }
