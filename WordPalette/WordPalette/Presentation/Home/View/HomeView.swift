@@ -49,6 +49,22 @@ final class HomeView: UIView {
     /// 선택된 버튼만 배경색이 바뀌는 레벨별 버튼
     let levelButtonView = LevelButtonView()
 
+    /// 내 단어장 목록을 보여주는 테이블 뷰
+    let myWordTableView = UITableView().then {
+        $0.separatorStyle = .none
+        $0.backgroundColor = .clear
+    }
+
+    /// 전체 삭제 버튼
+    let deleteAllButton = UIButton().then {
+        $0.setTitle("전체 삭제", for: .normal)
+        $0.setTitleColor(.white, for: .normal)
+        $0.titleLabel?.font = .boldSystemFont(ofSize: 18)
+        $0.backgroundColor = .customOrange
+        $0.layer.cornerRadius = 12
+        $0.clipsToBounds = true
+    }
+
     //MARK: - Initialize
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -67,7 +83,9 @@ final class HomeView: UIView {
             addWordLabel,
             levelSearchButtonStackView,
             myWordLabel,
-            levelButtonView
+            levelButtonView,
+            myWordTableView,
+            deleteAllButton
         ].forEach { addSubview($0) }
 
         addWordLabel.snp.makeConstraints {
@@ -90,6 +108,18 @@ final class HomeView: UIView {
             $0.top.equalTo(myWordLabel.snp.bottom).offset(18)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(18)
             $0.height.equalTo(28)
+        }
+
+        myWordTableView.snp.makeConstraints {
+            $0.top.equalTo(levelButtonView.snp.bottom).offset(24)
+            $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(18)
+            $0.bottom.equalTo(deleteAllButton.snp.top).offset(-18)
+        }
+
+        deleteAllButton.snp.makeConstraints {
+            $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(18)
+            $0.height.equalTo(40)
+            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-24)
         }
     }
 }
