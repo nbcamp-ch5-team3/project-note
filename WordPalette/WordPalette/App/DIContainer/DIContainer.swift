@@ -54,7 +54,10 @@ final class DIContainer {
     }
     
     private var makeAnswerQuizUseCase: AnswerQuizUseCase {
-        AnswerQuizUseCase(repository: makeSolveddRepository)
+        AnswerQuizUseCase(
+            unsolvedWordRepository: makeUnsolvedRepository,
+            solvedWordRepository: makeSolveddRepository
+        )
     }
     
 //    ///
