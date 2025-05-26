@@ -111,7 +111,7 @@ final class AddWordUseCaseImpl: AddWordUseCase {
             }
     }
     
-    // database로 변경
+    // source를 database로 변경
     func saveWordToDatabase(word: WordEntity) -> Single<Bool> {
         let dbWord = WordEntity(
             id: UUID(),

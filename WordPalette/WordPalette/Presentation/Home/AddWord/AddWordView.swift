@@ -57,11 +57,6 @@ final class AddWordView: UIView {
         $0.tintColor = .clear 
         $0.backgroundColor = .clear
     }
-    
-    let levelSegmentControl = UISegmentedControl(items: ["초급", "중급", "고급"]).then {
-        $0.selectedSegmentIndex = 0
-        $0.backgroundColor = .systemGray6
-    }
 
     // MARK: - Init
     override init(frame: CGRect) {

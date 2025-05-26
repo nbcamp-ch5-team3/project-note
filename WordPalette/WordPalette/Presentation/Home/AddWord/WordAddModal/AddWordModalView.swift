@@ -25,6 +25,7 @@ final class AddWordModalView: UIView {
         $0.clipsToBounds = true
         $0.backgroundColor = UIColor(white: 0.95, alpha: 1)
         $0.font = UIFont.systemFont(ofSize: 16)
+        $0.textColor = .black
         $0.autocapitalizationType = .none
         $0.keyboardType = .asciiCapable
     }
@@ -33,6 +34,7 @@ final class AddWordModalView: UIView {
         $0.setPlaceholder("한글 뜻을 입력하세요")
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
+        $0.textColor = .black
         $0.backgroundColor = UIColor(white: 0.95, alpha: 1)
         $0.font = UIFont.systemFont(ofSize: 16)
         $0.keyboardType = .default
@@ -42,6 +44,7 @@ final class AddWordModalView: UIView {
         $0.setPlaceholder("예문을 입력하세요 (선택)")
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
+        $0.textColor = .black
         $0.backgroundColor = UIColor(white: 0.95, alpha: 1)
         $0.font = UIFont.systemFont(ofSize: 16)
         $0.keyboardType = .default
@@ -89,6 +92,7 @@ final class AddWordModalView: UIView {
         [titleLabel, wordTextView, meaningTextView, exampleTextView, saveButton].forEach { contentStack.addArrangedSubview($0) }
     }
     
+    /// 텍스트뷰 델리게이트 연결
     private func setupDelegate() {
         wordTextView.delegate = self
         meaningTextView.delegate = self
@@ -133,7 +137,9 @@ final class AddWordModalView: UIView {
     var exampleText: String? { exampleTextView.text }
 }
 
+// MARK: - UITextView extension(placeholder 기능)
 extension UITextView {
+    /// 텍스트뷰에 플레이스홀더 레이블을 추가하고, 텍스트 변경에 따라 표시/숨김 처리
     func setPlaceholder(_ text: String, color: UIColor = .systemGray) {
         let placeholderLabel = UILabel()
         placeholderLabel.text = text
@@ -158,7 +164,9 @@ extension UITextView {
     }
 }
 
+// MARK: - UITextViewDelegate
 extension AddWordModalView: UITextViewDelegate {
+    /// 텍스트뷰 입력값에 따라 다음 입력 필드로 이동하거나, 입력값 제한(영어/한글) 처리
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             if textView == wordTextView {
@@ -188,10 +196,10 @@ extension AddWordModalView: UITextViewDelegate {
         if textView == meaningTextView {
             for scalar in text.unicodeScalars {
                 let v = scalar.value
-                // 완성형 한글, 자음, 모음 모두 허용
                 let isHangul = (v >= 0xAC00 && v <= 0xD7A3)
-                    || (v >= 0x3131 && v <= 0x318E)    
-                if !isHangul && text != "" {
+                    || (v >= 0x3131 && v <= 0x318E)
+                let isComma = (scalar == ",")
+                if !isHangul && !isComma && text != "" {
                     return false
                 }
             }

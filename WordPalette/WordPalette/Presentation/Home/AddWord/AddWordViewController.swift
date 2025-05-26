@@ -104,6 +104,7 @@ final class AddWordViewController: UIViewController {
     }
     
     // MARK: - Input Binding
+    /// Input 이벤트 바인딩
     private func bindInput() {
         bindFloatingButton()
         bindSearchBar()
@@ -111,6 +112,7 @@ final class AddWordViewController: UIViewController {
     }
     
     // MARK: - Output Binding
+    /// Output 이벤트 바인딩
     private func bindOutput(_ output: AddWordViewModel.Output) {
         bindWordsOutput(output.words)
         bindAddResultOutput(output.addResult)
@@ -118,6 +120,7 @@ final class AddWordViewController: UIViewController {
     }
     
     // MARK: - Individual Input Bindings
+    /// 플로팅 버튼 탭 바인딩
     private func bindFloatingButton() {
         addWordView.floatingButton.rx.tap
             .bind(with: self) { owner, _ in
@@ -133,8 +136,9 @@ final class AddWordViewController: UIViewController {
                         .subscribe(onSuccess: { (exists, level) in
                             completion(exists, level)
                         }, onFailure: { error in
+                            // 에러 시 중복 없음으로 처리
                             print("❌ [중복 체크 실패] \(error.localizedDescription)")
-                            completion(false, nil) // 에러 시 중복 없음으로 처리
+                            completion(false, nil)
                         })
                         .disposed(by: self.disposeBag)
                 }
@@ -149,12 +153,14 @@ final class AddWordViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
+    /// 검색바 텍스트 바인딩
     private func bindSearchBar() {
         addWordView.searchBar.rx.text.orEmpty
             .bind(to: searchTextSubject)
             .disposed(by: disposeBag)
     }
     
+    /// 새로고침 컨트롤 바인딩
     private func bindRefreshControl() {
         addWordView.refreshControl.rx.controlEvent(.valueChanged)
             .bind(to: refreshSubject)
@@ -162,6 +168,7 @@ final class AddWordViewController: UIViewController {
     }
     
     // MARK: - Individual Output Bindings
+    /// 단어 리스트 바인딩
     private func bindWordsOutput(_ words: Observable<[WordEntity]>) {
         words
             .observe(on: MainScheduler.instance)
@@ -173,6 +180,7 @@ final class AddWordViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
+    /// 단어 추가 결과 바이딩
     private func bindAddResultOutput(_ addResult: Observable<AddWordResult>) {
         addResult
             .observe(on: MainScheduler.instance)
@@ -192,6 +200,7 @@ final class AddWordViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
+    /// Alert 메시지 바인딩
     private func bindAlertOutput(_ showAlert: Observable<String>) {
         showAlert
             .observe(on: MainScheduler.instance)
@@ -202,14 +211,16 @@ final class AddWordViewController: UIViewController {
     }
     
     // MARK: - Helper Methods
+    /// 새로고침 종료 처리
     private func endRefreshingIfNeeded() {
         if addWordView.refreshControl.isRefreshing {
             addWordView.refreshControl.endRefreshing()
         }
     }
     
+    /// Alert 표시
     private func showAlert(message: String) {
-        // 이미 Alert가 표시 중인지 확인
+        // 이미 Alert가 표시 중인지 확인 (Alert 중복 방지)
         if presentedViewController != nil {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
                 self?.showAlert(message: message)
@@ -222,6 +233,7 @@ final class AddWordViewController: UIViewController {
         present(alert, animated: true)
     }
     
+    /// 단어 저장 확인 Alert 표시
     private func showAddWordAlert(word: WordEntity) {
         let alert = UIAlertController(
             title: "내 단어장에 저장",
@@ -238,10 +250,12 @@ final class AddWordViewController: UIViewController {
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
 extension AddWordViewController: UITableViewDataSource, UITableViewDelegate {
+    /// 테이블뷰 셀 개수 반환
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return words.count
     }
     
+    /// 테이블뷰 셀 구성
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TableViewWordCell.id, for: indexPath) as? TableViewWordCell else {
             return UITableViewCell()
@@ -271,7 +285,9 @@ extension AddWordViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
+// MARK: - UISearchBarDelegate
 extension AddWordViewController: UISearchBarDelegate {
+    /// 검색 버튼 클릭 시 키보드 내림
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
     }

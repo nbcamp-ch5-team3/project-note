@@ -107,6 +107,7 @@ final class TableViewWordCell: UITableViewCell {
     var publicAddButton: UIButton { addButton }
     
     // MARK: - configure Methods
+    /// 셀 데이터 구성
     func configure(word: String, example: String) {
         wordLabel.text = word
         exampleLabel.text = example
