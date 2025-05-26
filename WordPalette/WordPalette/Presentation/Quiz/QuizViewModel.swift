@@ -24,6 +24,8 @@ final class QuizViewModel {
     
     // MARK: - Properties
     
+    private var unsolvedWords: [WordEntity] = []
+    
     private let disposeBag = DisposeBag()
     
     let state = PublishRelay<State>()
@@ -31,15 +33,18 @@ final class QuizViewModel {
     
     private let fetchWordsUseCase: FetchUnsolvedWordsUseCase
     private let fetchTodayStudyHistoryUseCase: FetchTodayStudyHistoryUseCase
+    private let answerQuizUseCase: AnswerQuizUseCase
     
     // MARK: - Initailizer
     
     init(
         fetchWordsUseCase: FetchUnsolvedWordsUseCase,
         fetchTodayStudyHistoryUseCase: FetchTodayStudyHistoryUseCase,
+        answerQuizUseCase: AnswerQuizUseCase
     ) {
         self.fetchWordsUseCase = fetchWordsUseCase
         self.fetchTodayStudyHistoryUseCase = fetchTodayStudyHistoryUseCase
+        self.answerQuizUseCase = answerQuizUseCase
         bind()
     }
     
@@ -52,7 +57,7 @@ final class QuizViewModel {
                 case .viewWillAppear:
                     self.fetchQuizViewInfo()
                 case .answer(let isCorrect):
-                    print(isCorrect)
+                    self.answerQuiz(isCorrect)
                 }
             }
             .disposed(by: disposeBag)
@@ -64,6 +69,8 @@ final class QuizViewModel {
             fetchTodayStudyHistoryUseCase.execute()
         )
         .map { unsolvedWords, todaySolvedWords in
+            self.unsolvedWords = unsolvedWords
+            
             let correctCount = todaySolvedWords.filter { $0.isCorrect == true }.count
             let incorrectCount = todaySolvedWords.filter { $0.isCorrect == false }.count
             
@@ -77,5 +84,21 @@ final class QuizViewModel {
         }
         .bind(to: state)
         .disposed(by: disposeBag)
+    }
+    
+    private func answerQuiz(_ isCorrect: Bool) {
+        guard var word = unsolvedWords.first else { return }
+        word.isCorrect = isCorrect
+
+        answerQuizUseCase.execute(word: word)
+            .subscribe(onSuccess: { [weak self] success in
+                if success {
+                    print("저장 성공")
+                    self?.unsolvedWords.removeFirst()
+                } else {
+                    print("저장 실패")
+                }
+            })
+            .disposed(by: disposeBag)
     }
 }
