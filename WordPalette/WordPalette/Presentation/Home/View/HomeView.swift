@@ -90,36 +90,36 @@ final class HomeView: UIView {
 
         addWordLabel.snp.makeConstraints {
             $0.top.equalTo(safeAreaLayoutGuide).offset(24)
-            $0.leading.equalTo(safeAreaLayoutGuide).offset(18)
+            $0.leading.equalTo(safeAreaLayoutGuide).offset(24)
         }
 
         levelSearchButtonStackView.snp.makeConstraints {
             $0.top.equalTo(addWordLabel.snp.bottom).offset(18)
-            $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(18)
+            $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(24)
             $0.height.equalTo(levelSearchButtonStackView.snp.width).dividedBy(4)
         }
 
         myWordLabel.snp.makeConstraints {
             $0.top.equalTo(levelSearchButtonStackView.snp.bottom).offset(24)
-            $0.leading.equalTo(safeAreaLayoutGuide).offset(18)
+            $0.leading.equalTo(safeAreaLayoutGuide).offset(24)
         }
 
         levelButtonView.snp.makeConstraints {
             $0.top.equalTo(myWordLabel.snp.bottom).offset(18)
-            $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(18)
+            $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(24)
             $0.height.equalTo(28)
         }
 
         myWordTableView.snp.makeConstraints {
             $0.top.equalTo(levelButtonView.snp.bottom).offset(24)
-            $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(18)
+            $0.horizontalEdges.equalTo(safeAreaLayoutGuide)
             $0.bottom.equalTo(deleteAllButton.snp.top).offset(-18)
         }
 
         deleteAllButton.snp.makeConstraints {
-            $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(18)
-            $0.height.equalTo(40)
-            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-24)
+            $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(24)
+            $0.height.equalTo(55)
+            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-18)
         }
     }
 }
