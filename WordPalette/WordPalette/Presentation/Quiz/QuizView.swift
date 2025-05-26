@@ -171,8 +171,9 @@ private extension QuizView {
             incorrectButton.rx.tap.map { false }
         )
         .throttle(.milliseconds(1_000), scheduler: MainScheduler.instance)
-        .map { QuizView.Action.didSwipe($0) }
-        .bind(to: action)
+        .subscribe(with: self) { owner, isCorrect in
+            owner.quizCardStackView.answerTopCard(with: isCorrect)
+        }
         .disposed(by: disposeBag)
         
         quizCardStackView.action
