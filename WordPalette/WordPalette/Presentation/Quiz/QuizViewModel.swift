@@ -11,32 +11,6 @@ import RxRelay
 
 final class QuizViewModel {
     
-    private let mockData = [
-        WordEntity(
-            id: UUID(),
-            word: "hello",
-            meaning: "안녕",
-            example: "hello world",
-            level: .beginner,
-            isCorrect: nil
-        ),WordEntity(
-            id: UUID(),
-            word: "hello",
-            meaning: "안녕",
-            example: "hello world",
-            level: .beginner,
-            isCorrect: nil
-        )
-        ,WordEntity(
-            id: UUID(),
-            word: "hello",
-            meaning: "안녕",
-            example: "hello world",
-            level: .beginner,
-            isCorrect: nil
-        )
-    ]
-    
     // MARK: - State & Action
     
     enum State {
@@ -55,10 +29,17 @@ final class QuizViewModel {
     let state = PublishRelay<State>()
     let action = PublishRelay<Action>()
     
+    private let fetchWordsUseCase: FetchUnsolvedWordsUseCase
+    private let fetchTodayStudyHistoryUseCase: FetchTodayStudyHistoryUseCase
     
     // MARK: - Initailizer
     
-    init() {
+    init(
+        fetchWordsUseCase: FetchUnsolvedWordsUseCase,
+        fetchTodayStudyHistoryUseCase: FetchTodayStudyHistoryUseCase,
+    ) {
+        self.fetchWordsUseCase = fetchWordsUseCase
+        self.fetchTodayStudyHistoryUseCase = fetchTodayStudyHistoryUseCase
         bind()
     }
     
@@ -69,12 +50,32 @@ final class QuizViewModel {
             .subscribe(with: self) { owner, action in
                 switch action {
                 case .viewWillAppear:
-                    let quizViewInfo = QuizViewInfo(words: owner.mockData, correctCount: 2, incorrectCount: 5)
-                    owner.state.accept(.quizViewInfo(quizViewInfo))
+                    self.fetchQuizViewInfo()
                 case .answer(let isCorrect):
                     print(isCorrect)
                 }
             }
             .disposed(by: disposeBag)
+    }
+    
+    private func fetchQuizViewInfo() {
+        Observable.zip(
+            fetchWordsUseCase.execute(for: .advanced),
+            fetchTodayStudyHistoryUseCase.execute()
+        )
+        .map { unsolvedWords, todaySolvedWords in
+            let correctCount = todaySolvedWords.filter { $0.isCorrect == true }.count
+            let incorrectCount = todaySolvedWords.filter { $0.isCorrect == false }.count
+            
+            let quizViewInfo = QuizViewInfo(
+                words: unsolvedWords,
+                correctCount: correctCount,
+                incorrectCount: incorrectCount
+            )
+            
+            return State.quizViewInfo(quizViewInfo)
+        }
+        .bind(to: state)
+        .disposed(by: disposeBag)
     }
 }
