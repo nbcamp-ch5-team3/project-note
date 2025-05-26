@@ -15,11 +15,13 @@ final class QuizViewModel {
     
     enum State {
         case quizViewInfo(QuizViewInfo)
+        case quizWords([WordEntity])
     }
     
     enum Action {
         case viewWillAppear
         case answer(Bool)
+        case selectLevel(Level)
     }
     
     // MARK: - Properties
@@ -50,6 +52,8 @@ final class QuizViewModel {
                     self.fetchQuizViewInfo()
                 case .answer(let isCorrect):
                     self.answerQuiz(isCorrect)
+                case .selectLevel(let level):
+                    self.fetchQuizWords(level: level)
                 }
             }
             .disposed(by: disposeBag)
@@ -57,7 +61,7 @@ final class QuizViewModel {
     
     private func fetchQuizViewInfo() {
         Single.zip(
-            useCase.fetchUnsolvedWords(level: .advanced),
+            useCase.fetchUnsolvedWords(level: .beginner),
             useCase.fetchTodayWords()
         )
         .map { [weak self] unsolvedWords, todaySolvedWords in
@@ -72,11 +76,9 @@ final class QuizViewModel {
                 incorrectCount: incorrectCount
             )
         }
-        .subscribe(onSuccess: { quizViewInfo in
-            self.state.accept(.quizViewInfo(quizViewInfo))
-        }, onFailure: { error in
-            print("QuizViewInfo 에러 발생: \(error.localizedDescription)")
-        })
+        .subscribe(with: self) { owner, quizViewInfo in
+            owner.state.accept(.quizViewInfo(quizViewInfo))
+        }
         .disposed(by: disposeBag)
     }
     
@@ -93,6 +95,14 @@ final class QuizViewModel {
                     print("저장 실패")
                 }
             })
+            .disposed(by: disposeBag)
+    }
+    
+    private func fetchQuizWords(level: Level) {
+        useCase.fetchUnsolvedWords(level: level)
+            .subscribe(with: self) { owner, words in
+                owner.state.accept(.quizWords(words))
+            }
             .disposed(by: disposeBag)
     }
 }

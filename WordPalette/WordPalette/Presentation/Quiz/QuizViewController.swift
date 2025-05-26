@@ -56,7 +56,9 @@ private extension QuizViewController {
             .emit(with: self) { owner, state in
                 switch state {
                 case .quizViewInfo(let quizViewInfo):
-                    self.quizView.update(with: quizViewInfo)
+                    owner.quizView.update(with: quizViewInfo)
+                case .quizWords(let words):
+                    owner.quizView.updateQuizCardStackView(with: words)
                 }
             }
             .disposed(by: disposeBag)
@@ -69,6 +71,9 @@ private extension QuizViewController {
                     owner.quizView.updateAfterAnswer(with: isCorrect)
                 case .didFinishQuiz:
                     break
+                case .didSelectLevel(let level):
+                    owner.viewModel.action.accept(.selectLevel(level))
+                    owner.quizView.updateLevelButtons(with: level)
                 }
             }
             .disposed(by: disposeBag)

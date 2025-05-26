@@ -18,6 +18,7 @@ final class QuizView: UIView {
     enum Action {
         case didSwipe(Bool)
         case didFinishQuiz
+        case didSelectLevel(Level)
     }
     
     // MARK: - Properties
@@ -68,6 +69,10 @@ final class QuizView: UIView {
     
     private let quizStatusView = QuizStatusView()
     
+    private let levelButtonView = LevelButtonView().then {
+        $0.updateButtonSelection(selected: .beginner)
+    }
+    
     // MARK: - Initailizer
     
     override init(frame: CGRect) {
@@ -83,12 +88,7 @@ final class QuizView: UIView {
     
     /// 초기 UI 업데이트
     func update(with quizInfo: QuizViewInfo) {
-        let cards = quizInfo.words.map {
-            let card = QuizCardView()
-            card.update(word: $0.word, example: $0.example, meaning: $0.meaning)
-            return card
-        }
-        quizCardStackView.setCards(cards)
+        updateQuizCardStackView(with: quizInfo.words)
         quizStatusView.update(with: quizInfo)
     }
     
@@ -96,6 +96,20 @@ final class QuizView: UIView {
     func updateAfterAnswer(with isCorrect: Bool) {
         quizStatusView.updateAfterAnswer(with: isCorrect)
     }
+    
+    func updateQuizCardStackView(with words: [WordEntity]) {
+        let cards = words.map {
+            let card = QuizCardView()
+            card.update(word: $0.word, example: $0.example, meaning: $0.meaning)
+            return card
+        }
+        quizCardStackView.setCards(cards)
+    }
+    
+    func updateLevelButtons(with level: Level) {
+        levelButtonView.updateButtonSelection(selected: level)
+    }
+
 }
 
 // MARK: - Configure
@@ -118,6 +132,7 @@ private extension QuizView {
             quizCardStackView,
             choiceStackView,
             quizStatusView,
+            levelButtonView
         ].forEach { addSubview($0) }
     }
     
@@ -141,7 +156,12 @@ private extension QuizView {
         quizStatusView.snp.makeConstraints {
             $0.top.greaterThanOrEqualTo(choiceStackView.snp.bottom).offset(20)
             $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.bottom.equalToSuperview().inset(100)
+        }
+        
+        levelButtonView.snp.makeConstraints {
+            $0.top.equalTo(quizStatusView.snp.bottom).offset(10)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.bottom.equalTo(safeAreaLayoutGuide).inset(10)
         }
     }
     
@@ -151,9 +171,8 @@ private extension QuizView {
             incorrectButton.rx.tap.map { false }
         )
         .throttle(.milliseconds(1_000), scheduler: MainScheduler.instance)
-        .bind(with: self) { owner, isCorrect in
-            owner.quizCardStackView.answerTopCard(with: isCorrect)
-        }
+        .map { QuizView.Action.didSwipe($0) }
+        .bind(to: action)
         .disposed(by: disposeBag)
         
         quizCardStackView.action
@@ -165,6 +184,11 @@ private extension QuizView {
                     return .didFinishQuiz
                 }
             }
+            .bind(to: action)
+            .disposed(by: disposeBag)
+        
+        levelButtonView.bindButtonTapped()
+            .map { QuizView.Action.didSelectLevel($0) }
             .bind(to: action)
             .disposed(by: disposeBag)
     }
