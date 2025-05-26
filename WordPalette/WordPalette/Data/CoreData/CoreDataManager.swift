@@ -10,32 +10,11 @@ import CoreData
 
 actor CoreDataManager {
     
-    private let container: NSPersistentContainer
     private let context: NSManagedObjectContext
 
-    init() {
-        self.container = NSPersistentContainer(name: "WordPalette")
-        self.container.loadPersistentStores { _, error in
-            if let error {
-                fatalError("Core Data 로딩 실패: \(error)")
-            }
-        }
-        self.context = container.newBackgroundContext()
-    }
-    
-    // 테스트용 생성자
-    init(forTesting: Bool) {
-        self.container = NSPersistentContainer(name: "WordPalette")
-        let description = NSPersistentStoreDescription()
-        description.type = NSInMemoryStoreType
-        self.container.persistentStoreDescriptions = [description]
-        self.container.loadPersistentStores { _, error in
-            if let error {
-                fatalError("테스트용 Core Data 로딩 실패: \(error)")
-            }
-        }
-        self.context = container.newBackgroundContext()
-    }
+    init(context: NSManagedObjectContext = CoreDataStack.shared.backgroundContext) {
+         self.context = context
+     }
     
     // MARK: - Private Method
 
