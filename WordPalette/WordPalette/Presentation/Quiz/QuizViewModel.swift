@@ -64,25 +64,27 @@ final class QuizViewModel {
     }
     
     private func fetchQuizViewInfo() {
-        Observable.zip(
+        Single.zip(
             fetchWordsUseCase.execute(for: .advanced),
             fetchTodayStudyHistoryUseCase.execute()
         )
-        .map { unsolvedWords, todaySolvedWords in
-            self.unsolvedWords = unsolvedWords
+        .map { [weak self] unsolvedWords, todaySolvedWords in
+            self?.unsolvedWords = unsolvedWords
             
             let correctCount = todaySolvedWords.filter { $0.isCorrect == true }.count
             let incorrectCount = todaySolvedWords.filter { $0.isCorrect == false }.count
             
-            let quizViewInfo = QuizViewInfo(
+            return QuizViewInfo(
                 words: unsolvedWords,
                 correctCount: correctCount,
                 incorrectCount: incorrectCount
             )
-            
-            return State.quizViewInfo(quizViewInfo)
         }
-        .bind(to: state)
+        .subscribe(onSuccess: { quizViewInfo in
+            self.state.accept(.quizViewInfo(quizViewInfo))
+        }, onFailure: { error in
+            print("QuizViewInfo 에러 발생: \(error.localizedDescription)")
+        })
         .disposed(by: disposeBag)
     }
     

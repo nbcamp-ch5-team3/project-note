@@ -16,7 +16,7 @@ final class FetchTodayStudyHistoryUseCase {
         self.repository = repository
     }
     
-    func execute() -> Observable<[WordEntity]> {
-        repository.fetchTodayWords().asObservable()
+    func execute() -> Single<[WordEntity]> {
+        repository.fetchTodayWords()
     }
 }

@@ -16,7 +16,7 @@ final class FetchUnsolvedWordsUseCase {
         self.repository = repository
     }
     
-    func execute(for level: Level) -> Observable<[WordEntity]> {
-        repository.fetchWords(for: level).asObservable()
+    func execute(for level: Level) -> Single<[WordEntity]> {
+        repository.fetchWords(for: level)
     }
 }
