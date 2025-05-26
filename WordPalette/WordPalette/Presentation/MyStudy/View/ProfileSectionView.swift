@@ -13,7 +13,7 @@ import SnapKit
 final class ProfileSectionView: UIView, UIViewGuide {
     
     /// 메달
-    private let profileLabel = PaddingLabel(top: -4, left: 8, bottom: 10, right: 8)
+    private let profileLabel = PaddingLabel(top: -4, left: 7, bottom: 10, right: 7)
     
     /// 티어
     private let tierLabel = UILabel()
@@ -36,8 +36,8 @@ final class ProfileSectionView: UIView, UIViewGuide {
         backgroundColor = .white
         
         profileLabel.do {
-            $0.font = .systemFont(ofSize: 54, weight: .medium)
-            $0.layer.cornerRadius = 35
+            $0.font = .systemFont(ofSize: UIDevice.current.isiPhoneSE ? 42 : 54, weight: .medium)
+            $0.layer.cornerRadius = UIDevice.current.isiPhoneSE ? 30 : 35
             $0.clipsToBounds = true
         }
         
@@ -65,29 +65,28 @@ final class ProfileSectionView: UIView, UIViewGuide {
             $0.textColor = .black
             $0.font = .systemFont(ofSize: 14, weight: .medium)
         }
-        
     }
     
     func configureLayout() {
         profileLabel.snp.makeConstraints {
-            $0.top.leading.equalToSuperview().inset(24)
+            $0.top.equalToSuperview().inset(UIDevice.current.isiPhoneSE ? 18 : 24)
+            $0.leading.equalToSuperview().inset(UIDevice.current.isiPhoneSE ? 40 : 24)
         }
         
         tierStackView.snp.makeConstraints {
-            $0.leading.equalTo(profileLabel.snp.trailing).offset(24)
+            $0.leading.equalTo(profileLabel.snp.trailing).offset(UIDevice.current.isiPhoneSE ? 18 : 24)
             $0.centerY.equalTo(profileLabel)
         }
         
         remainingTierProgressView.snp.makeConstraints {
             $0.top.equalTo(profileLabel.snp.bottom).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(24)
+            $0.horizontalEdges.equalToSuperview().inset(UIDevice.current.isiPhoneSE ? 40 : 24)
             $0.height.equalTo(8)
         }
         
         remainingNextTierLabel.snp.makeConstraints {
             $0.top.equalTo(remainingTierProgressView.snp.bottom).offset(8)
-            $0.trailing.equalToSuperview().inset(24)
-            $0.bottom.equalToSuperview().inset(24)
+            $0.trailing.equalToSuperview().inset(UIDevice.current.isiPhoneSE ? 40 : 24)
         }
         
     }
