@@ -18,14 +18,17 @@ final class QuizViewModel {
             meaning: "안녕",
             example: "hello world",
             level: .beginner,
-            isCorrect: nil
+            isCorrect: nil,
+            source: .database
+            
         ),WordEntity(
             id: UUID(),
             word: "hello",
             meaning: "안녕",
             example: "hello world",
             level: .beginner,
-            isCorrect: nil
+            isCorrect: nil,
+            source: .database
         )
         ,WordEntity(
             id: UUID(),
@@ -33,7 +36,8 @@ final class QuizViewModel {
             meaning: "안녕",
             example: "hello world",
             level: .beginner,
-            isCorrect: nil
+            isCorrect: nil,
+            source: .database
         )
     ]
     

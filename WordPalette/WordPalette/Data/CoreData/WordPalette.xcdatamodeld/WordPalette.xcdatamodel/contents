@@ -21,7 +21,6 @@
         <attribute name="isCorrect" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="level" attributeType="String"/>
         <attribute name="meaning" attributeType="String"/>
-        <attribute name="source" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="word" attributeType="String"/>
     </entity>
     <entity name="UserObject" representedClassName="UserObject" syncable="YES">

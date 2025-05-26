@@ -72,7 +72,6 @@ actor CoreDataManager {
             object.meaning = word.meaning
             object.example = word.example
             object.level = word.level.rawValue
-            object.source = word.source.rawValue
             try self.context.save()
         }        
     }
