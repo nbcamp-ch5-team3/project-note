@@ -75,15 +75,8 @@ final class AddWordViewController: UIViewController {
         addWordView.searchBar.delegate = self
     }
     
-    private func setTitleByLevel() {
-        switch selectedLevel {
-        case .beginner:
-            title = "초급 단어 추가"
-        case .intermediate:
-            title = "중급 단어 추가"
-        case .advanced:
-            title = "고급 단어 추가"
-        }
+    func setTitleByLevel() {
+        title = "\(selectedLevel.rawValue) 단어 추가"
     }
     
     // MARK: - Bind
@@ -123,33 +116,7 @@ final class AddWordViewController: UIViewController {
     /// 플로팅 버튼 탭 바인딩
     private func bindFloatingButton() {
         addWordView.floatingButton.rx.tap
-            .bind(with: self) { owner, _ in
-                let modal = AddWordModalViewController()
-                modal.modalPresentationStyle = .overFullScreen
-                
-                modal.onCheckDuplicate = { [weak owner] word, completion in
-                    guard let owner = owner else { return }
-                    
-                    // VM을 통해 중복 체크만 수행
-                    owner.viewModel.checkDuplicateOnly(word: word)
-                        .observe(on: MainScheduler.instance)
-                        .subscribe(onSuccess: { (exists, level) in
-                            completion(exists, level)
-                        }, onFailure: { error in
-                            // 에러 시 중복 없음으로 처리
-                            print("❌ [중복 체크 실패] \(error.localizedDescription)")
-                            completion(false, nil)
-                        })
-                        .disposed(by: self.disposeBag)
-                }
-                
-                // 모달에서 저장 버튼 탭 시 처리
-                modal.onSaveButtonTap = { [weak owner] en, ko, example in
-                    owner?.addCustomWordTapSubject.onNext((en: en, ko: ko, example: example))
-                }
-                
-                owner.present(modal, animated: true)
-            }
+            .bind(with: self, onNext: presentModal)
             .disposed(by: disposeBag)
     }
     
@@ -186,14 +153,18 @@ final class AddWordViewController: UIViewController {
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, result in
                 switch result {
-                // 전체 새로고침 대신, 현재 저장한 셀만 업데이트
                 case .success(let savedWord):
+                    // 전체 새로고침 대신, 현재 저장한 셀만 업데이트
                     if let selectedIndexPath = owner.addedWordIndexPath {
                         owner.words[selectedIndexPath.row] = savedWord
                         owner.addWordView.tableView.reloadRows(at: [selectedIndexPath], with: .fade)
+                        owner.addedWordIndexPath = nil // 초기화
+                    } else {
+                        // 커스텀 단어 추가의 경우 전체 새로고침
+                        owner.refreshSubject.onNext(())
                     }
-                    // 실패/중복은 Alert로 처리됨
-                case .fail, .duplicate, .duplicateInLevel:
+                case .failure:
+                    // 실패는 Alert로 처리됨
                     break
                 }
             }
@@ -207,6 +178,36 @@ final class AddWordViewController: UIViewController {
             .bind(with: self) { owner, message in
                 owner.showAlert(message: message)
             }
+            .disposed(by: disposeBag)
+    }
+    
+    // MARK: - Modal Presentation
+    /// 단어 추가 모달 표시
+    private func presentModal(_ owner: AddWordViewController, _ element: Void) {
+        let modal = AddWordModalViewController()
+        modal.modalPresentationStyle = .overFullScreen
+        
+        // 모달에서 저장 버튼 탭 시 처리
+        modal.onSaveButtonTap = { [weak self] en, ko, example in
+            self?.addCustomWordTapSubject.onNext((en: en, ko: ko, example: example))
+        }
+        
+        // 중복 체크 콜백 설정
+        modal.onCheckDuplicate = { [weak self] word, completion in
+            self?.checkDuplicate(word: word, completion: completion)
+        }
+        
+        present(modal, animated: true)
+    }
+    
+    private func checkDuplicate(word: String, completion: @escaping (Bool, Level?) -> Void) {
+        viewModel.checkDuplicateOnly(word: word)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onSuccess: { isDuplicate, level in
+                completion(isDuplicate, level)
+            }, onFailure: { _ in
+                completion(false, nil) // 에러 시 중복 없음으로 처리
+            })
             .disposed(by: disposeBag)
     }
     
@@ -237,7 +238,7 @@ final class AddWordViewController: UIViewController {
     private func showAddWordAlert(word: WordEntity) {
         let alert = UIAlertController(
             title: "내 단어장에 저장",
-            message: "\"\(word.word)\"을(를) 내 단어장에 저장하시겠습니까?",
+            message: "\(word.word)을(를) 내 단어장에 저장하시겠습니까?",
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "취소", style: .cancel))
@@ -261,7 +262,6 @@ extension AddWordViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
         let data = words[indexPath.row]
-        cell.selectionStyle = .none
         cell.configure(word: "\(data.word): \(data.meaning)", example: data.example)
         
         // source에 따라 UI 분기

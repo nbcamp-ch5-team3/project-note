@@ -9,25 +9,12 @@ import Foundation
 import RxSwift
 
 protocol AddWordUseCase {
-    // 레벨별 전체 단어 로드 (json)
-    func fetchAllWords(level: Level) -> Single<[WordEntity]>
+    /// 통합된 단어 조회 (JSON + DB 합쳐서, 검색/랜덤 모두 처리)
+    func fetchWords(level: Level, keyword: String?, limit: Int?) -> Single<[WordEntity]>
     
-    // 랜덤 추천 20개
-    func recommendRandomWords(level: Level) -> Single<[WordEntity]>
+    /// 단어 저장 (JSON→DB 변환 포함)
+    func saveWord(_ word: WordEntity, convertToDatabase: Bool) -> Single<WordEntity>
     
-    // json+DB (refresh-저장 중복 확인용, 검색용)
-    func fetchAllWordsMerged(level: Level) -> Single<[WordEntity]>
-    func searchWordsMerged(keyword: String, level: Level) -> Single<[WordEntity]>
-
-    // 단어 저장
-    func saveWord(word: WordEntity) -> Single<Bool>
-    
-    // 중복 체크 (json + DB)
-    func checkDuplicate(word: String) -> Single<(exists: Bool, level: Level?)>
-    
-    // 중복 체크 (DB)
-    func checkDuplicateInDB(word: String) -> Single<Bool>
-    
-    // Entitiy: json -> DB 변경 (+ 버튼 클릭 시)
-    func saveWordToDatabase(word: WordEntity) -> Single<Bool>
+    /// 중복 체크 (전체 소스)
+    func checkDuplicate(word: String) -> Single<(Bool, Level?)>
 }
