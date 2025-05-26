@@ -34,8 +34,14 @@ final class HomeViewController: UIViewController {
         bindCellData()
         configureRegister()
         configureDelegate()
+    }
 
-        homeViewModel.bindMockFiltering() // Mock Data 수정 예정
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        // 단어 찾기 페이지에서 홈 화면으로 돌아갈 때 화면을 바로 업데이트하기 위함
+        let selected = homeViewModel.selectedLevelRelay.value
+        homeViewModel.selectedLevelRelay.accept(selected)
     }
 
     // MARK: - bind
@@ -58,7 +64,7 @@ final class HomeViewController: UIViewController {
             .bind(with: self) { owner, _ in
                 let selectedLevel = owner.homeViewModel.selectedLevelRelay.value
                 owner.showAlertDeleteAll(for: selectedLevel) {
-                    owner.homeViewModel.deleteAllMockWords() // Mock Data 수정 예정
+                    owner.homeViewModel.deleteAllWords()
                 }
             }
             .disposed(by: disposeBag)
@@ -69,7 +75,7 @@ final class HomeViewController: UIViewController {
         zip(homeView.levelSearchButtons, homeView.levels).forEach { button, level in
             button.rx.tap
                 .bind(with: self) { owner, _ in
-                    let addWordVC = AddWordViewController() // 검색 페이지로 이동, 수정 예정
+                    let addWordVC = AddWordViewController(selectedLevel: level) // 레벨별 검색 페이지로 이동
                     owner.navigationController?.pushViewController(addWordVC, animated: true)
                 }
                 .disposed(by: disposeBag)
@@ -132,7 +138,7 @@ extension HomeViewController: UITableViewDelegate {
         let delete = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completion in
             guard let self = self else { return }
             let word = self.homeViewModel.wordListRelay.value[indexPath.row]
-            self.homeViewModel.deleteMockWord(word) // Mock Data 수정 예정
+            self.homeViewModel.deleteWord(word)
             completion(true)
         }
 
