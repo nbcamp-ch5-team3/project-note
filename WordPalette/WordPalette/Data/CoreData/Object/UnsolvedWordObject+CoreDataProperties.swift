@@ -22,7 +22,6 @@ extension UnsolvedWordObject {
     @NSManaged public var level: String
     @NSManaged public var meaning: String
     @NSManaged public var word: String
-
 }
 
 extension UnsolvedWordObject : Identifiable {

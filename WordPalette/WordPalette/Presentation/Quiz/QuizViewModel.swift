@@ -10,7 +10,7 @@ import RxSwift
 import RxRelay
 
 final class QuizViewModel {
-    
+  
     // MARK: - State & Action
     
     enum State {

@@ -145,6 +145,14 @@ actor CoreDataManager {
         }
     }
     
+    func fetchUnsolvedWordsByLevel(_ level: Level) async throws -> [UnsolvedWordObject] {
+        try await context.perform {
+            let request = UnsolvedWordObject.fetchRequest()
+            request.predicate = NSPredicate(format: "level == %@", level.rawValue)
+            return try self.context.fetch(request)
+        }
+    }
+    
     func fetchOrCreateUser() throws -> UserObject {
         let request = UserObject.fetchRequest()
         if let user = try context.fetch(request).first {

@@ -1,5 +1,5 @@
 //
-//  WordAddModalView.swift
+//  AddWordModalView.swift
 //  WordPalette
 //
 //  Created by iOS study on 5/22/25.
@@ -9,37 +9,45 @@ import UIKit
 import SnapKit
 import Then
 
-final class WordAddModalView: UIView {
+final class AddWordModalView: UIView {
     
     //MARK: - UI Components
     private let titleLabel = UILabel().then {
         $0.text = "단어 추가하기"
         $0.font = UIFont.systemFont(ofSize: 24, weight: .heavy)
         $0.textAlignment = .center
+        $0.textColor = .black
     }
     
     private let wordTextView = UITextView().then {
         $0.setPlaceholder("영단어를 입력하세요")
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
-        $0.backgroundColor = UIColor.systemGray6
+        $0.backgroundColor = UIColor(white: 0.95, alpha: 1)
         $0.font = UIFont.systemFont(ofSize: 16)
+        $0.textColor = .black
+        $0.autocapitalizationType = .none
+        $0.keyboardType = .asciiCapable
     }
-
+    
     private let meaningTextView = UITextView().then {
         $0.setPlaceholder("한글 뜻을 입력하세요")
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
-        $0.backgroundColor = UIColor.systemGray6
+        $0.textColor = .black
+        $0.backgroundColor = UIColor(white: 0.95, alpha: 1)
         $0.font = UIFont.systemFont(ofSize: 16)
+        $0.keyboardType = .default
     }
-
+    
     private let exampleTextView = UITextView().then {
         $0.setPlaceholder("예문을 입력하세요 (선택)")
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
-        $0.backgroundColor = UIColor.systemGray6
+        $0.textColor = .black
+        $0.backgroundColor = UIColor(white: 0.95, alpha: 1)
         $0.font = UIFont.systemFont(ofSize: 16)
+        $0.keyboardType = .default
     }
     
     private let _saveButton = UIButton().then {
@@ -75,15 +83,16 @@ final class WordAddModalView: UIView {
     
     // MARK: - Setup
     private func setupUI() {
-        backgroundColor = .systemBackground
+        backgroundColor = .white
         layer.cornerRadius = 20
         clipsToBounds = true
-
+        
         [closeButton, contentStack].forEach { self.addSubview($0) }
         
         [titleLabel, wordTextView, meaningTextView, exampleTextView, saveButton].forEach { contentStack.addArrangedSubview($0) }
     }
     
+    /// 텍스트뷰 델리게이트 연결
     private func setupDelegate() {
         wordTextView.delegate = self
         meaningTextView.delegate = self
@@ -128,15 +137,17 @@ final class WordAddModalView: UIView {
     var exampleText: String? { exampleTextView.text }
 }
 
+// MARK: - UITextView extension(placeholder 기능)
 extension UITextView {
-    func setPlaceholder(_ text: String, color: UIColor = .secondaryLabel) {
+    /// 텍스트뷰에 플레이스홀더 레이블을 추가하고, 텍스트 변경에 따라 표시/숨김 처리
+    func setPlaceholder(_ text: String, color: UIColor = .systemGray) {
         let placeholderLabel = UILabel()
         placeholderLabel.text = text
         placeholderLabel.textColor = color
         placeholderLabel.font = UIFont.systemFont(ofSize: 16)
         placeholderLabel.numberOfLines = 0
         self.addSubview(placeholderLabel)
-
+        
         placeholderLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(8)
             make.leading.equalToSuperview().offset(8)
@@ -153,7 +164,9 @@ extension UITextView {
     }
 }
 
-extension WordAddModalView: UITextViewDelegate {
+// MARK: - UITextViewDelegate
+extension AddWordModalView: UITextViewDelegate {
+    /// 텍스트뷰 입력값에 따라 다음 입력 필드로 이동하거나, 입력값 제한(영어/한글) 처리
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             if textView == wordTextView {
@@ -167,6 +180,32 @@ extension WordAddModalView: UITextViewDelegate {
                 return false
             }
         }
+        
+        // wordTextView: 영어 소문자만 (대문자, 특수문자, 숫자 모두 불가)
+        if textView == wordTextView {
+            let allowed = CharacterSet.lowercaseLetters
+            for scalar in text.unicodeScalars {
+                if !allowed.contains(scalar) && text != "" {
+                    return false
+                }
+            }
+            return true
+        }
+        
+        // meaningTextView: 한글만 허용
+        if textView == meaningTextView {
+            for scalar in text.unicodeScalars {
+                let v = scalar.value
+                let isHangul = (v >= 0xAC00 && v <= 0xD7A3)
+                    || (v >= 0x3131 && v <= 0x318E)
+                let isComma = (scalar == ",")
+                if !isHangul && !isComma && text != "" {
+                    return false
+                }
+            }
+            return true
+        }
+        
         return true
     }
 }

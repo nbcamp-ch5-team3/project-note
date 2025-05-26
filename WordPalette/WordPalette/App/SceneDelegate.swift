@@ -14,7 +14,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = makeTabBarController
+        window?.rootViewController = AddWordViewController(selectedLevel: .beginner)
         window?.makeKeyAndVisible()
     }
     
@@ -34,18 +34,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let DIContainer = DIContainer()
         
         let homeVC = DIContainer.makeHomeViewController()
-        homeVC.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
-        
+        let homeNV = UINavigationController(rootViewController: homeVC)
+        homeNV.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), tag: 0)
+
         let quizVC = DIContainer.makeQuizViewController()
         quizVC.tabBarItem = UITabBarItem(title: "퀴즈", image: UIImage(systemName: "questionmark.circle.fill"), tag: 1)
         
         let studyHistoryVC = DIContainer.makeStudyHistoryViewContoller()
         studyHistoryVC.tabBarItem = UITabBarItem(title: "나의 학습", image: UIImage(systemName: "calendar"), tag: 2)
         
+        tabBar.overrideUserInterfaceStyle = .light
         tabBar.selectedIndex = 0
         tabBar.tabBar.tintColor = .customMango
-        tabBar.viewControllers = [homeVC, quizVC, studyHistoryVC]
-        
+        tabBar.viewControllers = [homeNV, quizVC, studyHistoryVC]
+
         return tabBar
     }
 }

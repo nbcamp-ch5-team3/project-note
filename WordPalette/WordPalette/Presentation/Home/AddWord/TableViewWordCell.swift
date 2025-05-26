@@ -8,11 +8,22 @@
 import UIKit
 import SnapKit
 import Then
+import RxSwift
+import RxCocoa
 
-class TableViewWordCell: UITableViewCell {
+final class TableViewWordCell: UITableViewCell {
     
     // MARK: - Properties
     static let id = "AddWordCell"
+    var addButtonTap: Observable<Void> {
+        addButton.rx.tap.asObservable()
+    }
+    
+    var disposeBag = DisposeBag()
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
+    }
     
     // MARK: - UI Components
     private let containerView = UIView().then {
@@ -25,11 +36,12 @@ class TableViewWordCell: UITableViewCell {
         $0.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
         $0.numberOfLines = 0
         $0.lineBreakMode = .byCharWrapping
+        $0.textColor = .black
     }
     
     private let exampleLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        $0.textColor = .secondaryLabel
+        $0.textColor = .black
         $0.numberOfLines = 0
         $0.lineBreakMode = .byCharWrapping
     }
@@ -52,9 +64,9 @@ class TableViewWordCell: UITableViewCell {
     
     // MARK: - Setup
     private func setupUI() {
-        backgroundColor = .clear
-        contentView.backgroundColor = .clear
-        
+        selectionStyle = .none
+        backgroundColor = .white
+        contentView.backgroundColor = .white
         contentView.addSubview(containerView)
         containerView.addSubview(wordLabel)
         containerView.addSubview(exampleLabel)
@@ -84,20 +96,18 @@ class TableViewWordCell: UITableViewCell {
         addButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().inset(16)
-            make.width.height.equalTo(28)
+            make.width.height.equalTo(30)
         }
     }
     
     // MARK: - Computed Property
-    var wordText: String? {
-        wordLabel.text
-    }
-
-    var exampleText: String? {
-        exampleLabel.text
-    }
+    var wordText: String? { wordLabel.text }
+    var exampleText: String? { exampleLabel.text }
+    var publicContainerView: UIView { containerView }
+    var publicAddButton: UIButton { addButton }
     
     // MARK: - configure Methods
+    /// 셀 데이터 구성
     func configure(word: String, example: String) {
         wordLabel.text = word
         exampleLabel.text = example

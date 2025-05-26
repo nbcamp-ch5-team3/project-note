@@ -56,7 +56,12 @@ final class DIContainer {
 //    var makeAddWordUseCase: AddWordUseCase {
 //        AddWordUseCaseImpl(repository: makeAddWordRepository)
 //    }
-    
+
+    /// 내 단어장 유즈케이스
+    private var makeUnsolvedMyWordUseCase: UnsolvedMyWordUseCase {
+        UnsolvedMyWordUseCaseImpl(repository: makeUnsolvedRepository)
+    }
+
     // MARK: - ViewModel
     
     /// 나의 학습 기록 ViewModel
@@ -77,13 +82,16 @@ final class DIContainer {
 //    var makeAddWordViewModel: AddWordViewModel {
 //        AddWordViewModel(useCase: makeAddWordUseCase)
 //    }
-    
-    
+
+    private var makeHomeViewModel: HomeViewModel {
+        HomeViewModel(unsolvedMyWordUseCase: makeUnsolvedMyWordUseCase)
+    }
+
     // MARK: - ViewController
     
     /// 홈 ViewController
     public func makeHomeViewController() -> HomeViewController {
-        HomeViewController()
+        HomeViewController(viewModel: makeHomeViewModel)
     }
     
     /// 퀴즈 ViewController
