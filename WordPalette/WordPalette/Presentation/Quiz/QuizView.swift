@@ -9,15 +9,20 @@ import UIKit
 import SnapKit
 import Then
 import RxSwift
+import RxRelay
 
 final class QuizView: UIView {
     
+    // MARK: - Action
+    
+    enum Action {
+        case didSwipe(Bool)
+        case didFinishQuiz
+    }
+    
     // MARK: - Properties
     
-    /// 퀴즈 정답 여부
-    var isCorrectQuiz: Observable<Bool> {
-        return quizCardStackView.swipeResult.asObservable()
-    }
+    let action = PublishRelay<Action>()
     private let disposeBag = DisposeBag()
     
     // MARK: - UI Components
@@ -91,7 +96,6 @@ final class QuizView: UIView {
     func updateAfterAnswer(with isCorrect: Bool) {
         quizStatusView.updateAfterAnswer(with: isCorrect)
     }
-
 }
 
 // MARK: - Configure
@@ -142,16 +146,26 @@ private extension QuizView {
     }
     
     func setBindings() {
-        correctButton.rx.tap
-            .bind(with: self) { owner, _ in
-                owner.quizCardStackView.answerTopCard(toLeft: true)
+        Observable.merge(
+            correctButton.rx.tap.map { true },
+            incorrectButton.rx.tap.map { false }
+        )
+        .throttle(.milliseconds(1_000), scheduler: MainScheduler.instance)
+        .bind(with: self) { owner, isCorrect in
+            owner.quizCardStackView.answerTopCard(with: isCorrect)
+        }
+        .disposed(by: disposeBag)
+        
+        quizCardStackView.action
+            .map { stackAction -> QuizView.Action in
+                switch stackAction {
+                case .didSwipe(let isCorrect):
+                    return .didSwipe(isCorrect)
+                case .didFinishQuiz:
+                    return .didFinishQuiz
+                }
             }
-            .disposed(by: disposeBag)
-
-        incorrectButton.rx.tap
-            .bind(with: self) { owner, _ in
-                owner.quizCardStackView.answerTopCard(toLeft: false)
-            }
+            .bind(to: action)
             .disposed(by: disposeBag)
     }
 }

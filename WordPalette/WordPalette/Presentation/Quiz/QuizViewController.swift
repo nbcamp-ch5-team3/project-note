@@ -61,10 +61,15 @@ private extension QuizViewController {
             }
             .disposed(by: disposeBag)
         
-        quizView.isCorrectQuiz
-            .bind(with: self) { owner, isCorrect in
-                owner.viewModel.action.accept(.answer(isCorrect))
-                owner.quizView.updateAfterAnswer(with: isCorrect)
+        quizView.action
+            .bind(with: self) { owner, action in
+                switch action {
+                case .didSwipe(let isCorrect):
+                    owner.viewModel.action.accept(.answer(isCorrect))
+                    owner.quizView.updateAfterAnswer(with: isCorrect)
+                case .didFinishQuiz:
+                    break
+                }
             }
             .disposed(by: disposeBag)
     }
