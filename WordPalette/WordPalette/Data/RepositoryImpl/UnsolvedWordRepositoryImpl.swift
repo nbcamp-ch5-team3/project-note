@@ -23,14 +23,16 @@ final class UnsolvedWordRepositoryImpl: UnsolvedWordRepository {
     
     // Core Data 모델 객체를 도메인 모델로 변환
     private func toEntity(_ object: UnsolvedWordObject) -> WordEntity? {
-        guard let level = Level(korean: object.level) else { return nil }
+        guard let level = Level(korean: object.level),
+              let source = WordSource(rawValue: object.source) else { return nil }
         
         return WordEntity(
             id: object.id,
             word: object.word,
             meaning: object.meaning,
             example: object.example,
-            level: level
+            level: level,
+            source: source
         )
     }
 
@@ -56,7 +58,8 @@ final class UnsolvedWordRepositoryImpl: UnsolvedWordRepository {
                     meaning: item.ko,
                     example: item.example,
                     level: level,
-                    isCorrect: nil
+                    isCorrect: nil,
+                    source: .json
                 )
             }
             
@@ -96,7 +99,8 @@ final class UnsolvedWordRepositoryImpl: UnsolvedWordRepository {
                 meaning: $0.ko,
                 example: $0.example,
                 level: level,
-                isCorrect: nil
+                isCorrect: nil,
+                source: .json
             )
         }
         return .just(entities)

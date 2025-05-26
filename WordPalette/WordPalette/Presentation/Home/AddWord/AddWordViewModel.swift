@@ -10,8 +10,8 @@ import RxSwift
 
 // 단어 저장 결과
 enum AddWordResult {
-    case success
-    case fail
+    case success(WordEntity)
+    case fail(Error)
     case duplicate
     case duplicateInLevel(word: String, level: Level)
 }
@@ -117,26 +117,38 @@ final class AddWordViewModel {
             .disposed(by: disposeBag)
     }
     
-    // 4. +버튼: 단어 저장 + 중복 체크
+    // 4. +버튼: 단어 저장 + 중복 체크(DB만)
     private func bindAddWord(input: Input) {
         input.addWordTap
             .flatMapLatest { [weak self] word -> Observable<AddWordResult> in
                 guard let self = self else { return .empty() }
                 print("➕ [단어 추가 시도] \(word.word)")
-
-                return self.useCase.checkDuplicate(word: word.word)
+                
+                return self.useCase.checkDuplicateInDB(word: word.word)
                     .asObservable()
-                    .flatMap { (exists, level) -> Observable<AddWordResult> in
+                    .flatMap { exists -> Observable<AddWordResult> in
                         if exists {
                             print("⚠️ [중복 확인] \(word.word)는 이미 존재")
-                            if let level = level {
-                                return .just(.duplicateInLevel(word: word.word, level: level))
-                            } else {
-                                return .just(.duplicate)
-                            }
+                            return .just(.duplicate)
                         } else {
-                            return self.useCase.saveWord(word: word)
-                                .map { $0 ? .success : .fail }
+                            return self.useCase.saveWordToDatabase(word: word)
+                                .map { isSuccess in
+                                    if isSuccess {
+                                        // 저장 성공 시 source를 .database로 바꾼 새 Entity 반환 (셀 업데이트를 위함)
+                                        let updatedWord = WordEntity(
+                                            id: word.id,
+                                            word: word.word,
+                                            meaning: word.meaning,
+                                            example: word.example,
+                                            level: word.level,
+                                            isCorrect: word.isCorrect,
+                                            source: .database
+                                        )
+                                        return .success(updatedWord)
+                                    } else {
+                                        return .fail(NSError(domain: "SaveError", code: -1, userInfo: nil))
+                                    }
+                                }
                                 .asObservable()
                         }
                     }
@@ -154,20 +166,20 @@ final class AddWordViewModel {
                 print("📝 [커스텀 단어 추가 시도] \(en): \(ko)")
                 
                 // 저장 시 앞,뒤 공백 제거
-                let trimmedEn = en.trimmingCharacters(in: .whitespacesAndNewlines)
-                let trimmedKo = ko.trimmingCharacters(in: .whitespacesAndNewlines)
-
                 let word = WordEntity(
                     id: UUID(),
-                    word: trimmedEn,
-                    meaning: trimmedKo,
+                    word: en.trimmingCharacters(in: .whitespacesAndNewlines),
+                    meaning: ko.trimmingCharacters(in: .whitespacesAndNewlines),
                     example: example ?? "",
                     level: self.currentLevel,
-                    isCorrect: nil
+                    isCorrect: nil,
+                    source: .database
                 )
                 
                 return self.useCase.saveWord(word: word)
-                    .map { $0 ? .success : .fail }
+                    .map { isSuccess in
+                        isSuccess ? .success(word) : .fail(NSError(domain: "SaveError", code: -1, userInfo: nil))
+                    }
                     .asObservable()
             }
             .bind(to: addResultSubject)
@@ -181,7 +193,6 @@ final class AddWordViewModel {
                 guard let self = self else { return }
                 switch result {
                 case .success:
-                    self.printAllWords() // TODO: 나중에 삭제(확인용)
                     self.showAlertSubject.onNext("단어가 저장되었습니다.")
                 case .fail:
                     self.showAlertSubject.onNext("저장에 실패했습니다. 다시 시도해 주세요.")
@@ -193,17 +204,4 @@ final class AddWordViewModel {
             })
             .disposed(by: disposeBag)
     }
-    
-    // DB 저장 확인용 프린트 메서드
-    private func printAllWords() {
-        useCase.fetchAllWordsMerged(level: currentLevel)
-            .subscribe(onSuccess: { words in
-                print("[현재 저장 단어 목록] (\(words.count)개)")
-                for word in words {
-                    print("전체 단어: - \(word.word) : \(word.meaning)")
-                }
-            })
-            .disposed(by: disposeBag)
-    }
-
 }

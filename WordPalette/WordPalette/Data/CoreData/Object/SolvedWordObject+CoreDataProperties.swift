@@ -23,7 +23,6 @@ extension SolvedWordObject {
     @NSManaged public var meaning: String
     @NSManaged public var word: String
     @NSManaged public var study: StudyObject?
-
 }
 
 extension SolvedWordObject : Identifiable {

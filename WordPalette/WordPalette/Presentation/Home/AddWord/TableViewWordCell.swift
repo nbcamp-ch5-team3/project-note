@@ -8,11 +8,22 @@
 import UIKit
 import SnapKit
 import Then
+import RxSwift
+import RxCocoa
 
 final class TableViewWordCell: UITableViewCell {
     
     // MARK: - Properties
     static let id = "AddWordCell"
+    var addButtonTap: Observable<Void> {
+        addButton.rx.tap.asObservable()
+    }
+    
+    var disposeBag = DisposeBag()
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
+    }
     
     // MARK: - UI Components
     private let containerView = UIView().then {
@@ -89,13 +100,10 @@ final class TableViewWordCell: UITableViewCell {
     }
     
     // MARK: - Computed Property
-    var wordText: String? {
-        wordLabel.text
-    }
-
-    var exampleText: String? {
-        exampleLabel.text
-    }
+    var wordText: String? { wordLabel.text }
+    var exampleText: String? { exampleLabel.text }
+    var publicContainerView: UIView { containerView }
+    var publicAddButton: UIButton { addButton }
     
     // MARK: - configure Methods
     func configure(word: String, example: String) {

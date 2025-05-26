@@ -24,6 +24,7 @@ final class AddWordViewController: UIViewController {
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private let addWordView = AddWordView()
+    private var addedWordIndexPath: IndexPath?
     
     // MARK: - Input Subjects
     private let viewWillAppearSubject = PublishSubject<Void>()
@@ -88,7 +89,7 @@ final class AddWordViewController: UIViewController {
         bindRefreshControl()
         bindLevelSegmentControl()
     }
-
+    
     // MARK: - Output Binding
     private func bindOutput(_ output: AddWordViewModel.Output) {
         bindWordsOutput(output.words)
@@ -110,7 +111,7 @@ final class AddWordViewController: UIViewController {
                     owner.viewModel.checkDuplicateOnly(word: word)
                         .observe(on: MainScheduler.instance)
                         .subscribe(onSuccess: { (exists, level) in
-                                completion(exists, level)
+                            completion(exists, level)
                         }, onFailure: { error in
                             print("❌ [중복 체크 실패] \(error.localizedDescription)")
                             completion(false, nil) // 에러 시 중복 없음으로 처리
@@ -127,7 +128,7 @@ final class AddWordViewController: UIViewController {
             }
             .disposed(by: disposeBag)
     }
-
+    
     private func bindSearchBar() {
         addWordView.searchBar.rx.text.orEmpty
             .bind(to: searchTextSubject)
@@ -139,22 +140,22 @@ final class AddWordViewController: UIViewController {
             .bind(to: refreshSubject)
             .disposed(by: disposeBag)
     }
-
+    
     private func bindLevelSegmentControl() {
         // 요기서 사용 X 임의로 틀만 만들어둠
         /*
-        addWordView.levelSegmentControl?.rx.selectedSegmentIndex
-            .map { index -> Level in
-                switch index {
-                case 0: return .beginner
-                case 1: return .intermediate
-                case 2: return .advanced
-                default: return .beginner
-                }
-            }
-            .bind(to: selectedLevelSubject)
-            .disposed(by: disposeBag)
-        */
+         addWordView.levelSegmentControl?.rx.selectedSegmentIndex
+         .map { index -> Level in
+         switch index {
+         case 0: return .beginner
+         case 1: return .intermediate
+         case 2: return .advanced
+         default: return .beginner
+         }
+         }
+         .bind(to: selectedLevelSubject)
+         .disposed(by: disposeBag)
+         */
     }
     
     // MARK: - Individual Output Bindings
@@ -168,23 +169,26 @@ final class AddWordViewController: UIViewController {
             }
             .disposed(by: disposeBag)
     }
-
+    
     private func bindAddResultOutput(_ addResult: Observable<AddWordResult>) {
         addResult
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, result in
                 switch result {
-                case .success:
-                    // 성공 시 단어 목록 새로고침
-                    owner.refreshSubject.onNext(())
-                case .fail, .duplicate, .duplicateInLevel:
+                // 전체 새로고침 대신, 현재 저장한 셀만 업데이트
+                case .success(let savedWord):
+                    if let selectedIndexPath = owner.addedWordIndexPath {
+                        owner.words[selectedIndexPath.row] = savedWord
+                        owner.addWordView.tableView.reloadRows(at: [selectedIndexPath], with: .fade)
+                    }
                     // 실패/중복은 Alert로 처리됨
+                case .fail, .duplicate, .duplicateInLevel:
                     break
                 }
             }
             .disposed(by: disposeBag)
     }
-
+    
     private func bindAlertOutput(_ showAlert: Observable<String>) {
         showAlert
             .observe(on: MainScheduler.instance)
@@ -193,14 +197,14 @@ final class AddWordViewController: UIViewController {
             }
             .disposed(by: disposeBag)
     }
-
+    
     // MARK: - Helper Methods
     private func endRefreshingIfNeeded() {
         if addWordView.refreshControl.isRefreshing {
             addWordView.refreshControl.endRefreshing()
         }
     }
-
+    
     private func showAlert(message: String) {
         // 이미 Alert가 표시 중인지 확인
         if presentedViewController != nil {
@@ -212,6 +216,19 @@ final class AddWordViewController: UIViewController {
         
         let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
+    }
+    
+    private func showAddWordAlert(word: WordEntity) {
+        let alert = UIAlertController(
+            title: "내 단어장에 저장",
+            message: "\"\(word.word)\"을(를) 내 단어장에 저장하시겠습니까?",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { [weak self] _ in
+            self?.addWordTapSubject.onNext(word)
+        }))
         present(alert, animated: true)
     }
 }
@@ -229,6 +246,24 @@ extension AddWordViewController: UITableViewDataSource, UITableViewDelegate {
         let data = words[indexPath.row]
         cell.selectionStyle = .none
         cell.configure(word: "\(data.word): \(data.meaning)", example: data.example)
+        
+        // source에 따라 UI 분기
+        switch data.source {
+        case .database:
+            cell.publicAddButton.isHidden = true
+            cell.publicContainerView.backgroundColor = .customMango
+        case .json:
+            cell.publicAddButton.isHidden = false
+            cell.publicContainerView.backgroundColor = .customBanana
+        }
+        
+        cell.addButtonTap
+            .bind(with: self) { owner, _ in
+                owner.addedWordIndexPath = indexPath
+                owner.showAddWordAlert(word: data)
+            }
+            .disposed(by: cell.disposeBag)
+        
         return cell
     }
 }

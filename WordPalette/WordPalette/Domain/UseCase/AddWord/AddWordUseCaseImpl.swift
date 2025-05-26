@@ -33,9 +33,9 @@ final class AddWordUseCaseImpl: AddWordUseCase {
             repository.fetchWords(for: level)
         )
         .map { jsonWords, dbWords in
-            let allWords = (jsonWords + dbWords)
-            var seen = Set<String>()
-            return allWords.filter { seen.insert($0.word.lowercased()).inserted }
+            let dbWordSet = Set(dbWords.map { $0.word.lowercased() })
+            let jsonEntities = jsonWords.filter { !dbWordSet.contains($0.word.lowercased()) }
+            return dbWords + jsonEntities // DB 우선, 그 다음 JSON
         }
     }
     
@@ -50,10 +50,11 @@ final class AddWordUseCaseImpl: AddWordUseCase {
                 }
             }
         )
+        // DB에 이미 있는 단어는 jsonWords에서 빼고, DB 단어 먼저 보여주기
         .map { jsonWords, dbWords in
-            let allWords = (jsonWords + dbWords)
-            var seen = Set<String>()
-            return allWords.filter { seen.insert($0.word.lowercased()).inserted }
+            let dbWordSet = Set(dbWords.map { $0.word.lowercased() })
+            let filteredJsonWords = jsonWords.filter { !dbWordSet.contains($0.word.lowercased()) }
+            return dbWords + filteredJsonWords
         }
     }
     
@@ -94,6 +95,35 @@ final class AddWordUseCaseImpl: AddWordUseCase {
                         return (false, nil)
                     }
             }
+    }
+    
+    // 중복체크 (DB)
+    func checkDuplicateInDB(word: String) -> Single<Bool> {
+        let levels: [Level] = [.beginner, .intermediate, .advanced]
+        let searchWord = word.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        let dbChecks = levels.map { level in
+            repository.fetchWords(for: level)
+        }
+        return Single.zip(dbChecks)
+            .map { dbLists in
+                let allWords = dbLists.flatMap { $0 }
+                return allWords.contains { $0.word.lowercased() == searchWord }
+            }
+    }
+    
+    // database로 변경
+    func saveWordToDatabase(word: WordEntity) -> Single<Bool> {
+        let dbWord = WordEntity(
+            id: UUID(),
+            word: word.word,
+            meaning: word.meaning,
+            example: word.example,
+            level: word.level,
+            isCorrect: nil,
+            source: .database
+        )
+        return repository.saveWord(word: dbWord)
+        
     }
     
     // 저장

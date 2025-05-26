@@ -24,4 +24,10 @@ protocol AddWordUseCase {
     
     // 중복 체크 (json + DB)
     func checkDuplicate(word: String) -> Single<(exists: Bool, level: Level?)>
+    
+    // 중복 체크 (DB)
+    func checkDuplicateInDB(word: String) -> Single<Bool>
+    
+    // Entitiy: json -> DB 변경 (+ 버튼 클릭 시)
+    func saveWordToDatabase(word: WordEntity) -> Single<Bool>
 }
