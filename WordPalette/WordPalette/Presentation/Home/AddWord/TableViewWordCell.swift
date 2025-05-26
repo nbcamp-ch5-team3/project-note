@@ -64,9 +64,9 @@ final class TableViewWordCell: UITableViewCell {
     
     // MARK: - Setup
     private func setupUI() {
+        selectionStyle = .none
         backgroundColor = .white
         contentView.backgroundColor = .white
-        
         contentView.addSubview(containerView)
         containerView.addSubview(wordLabel)
         containerView.addSubview(exampleLabel)

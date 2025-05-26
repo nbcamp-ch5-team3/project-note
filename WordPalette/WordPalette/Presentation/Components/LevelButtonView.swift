@@ -1,17 +1,12 @@
 import UIKit
 import SnapKit
 import Then
+import RxSwift
+import RxCocoa
 
 final class LevelButtonView: UIView {
     /// Level 배열
     private let levels: [Level] = [.beginner, .intermediate, .advanced]
-
-    /// 선택된 버튼의 초기값은 초급 버튼
-    private var selectedLevel: Level = .beginner {
-        didSet {
-            updateButtonSelection() // 버튼 상태 갱신
-        }
-    }
 
     /// 레벨별 버튼을 모아놓은 스택 뷰
     private lazy var levelButtonStackView = UIStackView(arrangedSubviews: levelButtons).then {
@@ -29,8 +24,6 @@ final class LevelButtonView: UIView {
             $0.titleLabel?.font = .boldSystemFont(ofSize: 16)
             $0.layer.cornerRadius = 12
             $0.clipsToBounds = true
-            $0.tag = levelIndex(level: level)
-            $0.addTarget(self, action: #selector(levelButtonTapped), for: .touchUpInside)
         }
         return button
     }
@@ -39,7 +32,6 @@ final class LevelButtonView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureUI()
-        updateButtonSelection()
     }
 
     required init?(coder: NSCoder) {
@@ -55,30 +47,20 @@ final class LevelButtonView: UIView {
         }
     }
 
-    /// tag로 Levels에서 어떤 레벨인지 확인하기 위한 메서드
-    private func levelIndex(level: Level) -> Int {
-        switch level {
-        case .beginner: return 0
-        case .intermediate: return 1
-        case .advanced: return 2
-        }
-    }
-
-    /// 버튼의 배경색이 선택되었을 때, 선택되지 않았을 때 분리하기 위한 메서드
-    private func updateButtonSelection() {
+    /// 버튼의 배경색이 선택되었을 때, 선택되지 않았을 때의 배경색을 분리하기 위한 메서드
+    func updateButtonSelection(selected: Level) {
         for (index, button) in levelButtons.enumerated() {
             let level = levels[index]
-            if level == selectedLevel {
-                button.backgroundColor = .customMango
-            } else {
-                button.backgroundColor = .systemGray3
-            }
+            button.backgroundColor = (level == selected) ? .customMango : .systemGray5
         }
     }
 
-    /// 버튼이 눌렸을 때 실행되는 메서드
-    @objc private func levelButtonTapped(level: UIButton) {
-        guard level.tag < levels.count else { return }
-        selectedLevel = levels[level.tag]
+    // 버튼이 눌렸음을 Rx로 나타내는 메서드
+    func bindButtonTapped() -> Observable<Level> {
+        return Observable.merge(
+            zip(levelButtons, levels).map { button, level in
+                button.rx.tap.map { level }
+            }
+        )
     }
 }
