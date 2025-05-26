@@ -12,8 +12,7 @@ import Then
 final class AddWordView: UIView {
     // MARK: - UI Components
     let searchBar = UISearchBar().then {
-        $0.placeholder = "단어를 검색해보세요"
-        $0.tintColor = .systemGray3
+        $0.tintColor = .systemGray2
         $0.searchBarStyle = .minimal
         $0.backgroundImage = UIImage()
         $0.backgroundColor = .clear
@@ -22,6 +21,21 @@ final class AddWordView: UIView {
         textField.layer.cornerRadius = 10
         textField.clipsToBounds = true
         textField.font = UIFont.systemFont(ofSize: 17)
+        textField.backgroundColor = UIColor(white: 0.95, alpha: 1)
+
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.systemGray
+        ]
+        
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "단어를 검색해보세요",
+            attributes: attributes
+        )
+        
+        if let leftView = textField.leftView as? UIImageView {
+            leftView.tintColor = UIColor.systemGray
+        }
     }
 
     let tableView = UITableView().then {
@@ -62,7 +76,7 @@ final class AddWordView: UIView {
 
     // MARK: - Setup
     private func setupUI() {
-        backgroundColor = .systemBackground
+        backgroundColor = .white
         [searchBar, tableView, floatingButton].forEach { addSubview($0) }
         
         tableView.refreshControl = refreshControl

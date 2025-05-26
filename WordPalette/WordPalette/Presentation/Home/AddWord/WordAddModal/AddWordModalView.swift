@@ -16,13 +16,14 @@ final class AddWordModalView: UIView {
         $0.text = "단어 추가하기"
         $0.font = UIFont.systemFont(ofSize: 24, weight: .heavy)
         $0.textAlignment = .center
+        $0.textColor = .black
     }
     
     private let wordTextView = UITextView().then {
         $0.setPlaceholder("영단어를 입력하세요")
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
-        $0.backgroundColor = UIColor.systemGray6
+        $0.backgroundColor = UIColor(white: 0.95, alpha: 1)
         $0.font = UIFont.systemFont(ofSize: 16)
         $0.autocapitalizationType = .none
         $0.keyboardType = .asciiCapable
@@ -32,7 +33,7 @@ final class AddWordModalView: UIView {
         $0.setPlaceholder("한글 뜻을 입력하세요")
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
-        $0.backgroundColor = UIColor.systemGray6
+        $0.backgroundColor = UIColor(white: 0.95, alpha: 1)
         $0.font = UIFont.systemFont(ofSize: 16)
         $0.keyboardType = .default
     }
@@ -41,7 +42,7 @@ final class AddWordModalView: UIView {
         $0.setPlaceholder("예문을 입력하세요 (선택)")
         $0.layer.cornerRadius = 8
         $0.clipsToBounds = true
-        $0.backgroundColor = UIColor.systemGray6
+        $0.backgroundColor = UIColor(white: 0.95, alpha: 1)
         $0.font = UIFont.systemFont(ofSize: 16)
         $0.keyboardType = .default
     }
@@ -79,7 +80,7 @@ final class AddWordModalView: UIView {
     
     // MARK: - Setup
     private func setupUI() {
-        backgroundColor = .systemBackground
+        backgroundColor = .white
         layer.cornerRadius = 20
         clipsToBounds = true
         
@@ -133,7 +134,7 @@ final class AddWordModalView: UIView {
 }
 
 extension UITextView {
-    func setPlaceholder(_ text: String, color: UIColor = .secondaryLabel) {
+    func setPlaceholder(_ text: String, color: UIColor = .systemGray) {
         let placeholderLabel = UILabel()
         placeholderLabel.text = text
         placeholderLabel.textColor = color
