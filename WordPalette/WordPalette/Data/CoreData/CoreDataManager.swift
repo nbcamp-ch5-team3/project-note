@@ -114,11 +114,20 @@ actor CoreDataManager {
             request.predicate = NSPredicate(format: "id == %@", studyID as CVarArg)
 
             guard let study = try self.context.fetch(request).first,
-                  let orderedSet = study.words else {
+                  let words = study.words else {
                 return []
             }
 
-            return orderedSet.array as? [SolvedWordObject] ?? []
+            return words.array as? [SolvedWordObject] ?? []
+        }
+    }
+    
+    func fetchTodaySolvedWords() async throws -> [SolvedWordObject] {
+        try await context.perform {
+            let user = try self.fetchOrCreateUser()
+            let study = try self.fetchOrCreateTodayStudy(for: user)
+            
+            return (study.words?.array as? [SolvedWordObject]) ?? []
         }
     }
     

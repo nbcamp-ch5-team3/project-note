@@ -68,4 +68,20 @@ final class SolvedWordRepositoryImpl: SolvedWordRepository {
             return Disposables.create()
         }
     }
+    
+    func fetchTodayWords() -> Single<[WordEntity]> {
+        return Single.create { observer in
+            Task {
+                do {
+                    let words = try await self.coreDataManager.fetchTodaySolvedWords()
+                    let entities = words.compactMap { self.toEntity($0) }
+                    observer(.success(entities))
+                } catch {
+                    observer(.failure(error))
+                }
+            }
+            
+            return Disposables.create()
+        }
+    }
 }
