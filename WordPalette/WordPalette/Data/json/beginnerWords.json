@@ -221,7 +221,7 @@
     { "id": 220, "en": "microwave", "ko": "전자레인지", "example": "Heat the food in the microwave." },
     { "id": 221, "en": "refrigerator", "ko": "냉장고", "example": "Put the milk in the refrigerator." },
     { "id": 222, "en": "freezer", "ko": "냉동고", "example": "The ice cream is in the freezer." },
-    { "id": 223, "en": "stove", "ko": "스토브", "example": "Cook the soup on the stove." },
+    { "id": 223, "en": "stove", "ko": "난로", "example": "Cook the soup on the stove." },
     { "id": 224, "en": "sink", "ko": "싱크대", "example": "Wash the dishes in the sink." },
     { "id": 225, "en": "toilet", "ko": "화장실", "example": "The toilet is next to the bathroom." },
     { "id": 226, "en": "shower", "ko": "샤워", "example": "I take a shower every morning." },

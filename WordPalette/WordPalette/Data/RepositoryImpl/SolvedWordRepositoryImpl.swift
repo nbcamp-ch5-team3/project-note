@@ -28,7 +28,8 @@ final class SolvedWordRepositoryImpl: SolvedWordRepository {
             meaning: object.meaning,
             example: object.example,
             level: level,
-            isCorrect: object.isCorrect
+            isCorrect: object.isCorrect,
+            source: .database
         )
     }
     
