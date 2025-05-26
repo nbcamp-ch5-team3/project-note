@@ -95,7 +95,11 @@ actor CoreDataManager {
                 let user = try self.fetchOrCreateUser()
                 let study = try self.fetchOrCreateTodayStudy(for: user)
                 
-                if let existing = study.words?.compactMap({ $0 as? SolvedWordObject }).first(where: { $0.id == word.id }) {
+                let isSaved = study.words?
+                    .compactMap { $0 as? SolvedWordObject }
+                    .contains(where: { $0.id == word.id }) ?? false
+
+                if isSaved {
                     throw CoreDataErrorType.duplicate
                 }
                 
