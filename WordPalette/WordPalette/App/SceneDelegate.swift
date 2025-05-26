@@ -43,6 +43,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let studyHistoryVC = DIContainer.makeStudyHistoryViewContoller()
         studyHistoryVC.tabBarItem = UITabBarItem(title: "나의 학습", image: UIImage(systemName: "calendar"), tag: 2)
         
+        tabBar.overrideUserInterfaceStyle = .light
         tabBar.selectedIndex = 0
         tabBar.tabBar.tintColor = .customMango
         tabBar.viewControllers = [homeNV, quizVC, studyHistoryVC]
