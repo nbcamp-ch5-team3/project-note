@@ -72,6 +72,7 @@ actor CoreDataManager {
             object.meaning = word.meaning
             object.example = word.example
             object.level = word.level.rawValue
+            object.source = word.source.rawValue
             try self.context.save()
         }        
     }
@@ -119,6 +120,14 @@ actor CoreDataManager {
             }
 
             return orderedSet.array as? [SolvedWordObject] ?? []
+        }
+    }
+    
+    func fetchUnsolvedWordsByLevel(_ level: Level) async throws -> [UnsolvedWordObject] {
+        try await context.perform {
+            let request = UnsolvedWordObject.fetchRequest()
+            request.predicate = NSPredicate(format: "level == %@", level.rawValue)
+            return try self.context.fetch(request)
         }
     }
     

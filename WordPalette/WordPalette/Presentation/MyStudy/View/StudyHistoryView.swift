@@ -12,17 +12,21 @@ import SnapKit
 // MARK: - 나의 학습기록 UIView
 final class StudyHistoryView: UIView, UIViewGuide {
     
+    
     /// 배경색
     private let backGroundView = UIView()
     
     /// 타이틀
-    private let titleLabel = PaddingLabel(top: 24, left: 24, bottom: 24, right: 0)
+    private let titleLabel = PaddingLabel(top: 24, left: UIDevice.current.isiPhoneSE ? 36 : 24, bottom: 0, right: 0)
     
     /// 프로필 섹션 뷰
     private let profileSectionView = ProfileSectionView()
     
     /// 달력
     private let calendarView = UICalendarView()
+    
+    /// 달력 배경 (inset을 주고 배경을 깔기 위함)
+    private let calendarBackgroundView = UIView()
     
     func configureAttributes() {
         
@@ -37,10 +41,15 @@ final class StudyHistoryView: UIView, UIViewGuide {
             $0.textColor = .black
             $0.textAlignment = .left
             $0.backgroundColor = .white
-            $0.font = .systemFont(ofSize: 32, weight: .bold)
+            $0.font = .systemFont(ofSize: UIDevice.current.isiPhoneSE ? 24 : 32, weight: .bold)
+        }
+        
+        calendarBackgroundView.do {
+            $0.backgroundColor = .white
         }
         
         calendarView.do {
+            $0.calendar = Calendar(identifier: .gregorian)
             $0.backgroundColor = .white
             $0.locale = Locale(identifier: "ko_KR")
             $0.tintColor = .customOrange
@@ -49,7 +58,7 @@ final class StudyHistoryView: UIView, UIViewGuide {
     }
     
     func configureSubView() {
-        [backGroundView, titleLabel, profileSectionView, calendarView]
+        [backGroundView, titleLabel, profileSectionView, calendarBackgroundView, calendarView]
             .forEach { addSubview($0) }
     }
     
@@ -71,8 +80,15 @@ final class StudyHistoryView: UIView, UIViewGuide {
         
         calendarView.snp.makeConstraints {
             $0.top.equalTo(profileSectionView.snp.bottom).offset(16)
+            $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(UIDevice.current.isiPhoneSE ? 40 : 0)
+            $0.height.equalTo(UIDevice.current.isiPhoneSE ? 380 : 480)
+            $0.bottom.equalTo(safeAreaLayoutGuide)
+        }
+        
+        calendarBackgroundView.snp.makeConstraints {
+            $0.top.equalTo(profileSectionView.snp.bottom).offset(16)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide)
-            $0.bottom.equalTo(safeAreaLayoutGuide).inset(18)
+            $0.bottom.equalTo(safeAreaLayoutGuide)
         }
     }
     
