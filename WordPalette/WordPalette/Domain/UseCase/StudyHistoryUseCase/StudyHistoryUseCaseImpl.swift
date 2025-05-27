@@ -28,9 +28,10 @@ final class StudyHistoryUseCaseImpl: StudyHistoryUseCase {
     func fetchWords(id: UUID) -> Single<(all: [WordEntity], memos: [WordEntity], unMemos: [WordEntity])>{
         return solvedRepository.fetchWords(id: id)
             .map { words in
-                let memos = words.filter { $0.isCorrect == true }
-                let unMemos = words.filter { $0.isCorrect != true }
-                return (all: words, memos: memos, unMemos: unMemos)
+                let all = Array(words.reversed())
+                let memos = Array(words.filter { $0.isCorrect == true }.reversed())
+                let unMemos = Array(words.filter { $0.isCorrect != true }.reversed())
+                return (all: all, memos: memos, unMemos: unMemos)
             }
     }
 }

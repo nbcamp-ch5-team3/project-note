@@ -97,6 +97,8 @@ extension StudyHistoryViewController: UICalendarViewDelegate, UICalendarSelectio
               let studyHistory = self.studyHistory.first(where: { Calendar.current.isDate($0.solvedAt, inSameDayAs: date) })
         else { return }
         
+        selection.selectedDate = nil
+        
         // DIContainer 추가하면 바뀔 예정
         let vc = DIContainer.makeStudyStatisticsViewContoller(studyHistory: studyHistory)
         vc.modalPresentationStyle = .fullScreen

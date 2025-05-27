@@ -77,6 +77,7 @@ final class StudyStatisticsView: UIView, UIViewGuide {
         
         wordTableView.do {
             $0.rowHeight = 64
+            $0.backgroundColor = .white
         }
         
         dismissButton.do {

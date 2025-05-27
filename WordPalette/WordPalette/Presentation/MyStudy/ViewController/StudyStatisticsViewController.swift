@@ -57,6 +57,7 @@ final class StudyStatisticsViewController: UIViewController {
         
         // 단어 리스트 바인딩
         viewModel.state.statisticData
+            .observe(on: MainScheduler.asyncInstance)
             .bind(to: studyHistroyView.getWordTableView.rx.items(
                 cellIdentifier: StudyWordCell.identifier,
                 cellType: StudyWordCell.self)) { _, word, cell in
@@ -66,6 +67,7 @@ final class StudyStatisticsViewController: UIViewController {
         
         // 암기/미암기 수량
         viewModel.state.memoStateData
+            .observe(on: MainScheduler.asyncInstance)
             .bind(with: self) { owner, data in
                 let (memo, unMemo) = data
                 owner.studyHistroyView.configure(date: owner.studyHistory.solvedAt, memo: memo, unMemo: unMemo)
