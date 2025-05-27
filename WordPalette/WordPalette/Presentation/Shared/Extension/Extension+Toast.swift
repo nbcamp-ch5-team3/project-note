@@ -9,7 +9,13 @@ import UIKit
 
 extension UIViewController {
     func showToast(message: String, duration: Double = 2.0) {
+        // 기존 토스트 즉시 제거 (애니메이션 중이어도 강제 제거)
+        if let existingToast = view.viewWithTag(9999) {
+            existingToast.removeFromSuperview()
+        }
+        
         let toastLabel = UILabel()
+        toastLabel.tag = 9999
         toastLabel.text = message
         toastLabel.backgroundColor = UIColor.white.withAlphaComponent(1.0)
         toastLabel.textColor = .black
@@ -33,10 +39,10 @@ extension UIViewController {
         )
 
         view.addSubview(toastLabel)
-        UIView.animate(withDuration: 0.3, animations: {
+        UIView.animate(withDuration: 0.2, animations: {
             toastLabel.alpha = 1.0
         }) { _ in
-            UIView.animate(withDuration: 0.3, delay: duration, options: .curveEaseOut, animations: {
+            UIView.animate(withDuration: 0.2, delay: duration, options: .curveEaseOut, animations: {
                 toastLabel.alpha = 0.0
             }) { _ in
                 toastLabel.removeFromSuperview()

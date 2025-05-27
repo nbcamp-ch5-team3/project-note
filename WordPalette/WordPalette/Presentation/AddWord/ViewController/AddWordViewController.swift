@@ -57,6 +57,11 @@ final class AddWordViewController: UIViewController {
         viewWillAppearSubject.onNext(())
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        navigationController?.popViewController(animated: false)
+      }
+
+    
     // MARK: - Setup
     private func setupTableViewCell() {
         addWordView.tableView.register(TableViewWordCell.self, forCellReuseIdentifier: TableViewWordCell.id)
