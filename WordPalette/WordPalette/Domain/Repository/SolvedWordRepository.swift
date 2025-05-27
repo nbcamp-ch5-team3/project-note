@@ -11,4 +11,5 @@ import RxSwift
 protocol SolvedWordRepository {
     func saveWord(word: WordEntity) -> Single<Bool>
     func fetchWords(id: UUID) -> Single<[WordEntity]>
+    func fetchTodayWords() -> Single<[WordEntity]>
 }

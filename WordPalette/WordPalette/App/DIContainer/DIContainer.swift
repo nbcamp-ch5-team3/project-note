@@ -24,7 +24,7 @@ final class DIContainer {
     }
     
     /// 이미 푼 문제를 핸들링할 레포지토리
-    private var makeSoveldRepository: SolvedWordRepository {
+    private var makeSolveddRepository: SolvedWordRepository {
         SolvedWordRepositoryImpl(coredataManager: coreDataManager)
     }
     
@@ -33,16 +33,18 @@ final class DIContainer {
         UserRepositoryImpl(coredataManager: coreDataManager)
     }
     
-//    ///
-//    var makeAddWordRepository: AddWordRepository {
-//        AddWordRepositoryImpl(localDataSource: localDataSource, unsolvedWordRepository: unsolvedRepository)
-//    }
-    
     // MARK: - 유즈케이스
     
     /// 학습 기록 및 통계 유즈케이스
     private var makeStudyHistoryUseCase: StudyHistoryUseCase {
-        StudyHistoryUseCaseImpl(userRepository: makeUserRepository, solvedRepository: makeSoveldRepository)
+        StudyHistoryUseCaseImpl(userRepository: makeUserRepository, solvedRepository: makeSolveddRepository)
+    }
+    
+    private var makeQuizUseCase: QuizUseCase {
+        QuizUseCaseImpl(
+            unsolvedWordRepository: makeUnsolvedRepository,
+            solvedWordRepository: makeSolveddRepository
+        )
     }
     
 //    ///
@@ -55,6 +57,11 @@ final class DIContainer {
         UnsolvedMyWordUseCaseImpl(repository: makeUnsolvedRepository)
     }
 
+    /// 단어 추가 유즈케이스
+    private var makeAddWordUseCase: AddWordUseCase {
+        AddWordUseCaseImpl(repository: makeUnsolvedRepository)
+    }
+    
     // MARK: - ViewModel
     
     /// 나의 학습 기록 ViewModel
@@ -68,7 +75,7 @@ final class DIContainer {
     }
     
     private var makeQuizViewModel: QuizViewModel {
-        QuizViewModel()
+        QuizViewModel(useCase: makeQuizUseCase)
     }
     
 //    ///
@@ -78,6 +85,11 @@ final class DIContainer {
 
     private var makeHomeViewModel: HomeViewModel {
         HomeViewModel(unsolvedMyWordUseCase: makeUnsolvedMyWordUseCase)
+    }
+
+    /// 단어 추가 ViewModel
+    private var makeAddWordViewModel: AddWordViewModel {
+        AddWordViewModel(useCase: makeAddWordUseCase)
     }
 
     // MARK: - ViewController
@@ -100,5 +112,10 @@ final class DIContainer {
     /// 학습 기록에 따른 통계 ViewController
     public func makeStudyStatisticsViewContoller(studyHistory: StudyHistory) -> StudyStatisticsViewController {
         StudyStatisticsViewController(studyHistory: studyHistory, viewModel: makeStudyStatisticsViewModel)
+    }
+    
+    /// 단어 추가 ViewController
+    public func makeAddWordViewController(selectedLevel: Level) -> AddWordViewController {
+        AddWordViewController(selectedLevel: selectedLevel, viewModel: makeAddWordViewModel)
     }
 }
