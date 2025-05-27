@@ -97,6 +97,14 @@ final class QuizCardView: UIView {
         exampleLabel.text = example
         meaningLable.text = meaning
     }
+    
+    func setShadow() {
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.25
+        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowRadius = 4
+        layer.masksToBounds = false
+    }
 }
 
 // MARK: - Configure
@@ -111,13 +119,7 @@ private extension QuizCardView {
     
     func setAttributes() {
         backgroundColor = .white
-        
         layer.cornerRadius = 20
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOpacity = 0.25
-        layer.shadowOffset = CGSize(width: 0, height: 4)
-        layer.shadowRadius = 4
-        layer.masksToBounds = false
     }
     
     func setHierarchy() {

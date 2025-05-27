@@ -88,22 +88,18 @@ final class QuizView: UIView {
     
     /// 초기 UI 업데이트
     func update(with quizInfo: QuizViewInfo) {
-        updateQuizCardStackView(with: quizInfo.words)
+        let cards = quizInfo.words.map {
+            let card = QuizCardView()
+            card.update(word: $0.word, example: $0.example, meaning: $0.meaning)
+            return card
+        }
+        quizCardStackView.setCards(cards)
         quizStatusView.update(with: quizInfo)
     }
     
     /// 퀴즈를 풀고 난 후 UI 업데이트
     func updateAfterAnswer(with isCorrect: Bool) {
         quizStatusView.updateAfterAnswer(with: isCorrect)
-    }
-    
-    func updateQuizCardStackView(with words: [WordEntity]) {
-        let cards = words.map {
-            let card = QuizCardView()
-            card.update(word: $0.word, example: $0.example, meaning: $0.meaning)
-            return card
-        }
-        quizCardStackView.setCards(cards)
     }
     
     func updateLevelButtons(with level: Level) {
@@ -162,6 +158,7 @@ private extension QuizView {
             $0.top.equalTo(quizStatusView.snp.bottom).offset(10)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalTo(safeAreaLayoutGuide).inset(10)
+            $0.height.equalTo(32)
         }
     }
     
