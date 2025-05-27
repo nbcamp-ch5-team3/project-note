@@ -40,6 +40,16 @@ final class DIContainer {
         StudyHistoryUseCaseImpl(userRepository: makeUserRepository, solvedRepository: makeSoveldRepository)
     }
     
+//    ///
+//    var makeAddWordUseCase: AddWordUseCase {
+//        AddWordUseCaseImpl(repository: makeAddWordRepository)
+//    }
+
+    /// 내 단어장 유즈케이스
+    private var makeUnsolvedMyWordUseCase: UnsolvedMyWordUseCase {
+        UnsolvedMyWordUseCaseImpl(repository: makeUnsolvedRepository)
+    }
+
     /// 단어 추가 유즈케이스
     private var makeAddWordUseCase: AddWordUseCase {
         AddWordUseCaseImpl(repository: makeUnsolvedRepository)
@@ -61,6 +71,15 @@ final class DIContainer {
         QuizViewModel()
     }
     
+//    ///
+//    var makeAddWordViewModel: AddWordViewModel {
+//        AddWordViewModel(useCase: makeAddWordUseCase)
+//    }
+
+    private var makeHomeViewModel: HomeViewModel {
+        HomeViewModel(unsolvedMyWordUseCase: makeUnsolvedMyWordUseCase)
+    }
+
     /// 단어 추가 ViewModel
     private var makeAddWordViewModel: AddWordViewModel {
         AddWordViewModel(useCase: makeAddWordUseCase)
@@ -70,7 +89,7 @@ final class DIContainer {
     
     /// 홈 ViewController
     public func makeHomeViewController() -> HomeViewController {
-        HomeViewController()
+        HomeViewController(viewModel: makeHomeViewModel)
     }
     
     /// 퀴즈 ViewController
