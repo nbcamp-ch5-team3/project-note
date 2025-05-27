@@ -141,17 +141,17 @@ final class UnsolvedWordRepositoryImpl: UnsolvedWordRepository {
     }
     
     /// 전체 단어 삭제
-    func deleteAllWords() -> Single<Bool> {
+    func deleteAllWords(for level: Level) -> Single<Bool> {
         Single.create { observer in
             Task {
                 do {
-                    try await self.coreDataManager.deleteAllUnsolvedWords()
+                    try await self.coreDataManager.deleteAllUnsolvedWords(for: level)
                     observer(.success(true))
                 } catch {
                     observer(.success(false))
                 }
             }
-            
+
             return Disposables.create()
         }
     }

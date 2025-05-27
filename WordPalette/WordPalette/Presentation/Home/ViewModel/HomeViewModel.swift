@@ -13,39 +13,42 @@ final class HomeViewModel {
 
     init(unsolvedMyWordUseCase: UnsolvedMyWordUseCase) {
         self.unsolvedMyWordUseCase = unsolvedMyWordUseCase
+        bindLevelSelection()
     }
 
-    // MARK: - Mock Data (머지 후 브랜치 파서 수정 예정)
-    private let mockAllWordsRelay = BehaviorRelay<[WordEntity]>(value: [
-        WordEntity(id: UUID(), word: "Apple", meaning: "사과", example: "I ate an apple.", level: .beginner),
-        WordEntity(id: UUID(), word: "Run", meaning: "달리다", example: "He runs fast.", level: .beginner),
-        WordEntity(id: UUID(), word: "Negotiate", meaning: "협상하다", example: "We negotiated.", level: .intermediate),
-        WordEntity(id: UUID(), word: "Ponder", meaning: "숙고하다", example: "She pondered.", level: .advanced)
-    ])
-
-    func bindMockFiltering() {
-        Observable.combineLatest(
-            selectedLevelRelay,
-            mockAllWordsRelay
-        )
-        .map { selected, allWords in
-            allWords.filter { $0.level == selected }
-        }
-        .bind(to: wordListRelay)
-        .disposed(by: disposeBag)
+    // MARK: - Data Binding
+    /// 레벨별 바인드 메서드
+    private func bindLevelSelection() {
+        selectedLevelRelay
+            .flatMapLatest { [weak self] level -> Single<[WordEntity]> in
+                guard let self = self else { return .just([]) }
+                return self.unsolvedMyWordUseCase.fetchWords(by: level)
+            }
+            .bind(to: wordListRelay)
+            .disposed(by: disposeBag)
     }
 
-    // 전체 삭제
-    func deleteMockWord(_ word: WordEntity) {
-        var current = mockAllWordsRelay.value
-        current.removeAll { $0.id == word.id }
-        mockAllWordsRelay.accept(current)
+    /// 선택된 레벨에 해당하는 단어만 전체 삭제 메서드
+    func deleteAllWords() {
+        unsolvedMyWordUseCase.deleteAllWords(by: selectedLevelRelay.value)
+            .flatMap { [weak self] _ -> Single<[WordEntity]> in
+                guard let self = self else { return .just([]) }
+                return self.unsolvedMyWordUseCase.fetchWords(by: self.selectedLevelRelay.value)
+            }
+            .asObservable()
+            .bind(to: wordListRelay)
+            .disposed(by: disposeBag)
     }
 
-    // 개별 삭제
-    func deleteAllMockWords() {
-        let currentLevel = selectedLevelRelay.value
-        let updated = mockAllWordsRelay.value.filter { $0.level != currentLevel }
-        mockAllWordsRelay.accept(updated)
+    /// 개별 삭제 메서드
+    func deleteWord(_ word: WordEntity) {
+        unsolvedMyWordUseCase.deleteWord(id: word.id)
+            .flatMap { [weak self] _ -> Single<[WordEntity]> in
+                guard let self = self else { return .just([]) }
+                return self.unsolvedMyWordUseCase.fetchWords(by: self.selectedLevelRelay.value)
+            }
+            .asObservable()
+            .bind(to: wordListRelay)
+            .disposed(by: disposeBag)
     }
 }

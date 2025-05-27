@@ -22,5 +22,6 @@ protocol UnsolvedWordRepository {
 
     // 삭제
     func deleteWord(by id: UUID) -> Single<Bool>
-    func deleteAllWords() -> Single<Bool>
+
+    func deleteAllWords(for level: Level) -> Single<Bool>
 }

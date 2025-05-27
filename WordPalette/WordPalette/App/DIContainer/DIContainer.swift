@@ -47,11 +47,6 @@ final class DIContainer {
         )
     }
     
-//    ///
-//    var makeAddWordUseCase: AddWordUseCase {
-//        AddWordUseCaseImpl(repository: makeAddWordRepository)
-//    }
-
     /// 내 단어장 유즈케이스
     private var makeUnsolvedMyWordUseCase: UnsolvedMyWordUseCase {
         UnsolvedMyWordUseCaseImpl(repository: makeUnsolvedRepository)
@@ -77,11 +72,6 @@ final class DIContainer {
     private var makeQuizViewModel: QuizViewModel {
         QuizViewModel(useCase: makeQuizUseCase)
     }
-    
-//    ///
-//    var makeAddWordViewModel: AddWordViewModel {
-//        AddWordViewModel(useCase: makeAddWordUseCase)
-//    }
 
     private var makeHomeViewModel: HomeViewModel {
         HomeViewModel(unsolvedMyWordUseCase: makeUnsolvedMyWordUseCase)
@@ -96,7 +86,7 @@ final class DIContainer {
     
     /// 홈 ViewController
     public func makeHomeViewController() -> HomeViewController {
-        HomeViewController(viewModel: makeHomeViewModel)
+        HomeViewController(viewModel: makeHomeViewModel, diContainer: self)
     }
     
     /// 퀴즈 ViewController

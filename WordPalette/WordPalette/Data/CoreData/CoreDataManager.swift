@@ -179,15 +179,16 @@ actor CoreDataManager {
             }
         }
     }
-    
-    func deleteAllUnsolvedWords() async throws {
+
+    func deleteAllUnsolvedWords(for level: Level) async throws {
         try await context.perform {
-            do {
-                let deleteRequest = NSBatchDeleteRequest(fetchRequest: UnsolvedWordObject.fetchRequest())
-                try self.context.execute(deleteRequest)
-            } catch {
-                throw CoreDataErrorType.deleteFailed
-            }
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "UnsolvedWordObject")
+            request.predicate = NSPredicate(format: "level == %@", level.rawValue)
+
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+            try self.context.execute(deleteRequest)
+            try self.context.save()
+
         }
     }
 }
