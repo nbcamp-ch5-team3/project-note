@@ -16,6 +16,8 @@ final class QuizStatusView: UIView {
     
     enum Action {
         case remainingWordZero
+        case correctMilestoneReached
+        case incorrectMilestoneReached
     }
     
     // MARK: - Properties
@@ -129,18 +131,33 @@ final class QuizStatusView: UIView {
     
     /// 퀴즈를 풀고 난 후 UI 업데이트
     func updateAfterAnswer(with isCorrect: Bool) {
-        let remaining = max(0, (Int(remainingWordCountLabel.text ?? "0") ?? 0) - 1)
-        remainingWordCountLabel.text = "\(remaining)"
-        
+        let remaining = max(0, (Int(remainingWordCountLabel.text ?? "") ?? 0) - 1)
+        var correct = Int(correctWordCountLabel.text ?? "") ?? 0
+        var incorrect = Int(incorrectWordCountLabel.text ?? "") ?? 0
+
+        // 정답/오답 카운트 업데이트
         if isCorrect {
-            correctWordCountLabel.text = "\((Int(correctWordCountLabel.text ?? "0") ?? 0) + 1)"
+            correct += 1
+            correctWordCountLabel.text = "\(correct)"
         } else {
-            incorrectWordCountLabel.text = "\((Int(incorrectWordCountLabel.text ?? "0") ?? 0) + 1)"
+            incorrect += 1
+            incorrectWordCountLabel.text = "\(incorrect)"
         }
-        
-        // 남은 단어가 0이면 액션 호출
-        if remaining == 0 {
+
+        // 남은 단어 수 업데이트
+        remainingWordCountLabel.text = "\(remaining)"
+
+        // 액션 발생 조건 처리
+        switch remaining {
+        case 0:
             action.accept(.remainingWordZero)
+        default:
+            if isCorrect, correct % 3 == 0 {
+                action.accept(.correctMilestoneReached)
+            }
+            if !isCorrect, incorrect % 3 == 0 {
+                action.accept(.incorrectMilestoneReached)
+            }
         }
     }
 }

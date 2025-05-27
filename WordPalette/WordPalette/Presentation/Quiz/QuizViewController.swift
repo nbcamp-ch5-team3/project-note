@@ -44,10 +44,11 @@ final class QuizViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         viewModel.action.accept(.viewWillAppear)
+        quizView.updateLevelButtons(with: .beginner)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        quizView.updateLevelButtons(with: .beginner)
+        quizView.removeAnimationView()
     }
 }
 
