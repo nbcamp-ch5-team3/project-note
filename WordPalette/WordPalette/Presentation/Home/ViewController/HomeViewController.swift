@@ -4,6 +4,8 @@ import RxCocoa
 import SnapKit
 
 final class HomeViewController: UIViewController {
+    private let diContainer: DIContainer
+    
     private let homeView = HomeView()
 
     /// Rx를 사용하기 위한 disposeBag
@@ -12,8 +14,9 @@ final class HomeViewController: UIViewController {
     private let homeViewModel: HomeViewModel
 
     // MARK: - Initialize
-    init(viewModel: HomeViewModel) {
+    init(viewModel: HomeViewModel, diContainer: DIContainer) {
         self.homeViewModel = viewModel
+        self.diContainer = diContainer
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -81,7 +84,7 @@ final class HomeViewController: UIViewController {
         zip(homeView.levelSearchButtons, homeView.levels).forEach { button, level in
             button.rx.tap
                 .bind(with: self) { owner, _ in
-                    let addWordVC = AddWordViewController(selectedLevel: level) // 레벨별 검색 페이지로 이동
+                    let addWordVC = self.diContainer.makeAddWordViewController(selectedLevel: level) // 레벨별 검색 페이지로 이동
                     owner.navigationController?.pushViewController(addWordVC, animated: true)
                 }
                 .disposed(by: disposeBag)
