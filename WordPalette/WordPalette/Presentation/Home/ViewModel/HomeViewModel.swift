@@ -30,7 +30,7 @@ final class HomeViewModel {
 
     /// 선택된 레벨에 해당하는 단어만 전체 삭제 메서드
     func deleteAllWords() {
-        unsolvedMyWordUseCase.deleteAllWords()
+        unsolvedMyWordUseCase.deleteAllWords(by: selectedLevelRelay.value)
             .flatMap { [weak self] _ -> Single<[WordEntity]> in
                 guard let self = self else { return .just([]) }
                 return self.unsolvedMyWordUseCase.fetchWords(by: self.selectedLevelRelay.value)

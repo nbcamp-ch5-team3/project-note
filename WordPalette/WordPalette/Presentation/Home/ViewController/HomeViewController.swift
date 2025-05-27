@@ -63,8 +63,14 @@ final class HomeViewController: UIViewController {
         homeView.deleteAllButton.rx.tap
             .bind(with: self) { owner, _ in
                 let selectedLevel = owner.homeViewModel.selectedLevelRelay.value
-                owner.showAlertDeleteAll(for: selectedLevel) {
-                    owner.homeViewModel.deleteAllWords()
+                let wordList = owner.homeViewModel.wordListRelay.value
+
+                if wordList.isEmpty {
+                    owner.showEmptyWordAlert(for: selectedLevel)
+                } else {
+                    owner.showAlertDeleteAll(for: selectedLevel) {
+                        owner.homeViewModel.deleteAllWords()
+                    }
                 }
             }
             .disposed(by: disposeBag)
@@ -90,6 +96,8 @@ final class HomeViewController: UIViewController {
                 cellType: TableViewWordCell.self)
             ) { row, word, cell in
                 cell.configure(word: "\(word.word): \(word.meaning)", example: word.example)
+                cell.publicAddButton.isHidden = true
+                cell.publicContainerView.backgroundColor = .customMango
             }
             .disposed(by: disposeBag)
     }
@@ -121,6 +129,14 @@ final class HomeViewController: UIViewController {
         present(alert, animated: true)
     }
 
+    /// 저장된 셀이 비어있을 때 경고하는 Alert
+    private func showEmptyWordAlert(for level: Level) {
+        let alert = UIAlertController(title: "저장된 \(level.rawValue) 단어가 없습니다!", message: nil, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "확인", style: .default)
+        alert.addAction(ok)
+        present(alert, animated: true)
+    }
+
     // MARK: - Navigation UI
     /// navigation backButton의 UI를 설정하는 메서드
     private func configureNavigationBackButton() {
@@ -142,6 +158,7 @@ extension HomeViewController: UITableViewDelegate {
             completion(true)
         }
 
+        delete.backgroundColor = .customOrange
         return UISwipeActionsConfiguration(actions: [delete])
     }
 }

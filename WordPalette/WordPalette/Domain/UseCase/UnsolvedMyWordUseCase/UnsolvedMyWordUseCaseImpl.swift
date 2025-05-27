@@ -17,7 +17,7 @@ final class UnsolvedMyWordUseCaseImpl: UnsolvedMyWordUseCase {
         repository.deleteWord(by: id)
     }
 
-    func deleteAllWords() -> Single<Bool> {
-        repository.deleteAllWords()
+    func deleteAllWords(by level: Level) -> Single<Bool> {
+        repository.deleteAllWords(for: level)
     }
 }
