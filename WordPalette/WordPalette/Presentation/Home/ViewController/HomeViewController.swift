@@ -153,14 +153,16 @@ extension HomeViewController: UITableViewDelegate {
         _ tableView: UITableView,
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
-        let delete = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completion in
+        let delete = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, completion in
             guard let self = self else { return }
             let word = self.homeViewModel.wordListRelay.value[indexPath.row]
             self.homeViewModel.deleteWord(word)
             completion(true)
         }
 
-        delete.backgroundColor = .customOrange
+        delete.image = UIImage(systemName: "trash")
+        delete.backgroundColor = .systemGray2
+
         return UISwipeActionsConfiguration(actions: [delete])
     }
 }

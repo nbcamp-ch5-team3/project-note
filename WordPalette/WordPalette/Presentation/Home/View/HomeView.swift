@@ -44,7 +44,7 @@ final class HomeView: UIView {
         $0.setTitle("전체 삭제", for: .normal)
         $0.setTitleColor(.white, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
-        $0.backgroundColor = .systemGray
+        $0.backgroundColor = .systemGray2
         $0.layer.cornerRadius = 10
         $0.clipsToBounds = true
     }
