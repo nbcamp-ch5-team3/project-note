@@ -69,13 +69,123 @@
 ## 📁 폴더 구조 & 역할
 
 ```bash
-📦project-note  
- ┣ 📂Model         # 데이터 모델 및 엔티티
- ┣ 📂View          # 화면(UI) 관련 파일
- ┣ 📂ViewModel     # 비즈니스 로직 및 데이터 바인딩
- ┣ 📂Resources     # 이미지, Lottie 등 리소스
- ┗ 📄AppDelegate.swift
+📦WordPalette  
+ ┣ 📂App                # 앱 실행 및 DI, 델리게이트 등
+ ┃ ┣ 📂DIContainer
+ ┃ ┃ ┗ 📝 DIContainer.swift
+ ┃ ┣ 📝 AppDelegate.swift
+ ┃ ┗ 📝 SceneDelegate.swift
+ ┣ 📂Data               # 데이터 관리 (CoreData, 로컬, 저장소 구현)
+ ┃ ┣ 📂CoreData
+ ┃ ┃ ┣ 📂Object
+ ┃ ┃ ┃ ┣ 📝 SolvedWordObject+CoreDataClass.swift
+ ┃ ┃ ┃ ┣ 📝 SolvedWordObject+CoreDataProperties.swift
+ ┃ ┃ ┃ ┣ 📝 StudyObject+CoreDataClass.swift
+ ┃ ┃ ┃ ┣ 📝 StudyObject+CoreDataProperties.swift
+ ┃ ┃ ┃ ┣ 📝 UnsolvedWordObject+CoreDataClass.swift
+ ┃ ┃ ┃ ┣ 📝 UnsolvedWordObject+CoreDataProperties.swift
+ ┃ ┃ ┃ ┣ 📝 UserObject+CoreDataClass.swift
+ ┃ ┃ ┃ ┗ 📝 UserObject+CoreDataProperties.swift
+ ┃ ┃ ┣ 📝 CoreDataErrorType.swift
+ ┃ ┃ ┣ 📝 CoreDataManager.swift
+ ┃ ┃ ┣ 📝 CoreDataStack.swift
+ ┃ ┃ ┣ 📝 TestCoreDataStack.swift
+ ┃ ┃ ┗ 📄 WordPalette.xcdatamodeld
+ ┃ ┣ 📂LocalDataSource
+ ┃ ┃ ┣ 📂json
+ ┃ ┃ ┣ 📝 Level+FileName.swift
+ ┃ ┃ ┣ 📝 WordItem.swift
+ ┃ ┃ ┗ 📝 WordLocalDataSource.swift
+ ┃ ┗ 📂RepositoryImpl
+ ┃   ┣ 📝 SolvedWordRepositoryImpl.swift
+ ┃   ┣ 📝 UnsolvedWordRepositoryImpl.swift
+ ┃   ┗ 📝 UserRepositoryImpl.swift
+ ┣ 📂Domain             # 비즈니스 로직, 엔티티, 리포지토리, 유스케이스
+ ┃ ┣ 📂Entity
+ ┃ ┃ ┣ 📝 Level.swift
+ ┃ ┃ ┣ 📝 StudyHistory.swift
+ ┃ ┃ ┣ 📝 TierType.swift
+ ┃ ┃ ┣ 📝 UserData.swift
+ ┃ ┃ ┗ 📝 WordEntity.swift
+ ┃ ┣ 📂Repository
+ ┃ ┃ ┣ 📝 SolvedWordRepository.swift
+ ┃ ┃ ┣ 📝 UnsolvedWordRepository.swift
+ ┃ ┃ ┗ 📝 UserRepository.swift
+ ┃ ┗ 📂UseCase
+ ┃   ┣ 📂AddWord
+ ┃   ┃ ┣ 📝 AddWordUseCase.swift
+ ┃   ┃ ┗ 📝 AddWordUseCaseImpl.swift
+ ┃   ┣ 📂QuizUseCase
+ ┃   ┃ ┣ 📝 QuizUseCase.swift
+ ┃   ┃ ┗ 📝 QuizUseCaseImpl.swift
+ ┃   ┣ 📂StudyHistoryUseCase
+ ┃   ┃ ┣ 📝 StudyHistoryUseCase.swift
+ ┃   ┃ ┗ 📝 StudyHistoryUseCaseImpl.swift
+ ┃   ┗ 📂UnsolvedMyWordUseCase
+ ┃     ┣ 📝 UnsolvedMyWordUseCase.swift
+ ┃     ┗ 📝 UnsolvedMyWordUseCaseImpl.swift
+ ┣ 📂Presentation       # 화면(UI), 뷰모델, 뷰컨트롤러 등
+ ┃ ┣ 📂AddWord
+ ┃ ┃ ┣ 📂View
+ ┃ ┃ ┃ ┣ 📂Cell
+ ┃ ┃ ┃ ┃ ┣ 📝 AddWordModalView.swift
+ ┃ ┃ ┃ ┃ ┗ 📝 AddWordView.swift
+ ┃ ┃ ┣ 📂ViewController
+ ┃ ┃ ┃ ┣ 📝 AddWordModalViewController.swift
+ ┃ ┃ ┃ ┗ 📝 AddWordViewController.swift
+ ┃ ┃ ┗ 📂ViewModel
+ ┃ ┃   ┗ 📝 AddWordViewModel.swift
+ ┃ ┣ 📂Home
+ ┃ ┃ ┣ 📂View
+ ┃ ┃ ┃ ┗ 📝 HomeView.swift
+ ┃ ┃ ┣ 📂ViewController
+ ┃ ┃ ┃ ┗ 📝 HomeViewController.swift
+ ┃ ┃ ┗ 📂ViewModel
+ ┃ ┃   ┗ 📝 HomeViewModel.swift
+ ┃ ┣ 📂MyStudy
+ ┃ ┃ ┣ 📂Cell
+ ┃ ┃ ┃ ┗ 📝 StudyWordCell.swift
+ ┃ ┃ ┣ 📂Utils
+ ┃ ┃ ┃ ┣ 📂Mock
+ ┃ ┃ ┃ ┃ ┣ 📝 UserDataMock.swift
+ ┃ ┃ ┃ ┃ ┗ 📝 WordEntityMock.swift
+ ┃ ┃ ┃ ┗ 📂Protocol
+ ┃ ┃ ┃   ┣ 📝 UIViewGuide.swift
+ ┃ ┃ ┃   ┗ 📝 ViewModelType.swift
+ ┃ ┃ ┣ 📂View
+ ┃ ┃ ┃ ┣ 📝 ProfileSectionView.swift
+ ┃ ┃ ┃ ┣ 📝 StatLabel.swift
+ ┃ ┃ ┃ ┣ 📝 StudyHistoryView.swift
+ ┃ ┃ ┃ ┗ 📝 StudyStatisticsView.swift
+ ┃ ┃ ┣ 📂ViewController
+ ┃ ┃ ┃ ┣ 📝 StudyHistoryViewController.swift
+ ┃ ┃ ┃ ┗ 📝 StudyStatisticsViewController.swift
+ ┃ ┃ ┗ 📂ViewModel
+ ┃ ┃   ┣ 📝 StudyHistoryViewModel.swift
+ ┃ ┃   ┗ 📝 StudyStatisticsViewModel.swift
+ ┃ ┗ 📂Quiz
+ ┃   ┣ 📂Components
+ ┃   ┃ ┣ 📝 QuizCardStackView.swift
+ ┃   ┃ ┣ 📝 QuizCardView.swift
+ ┃   ┃ ┗ 📝 QuizStatusView.swift
+ ┃   ┣ 📂Model
+ ┃   ┃ ┣ 📝 QuizViewInfo.swift
+ ┃   ┃ ┣ 📝 QuizView.swift
+ ┃   ┃ ┣ 📝 QuizViewController.swift
+ ┃   ┃ ┗ 📝 QuizViewModel.swift
+ ┃   ┗ 📂Shared
+ ┣ 📂Resource           # 리소스(애셋, Lottie, Info 등)
+ ┃ ┣ 📂Lottie
+ ┃ ┃ ┣ 🎞️ CelebrationAnimation.json
+ ┃ ┃ ┣ 🎞️ CoolEmojiAnimation.json
+ ┃ ┃ ┗ 🎞️ RaisedEmojiAnimation.json
+ ┃ ┣ 🖼️ Assets.xcassets
+ ┃ ┣ 📝 Info.plist
+ ┃ ┗ 📝 LaunchScreen.storyboard
+ ┣ 📂WordPaletteTests   # 단위 테스트
+ ┗ 📂WordPaletteUITests # UI 테스트
 ```
+
 > 각 폴더 역할은 # 주석 참고해서 간단히 확인할 수 있어요!
 
 ---
