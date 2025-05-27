@@ -10,6 +10,7 @@ import SnapKit
 import Then
 import RxSwift
 import RxRelay
+import Lottie
 
 final class QuizView: UIView {
     
@@ -27,6 +28,8 @@ final class QuizView: UIView {
     private let disposeBag = DisposeBag()
     
     // MARK: - UI Components
+    
+    private var animationView: LottieAnimationView?
     
     /// 퀴즈 화면 상단 타이틀 레이블 ("퀴즈 시간")
     private let titleLabel = UILabel().then {
@@ -84,6 +87,29 @@ final class QuizView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lottie Animation
+    
+    private func showAnimation(with name: String) {
+        animationView = LottieAnimationView(name: name)
+        animationView?.contentMode = .scaleAspectFit
+        
+        guard let animationView else { return }
+        addSubview(animationView)
+        animationView.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
+            $0.bottom.equalTo(quizStatusView.snp.top)
+        }
+        
+        // 애니메이션 실행
+        animationView.play { finished in
+            if finished {
+                animationView.removeFromSuperview()
+                self.animationView = nil
+            }
+        }
+    }
+    
     // MARK: - Update
     
     /// 초기 UI 업데이트
@@ -105,7 +131,6 @@ final class QuizView: UIView {
     func updateLevelButtons(with level: Level) {
         levelButtonView.updateButtonSelection(selected: level)
     }
-
 }
 
 // MARK: - Configure
@@ -183,6 +208,15 @@ private extension QuizView {
                 }
             }
             .bind(to: action)
+            .disposed(by: disposeBag)
+        
+        quizStatusView.action
+            .subscribe(with: self) { owner, action in
+                switch action {
+                case .remainingWordZero:
+                    owner.showAnimation(with: "CelebrationAnimation")
+                }
+            }
             .disposed(by: disposeBag)
         
         levelButtonView.bindButtonTapped()

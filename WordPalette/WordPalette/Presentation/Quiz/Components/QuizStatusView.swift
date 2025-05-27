@@ -8,8 +8,19 @@
 import UIKit
 import Then
 import SnapKit
+import RxRelay
 
 final class QuizStatusView: UIView {
+    
+    // MARK: - Action
+    
+    enum Action {
+        case remainingWordZero
+    }
+    
+    // MARK: - Properties
+    
+    let action = PublishRelay<Action>()
     
     // MARK: - UI Components
     
@@ -118,16 +129,18 @@ final class QuizStatusView: UIView {
     
     /// 퀴즈를 풀고 난 후 UI 업데이트
     func updateAfterAnswer(with isCorrect: Bool) {
-        let remaining = max(0, Int(remainingWordCountLabel.text ?? "0")! - 1)
-        let correct = Int(correctWordCountLabel.text ?? "0")!
-        let incorrect = Int(incorrectWordCountLabel.text ?? "0")!
-        
+        let remaining = max(0, (Int(remainingWordCountLabel.text ?? "0") ?? 0) - 1)
         remainingWordCountLabel.text = "\(remaining)"
         
         if isCorrect {
-            correctWordCountLabel.text = "\(correct + 1)"
+            correctWordCountLabel.text = "\((Int(correctWordCountLabel.text ?? "0") ?? 0) + 1)"
         } else {
-            incorrectWordCountLabel.text = "\(incorrect + 1)"
+            incorrectWordCountLabel.text = "\((Int(incorrectWordCountLabel.text ?? "0") ?? 0) + 1)"
+        }
+        
+        // 남은 단어가 0이면 액션 호출
+        if remaining == 0 {
+            action.accept(.remainingWordZero)
         }
     }
 }
