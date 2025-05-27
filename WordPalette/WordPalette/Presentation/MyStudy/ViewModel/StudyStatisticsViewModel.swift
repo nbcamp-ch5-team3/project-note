@@ -55,12 +55,11 @@ final class StudyStatisticsViewModel: ViewModelType {
         useCase.fetchWords(id: id)
             .subscribe(with: self) { owner, words in
                 let (all, memos, unMemos) = words
-                
                 // 모든 단어 리스트 일단 추가
                 owner.state.statisticData.accept(all)
                 
                 // 모두/암기/미암기 순으로 저장 (필요할 떄마다 statisticData에 저장)
-                [all, memos, unMemos].forEach { owner.words.append($0) }
+                owner.words = [all, memos, unMemos]
                 
                 // 암기/미암기 수량 저장
                 owner.state.memoStateData.accept((memos.count, unMemos.count))
@@ -70,6 +69,7 @@ final class StudyStatisticsViewModel: ViewModelType {
     
     /// 단어 리스트 저장
     private func setWordList(index: Int) {
+        guard !words.isEmpty else { return }
         state.statisticData.accept(words[index])
     }
 }
