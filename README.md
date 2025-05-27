@@ -68,6 +68,35 @@
 
 ## 📁 폴더 구조 & 역할
 
+### 🗂️ 요약된 폴더 구조
+
+```bash
+📦WordPalette
+ ┣ 📂App              # 앱 실행, DI, 라이프사이클 관리
+ ┣ 📂Data             # 데이터 계층(CORE DATA, 로컬, 저장소 구현체)
+ ┃ ┣ 📂CoreData           # CoreData 엔티티 및 스택, 매니저
+ ┃ ┣ 📂LocalDataSource    # 로컬(json) 데이터 관리
+ ┃ ┗ 📂RepositoryImpl     # 데이터 저장소 구현체
+ ┣ 📂Domain           # 비즈니스 로직(엔티티, 리포지토리, 유스케이스)
+ ┃ ┣ 📂Entity              # 핵심 데이터 구조 정의
+ ┃ ┣ 📂Repository          # 도메인 저장소 인터페이스
+ ┃ ┗ 📂UseCase             # 유스케이스(비즈니스 로직)
+ ┣ 📂Presentation     # UI, 화면, 뷰모델, 뷰컨트롤러
+ ┃ ┣ 📂AddWord             # 단어 추가 화면
+ ┃ ┣ 📂Home                # 메인(홈) 화면
+ ┃ ┣ 📂MyStudy             # 학습 이력/통계 화면
+ ┃ ┗ 📂Quiz                # 퀴즈 화면 및 컴포넌트
+ ┣ 📂Resource         # 리소스(애셋, Lottie, Info 등)
+ ┃ ┣ 📂Lottie              # Lottie 애니메이션 파일
+ ┃ ┣ 🖼️ Assets.xcassets     # 이미지 에셋
+ ┃ ┣ 📝 Info.plist          # 앱 정보 설정
+ ┃ ┗ 📝 LaunchScreen.storyboard # 런치 스크린
+ ┣ 📂WordPaletteTests   # 단위 테스트
+ ┗ 📂WordPaletteUITests # UI 테스트
+```
+
+### 🗂️ 전체 폴더 구조
+
 ```bash
 📦WordPalette  
  ┣ 📂App                # 앱 실행 및 DI, 델리게이트 등
