@@ -33,11 +33,6 @@ final class DIContainer {
         UserRepositoryImpl(coredataManager: coreDataManager)
     }
     
-//    ///
-//    var makeAddWordRepository: AddWordRepository {
-//        AddWordRepositoryImpl(localDataSource: localDataSource, unsolvedWordRepository: unsolvedRepository)
-//    }
-    
     // MARK: - 유즈케이스
     
     /// 학습 기록 및 통계 유즈케이스
@@ -55,6 +50,11 @@ final class DIContainer {
         UnsolvedMyWordUseCaseImpl(repository: makeUnsolvedRepository)
     }
 
+    /// 단어 추가 유즈케이스
+    private var makeAddWordUseCase: AddWordUseCase {
+        AddWordUseCaseImpl(repository: makeUnsolvedRepository)
+    }
+    
     // MARK: - ViewModel
     
     /// 나의 학습 기록 ViewModel
@@ -80,6 +80,11 @@ final class DIContainer {
         HomeViewModel(unsolvedMyWordUseCase: makeUnsolvedMyWordUseCase)
     }
 
+    /// 단어 추가 ViewModel
+    private var makeAddWordViewModel: AddWordViewModel {
+        AddWordViewModel(useCase: makeAddWordUseCase)
+    }
+
     // MARK: - ViewController
     
     /// 홈 ViewController
@@ -100,5 +105,10 @@ final class DIContainer {
     /// 학습 기록에 따른 통계 ViewController
     public func makeStudyStatisticsViewContoller(studyHistory: StudyHistory) -> StudyStatisticsViewController {
         StudyStatisticsViewController(studyHistory: studyHistory, viewModel: makeStudyStatisticsViewModel)
+    }
+    
+    /// 단어 추가 ViewController
+    public func makeAddWordViewController(selectedLevel: Level) -> AddWordViewController {
+        AddWordViewController(selectedLevel: selectedLevel, viewModel: makeAddWordViewModel)
     }
 }

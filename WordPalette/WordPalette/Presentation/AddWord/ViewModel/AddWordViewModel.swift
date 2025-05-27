@@ -8,14 +8,6 @@
 import UIKit
 import RxSwift
 
-// 단어 저장 결과
-//enum AddWordResult {
-//    case success(WordEntity)
-//    case fail(Error)
-//    case duplicate
-//    case duplicateInLevel(word: String, level: Level)
-//}
-
 // 단순화한 결과 타입
 enum AddWordResult {
     case success(WordEntity)
