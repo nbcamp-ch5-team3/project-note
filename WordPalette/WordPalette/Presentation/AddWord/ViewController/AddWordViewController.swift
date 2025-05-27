@@ -57,6 +57,11 @@ final class AddWordViewController: UIViewController {
         viewWillAppearSubject.onNext(())
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        navigationController?.popViewController(animated: false)
+      }
+
+    
     // MARK: - Setup
     private func setupTableViewCell() {
         addWordView.tableView.register(TableViewWordCell.self, forCellReuseIdentifier: TableViewWordCell.id)
@@ -102,7 +107,7 @@ final class AddWordViewController: UIViewController {
     private func bindOutput(_ output: AddWordViewModel.Output) {
         bindWordsOutput(output.words)
         bindAddResultOutput(output.addResult)
-        bindAlertOutput(output.showAlert)
+        bindResultMessage(output.resultMessage)
     }
     
     // MARK: - Individual Input Bindings
@@ -165,11 +170,11 @@ final class AddWordViewController: UIViewController {
     }
     
     /// Alert 메시지 바인딩
-    private func bindAlertOutput(_ showAlert: Observable<String>) {
-        showAlert
+    private func bindResultMessage(_ showToast: Observable<String>) {
+        showToast
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, message in
-                owner.showAlert(message: message)
+                owner.showToast(message: message)
             }
             .disposed(by: disposeBag)
     }
@@ -213,32 +218,8 @@ final class AddWordViewController: UIViewController {
     }
     
     /// Alert 표시
-    private func showAlert(message: String) {
-        // 이미 Alert가 표시 중인지 확인 (Alert 중복 방지)
-        if presentedViewController != nil {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                self?.showAlert(message: message)
-            }
-            return
-        }
-        
-        let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "확인", style: .default))
-        present(alert, animated: true)
-    }
-    
-    /// 단어 저장 확인 Alert 표시
-    private func showAddWordAlert(word: WordEntity) {
-        let alert = UIAlertController(
-            title: "내 단어장에 저장",
-            message: "\(word.word)을(를) 내 단어장에 저장하시겠습니까?",
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
-        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { [weak self] _ in
-            self?.addWordTapSubject.onNext(word)
-        }))
-        present(alert, animated: true)
+    private func resultMessage(message: String) {
+        showToast(message: message)
     }
 }
 
@@ -270,7 +251,7 @@ extension AddWordViewController: UITableViewDataSource, UITableViewDelegate {
         cell.addButtonTap
             .bind(with: self) { owner, _ in
                 owner.addedWordIndexPath = indexPath
-                owner.showAddWordAlert(word: data)
+                owner.addWordTapSubject.onNext(data)
             }
             .disposed(by: cell.disposeBag)
         
