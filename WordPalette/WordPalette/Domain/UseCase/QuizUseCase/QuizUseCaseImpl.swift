@@ -29,19 +29,13 @@ final class QuizUseCaseImpl: QuizUseCase {
     }
     
     func answerQuiz(word: WordEntity) -> Single<Bool> {
-        guard let isCorrect = word.isCorrect else {
-            return .just(false)
-        }
-        
-        if isCorrect {
-            // 맞힌 경우: unsolved에서 삭제 후 저장
-            return unsolvedWordRepository.deleteWord(by: word.id)
-                .flatMap { _ in
+        return unsolvedWordRepository.deleteWord(by: word.id)
+            .flatMap { isDeleted in
+                if isDeleted {
                     self.solvedWordRepository.saveWord(word: word)
+                } else {
+                    Single.just(false)
                 }
-        } else {
-            // 틀린 경우: 그냥 저장
-            return solvedWordRepository.saveWord(word: word)
-        }
+            }
     }
 }
