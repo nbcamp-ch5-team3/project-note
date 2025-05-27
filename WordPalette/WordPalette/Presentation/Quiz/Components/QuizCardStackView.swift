@@ -84,7 +84,7 @@ final class QuizCardStackView: UIView {
             card.removeFromSuperview()
             self.cardViews.removeLast()
             self.addPanGestureToTopCard()
-            cardViews.prefix(2).forEach { $0.setShadow() }
+            self.cardViews.suffix(2).forEach { $0.setShadow() }
             
             self.action.accept(.didSwipe(toLeft))
             if self.cardViews.isEmpty { self.action.accept(.didFinishQuiz) }
@@ -114,7 +114,7 @@ final class QuizCardStackView: UIView {
         }
         
         addPanGestureToTopCard()
-        cardViews.prefix(2).forEach { $0.setShadow() }
+        cardViews.suffix(2).forEach { $0.setShadow() }
     }
     
     /// 버튼 탭 시 스와이프처럼 카드 제거 처리
