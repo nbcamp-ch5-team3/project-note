@@ -30,13 +30,13 @@ final class AddWordViewModel {
     struct Output {
         let words: Observable<[WordEntity]>
         let addResult: Observable<AddWordResult>
-        let showAlert: Observable<String>
+        let resultMessage: Observable<String>
     }
     
     // MARK: - Output Subjects
     private let wordsSubject = BehaviorSubject<[WordEntity]>(value: [])
     private let addResultSubject = PublishSubject<AddWordResult>()
-    private let showAlertSubject = PublishSubject<String>()
+    private let resultMessageSubject = PublishSubject<String>()
     
     // MARK: - Properties
     private let useCase: AddWordUseCase
@@ -55,12 +55,12 @@ final class AddWordViewModel {
         bindSearch(input: input)
         bindAddWord(input: input)
         bindAddCustomWord(input: input)
-        bindAlert()
+        bindResultMessage()
         
         return Output(
             words: wordsSubject.asObservable(),
             addResult: addResultSubject.asObservable(),
-            showAlert: showAlertSubject.asObservable()
+            resultMessage: resultMessageSubject.asObservable()
         )
     }
     
@@ -127,16 +127,17 @@ final class AddWordViewModel {
             .disposed(by: disposeBag)
     }
     
-    // 6. 결과에 따라 Alert 출력
-    private func bindAlert() {
+    // 6. 결과에 따라 Toast 출력
+    private func bindResultMessage() {
         addResultSubject
             .compactMap { result in
                 switch result {
-                case .success: return "단어가 저장되었습니다."
+                case .success(let wordEntity):
+                    return "\(wordEntity.word) 단어가 저장되었습니다."
                 case .failure(let message): return message
                 }
             }
-            .bind(to: showAlertSubject)
+            .bind(to: resultMessageSubject)
             .disposed(by: disposeBag)
     }
 }
