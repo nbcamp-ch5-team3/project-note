@@ -9,7 +9,7 @@ final class HomeView: UIView {
     /// 단어 추가 label
     private let addWordLabel = UILabel().then {
         $0.text = "단어 추가"
-        $0.font = .boldSystemFont(ofSize: 32)
+        $0.font = .systemFont(ofSize: 32, weight: .heavy)
         $0.textColor = .black
     }
 
@@ -25,7 +25,7 @@ final class HomeView: UIView {
         let button = UIButton().then {
             $0.setTitle(level.rawValue, for: .normal)
             $0.setTitleColor(.white, for: .normal)
-            $0.titleLabel?.font = .boldSystemFont(ofSize: 26)
+            $0.titleLabel?.font = .systemFont(ofSize: 26, weight: .heavy)
             $0.layer.cornerRadius = 12
             $0.clipsToBounds = true
             $0.backgroundColor = {
@@ -42,7 +42,7 @@ final class HomeView: UIView {
     /// 내 단어장 label
     private let myWordLabel = UILabel().then {
         $0.text = "내 단어장"
-        $0.font = .boldSystemFont(ofSize: 32)
+        $0.font = .systemFont(ofSize: 32, weight: .heavy)
         $0.textColor = .black
     }
 
@@ -59,7 +59,7 @@ final class HomeView: UIView {
     let deleteAllButton = UIButton().then {
         $0.setTitle("전체 삭제", for: .normal)
         $0.setTitleColor(.white, for: .normal)
-        $0.titleLabel?.font = .boldSystemFont(ofSize: 18)
+        $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.backgroundColor = .customOrange
         $0.layer.cornerRadius = 12
         $0.clipsToBounds = true
@@ -89,7 +89,7 @@ final class HomeView: UIView {
         ].forEach { addSubview($0) }
 
         addWordLabel.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(24)
+            $0.top.equalTo(safeAreaLayoutGuide)
             $0.leading.equalTo(safeAreaLayoutGuide).offset(24)
         }
 
@@ -107,7 +107,7 @@ final class HomeView: UIView {
         levelButtonView.snp.makeConstraints {
             $0.top.equalTo(myWordLabel.snp.bottom).offset(18)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(24)
-            $0.height.equalTo(28)
+            $0.height.equalTo(32)
         }
 
         myWordTableView.snp.makeConstraints {

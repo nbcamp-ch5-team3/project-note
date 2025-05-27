@@ -21,8 +21,8 @@ final class LevelButtonView: UIView {
         let button = UIButton().then {
             $0.setTitle(level.rawValue, for: .normal)
             $0.setTitleColor(.white, for: .normal)
-            $0.titleLabel?.font = .boldSystemFont(ofSize: 16)
-            $0.layer.cornerRadius = 12
+            $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .heavy)
+            $0.layer.cornerRadius = 16
             $0.clipsToBounds = true
         }
         return button
@@ -51,9 +51,22 @@ final class LevelButtonView: UIView {
     func updateButtonSelection(selected: Level) {
         for (index, button) in levelButtons.enumerated() {
             let level = levels[index]
-            button.backgroundColor = (level == selected) ? .customMango : .systemGray5
+
+            if level == selected {
+                switch level {
+                case .beginner:
+                    button.backgroundColor = .customBanana
+                case .intermediate:
+                    button.backgroundColor = .customOrange
+                case .advanced:
+                    button.backgroundColor = .customStrawBerry
+                }
+            } else {
+                button.backgroundColor = .systemGray5
+            }
         }
     }
+
 
     // 버튼이 눌렸음을 Rx로 나타내는 메서드
     func bindButtonTapped() -> Observable<Level> {

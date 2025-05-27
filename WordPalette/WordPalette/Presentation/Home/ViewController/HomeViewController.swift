@@ -84,6 +84,11 @@ final class HomeViewController: UIViewController {
         zip(homeView.levelSearchButtons, homeView.levels).forEach { button, level in
             button.rx.tap
                 .bind(with: self) { owner, _ in
+                    // VM 상태 변경
+                    owner.homeViewModel.selectedLevelRelay.accept(level)
+                    // 버튼 UI 즉시 업데이트
+                    owner.homeView.levelButtonView.updateButtonSelection(selected: level)
+
                     let addWordVC = self.diContainer.makeAddWordViewController(selectedLevel: level) // 레벨별 검색 페이지로 이동
                     owner.navigationController?.pushViewController(addWordVC, animated: true)
                 }
