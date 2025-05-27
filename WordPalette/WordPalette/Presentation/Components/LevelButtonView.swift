@@ -62,7 +62,7 @@ final class LevelButtonView: UIView {
                     button.backgroundColor = .customStrawBerry
                 }
             } else {
-                button.backgroundColor = .systemGray5
+                button.backgroundColor = .systemGray2
             }
         }
     }

@@ -81,19 +81,13 @@ final class HomeViewController: UIViewController {
 
     /// 단어 검색 페이지로 넘어가는 메서드
     private func bindToSearchButton() {
-        zip(homeView.levelSearchButtons, homeView.levels).forEach { button, level in
-            button.rx.tap
-                .bind(with: self) { owner, _ in
-                    // VM 상태 변경
-                    owner.homeViewModel.selectedLevelRelay.accept(level)
-                    // 버튼 UI 즉시 업데이트
-                    owner.homeView.levelButtonView.updateButtonSelection(selected: level)
-
-                    let addWordVC = self.diContainer.makeAddWordViewController(selectedLevel: level) // 레벨별 검색 페이지로 이동
-                    owner.navigationController?.pushViewController(addWordVC, animated: true)
-                }
-                .disposed(by: disposeBag)
-        }
+        homeView.toSearchWordButton.rx.tap
+            .withLatestFrom(homeViewModel.selectedLevelRelay) // 가장 최근에 선택된 레벨
+            .bind(with: self) { owner, level in
+                let addWordVC = self.diContainer.makeAddWordViewController(selectedLevel: level) // 레벨별 검색 페이지로 이동
+                owner.navigationController?.pushViewController(addWordVC, animated: true)
+            }
+            .disposed(by: disposeBag)
     }
 
     /// Cell별 Data 바인딩 메서드
@@ -159,14 +153,16 @@ extension HomeViewController: UITableViewDelegate {
         _ tableView: UITableView,
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
-        let delete = UIContextualAction(style: .destructive, title: "삭제") { [weak self] _, _, completion in
+        let delete = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, completion in
             guard let self = self else { return }
             let word = self.homeViewModel.wordListRelay.value[indexPath.row]
             self.homeViewModel.deleteWord(word)
             completion(true)
         }
 
-        delete.backgroundColor = .customOrange
+        delete.image = UIImage(systemName: "trash")
+        delete.backgroundColor = .systemGray2
+
         return UISwipeActionsConfiguration(actions: [delete])
     }
 }
