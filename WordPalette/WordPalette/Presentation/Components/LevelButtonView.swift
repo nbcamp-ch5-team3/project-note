@@ -22,7 +22,7 @@ final class LevelButtonView: UIView {
             $0.setTitle(level.rawValue, for: .normal)
             $0.setTitleColor(.white, for: .normal)
             $0.titleLabel?.font = .boldSystemFont(ofSize: 16)
-            $0.layer.cornerRadius = 12
+            $0.layer.cornerRadius = 16
             $0.clipsToBounds = true
         }
         return button

@@ -89,7 +89,7 @@ final class HomeView: UIView {
         ].forEach { addSubview($0) }
 
         addWordLabel.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(24)
+            $0.top.equalTo(safeAreaLayoutGuide)
             $0.leading.equalTo(safeAreaLayoutGuide).offset(24)
         }
 
@@ -107,7 +107,7 @@ final class HomeView: UIView {
         levelButtonView.snp.makeConstraints {
             $0.top.equalTo(myWordLabel.snp.bottom).offset(18)
             $0.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(24)
-            $0.height.equalTo(28)
+            $0.height.equalTo(32)
         }
 
         myWordTableView.snp.makeConstraints {
