@@ -10,6 +10,7 @@ import SnapKit
 import Then
 import RxSwift
 import RxRelay
+import Lottie
 
 final class QuizView: UIView {
     
@@ -27,6 +28,8 @@ final class QuizView: UIView {
     private let disposeBag = DisposeBag()
     
     // MARK: - UI Components
+    
+    private var animationView: LottieAnimationView?
     
     /// 퀴즈 화면 상단 타이틀 레이블 ("퀴즈 시간")
     private let titleLabel = UILabel().then {
@@ -84,6 +87,30 @@ final class QuizView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lottie Animation
+    
+    private func showAnimation(
+        with name: String,
+        constraints: (_ animationView: LottieAnimationView, _ make: ConstraintMaker) -> Void
+    ) {
+        removeAnimationView()
+        
+        let animationView = LottieAnimationView(name: name)
+        animationView.contentMode = .scaleAspectFit
+        self.animationView = animationView
+
+        addSubview(animationView)
+        animationView.snp.makeConstraints { make in
+            constraints(animationView, make)
+        }
+
+        animationView.play { [weak self] finished in
+            if finished {
+                self?.removeAnimationView()
+            }
+        }
+    }
+    
     // MARK: - Update
     
     /// 초기 UI 업데이트
@@ -105,7 +132,11 @@ final class QuizView: UIView {
     func updateLevelButtons(with level: Level) {
         levelButtonView.updateButtonSelection(selected: level)
     }
-
+    
+    func removeAnimationView() {
+        animationView?.removeFromSuperview()
+        self.animationView = nil
+    }
 }
 
 // MARK: - Configure
@@ -185,6 +216,33 @@ private extension QuizView {
             .bind(to: action)
             .disposed(by: disposeBag)
         
+        quizStatusView.action
+            .subscribe(with: self) { owner, action in
+                switch action {
+                case .remainingWordZero:
+                    owner.showAnimation(with: "CelebrationAnimation") { _, make in
+                        make.top.equalToSuperview()
+                        make.horizontalEdges.equalToSuperview()
+                        make.bottom.equalTo(owner.quizStatusView.snp.top)
+                    }
+
+                case .correctMilestoneReached:
+                    owner.showAnimation(with: "CoolEmojiAnimation") { _, make in
+                        make.top.equalTo(owner.titleLabel.snp.bottom).offset(50)
+                        make.centerX.equalToSuperview()
+                        make.size.equalTo(70)
+                    }
+
+                case .incorrectMilestoneReached:
+                    owner.showAnimation(with: "RaisedEmojiAnimation") { _, make in
+                        make.top.equalTo(owner.titleLabel.snp.bottom).offset(50)
+                        make.centerX.equalToSuperview()
+                        make.size.equalTo(70)
+                    }
+                }
+            }
+            .disposed(by: disposeBag)
+
         levelButtonView.bindButtonTapped()
             .map { QuizView.Action.didSelectLevel($0) }
             .bind(to: action)
