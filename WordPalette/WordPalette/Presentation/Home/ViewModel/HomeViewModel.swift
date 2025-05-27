@@ -24,6 +24,9 @@ final class HomeViewModel {
                 guard let self = self else { return .just([]) }
                 return self.unsolvedMyWordUseCase.fetchWords(by: level)
             }
+            .map { wordList in
+                return wordList.sorted { $0.word.lowercased() < $1.word.lowercased() }
+            } // 저장된 단어 오름차순 정렬
             .bind(to: wordListRelay)
             .disposed(by: disposeBag)
     }
