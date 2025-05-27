@@ -148,7 +148,7 @@ final class StudyStatisticsView: UIView, UIViewGuide {
     func configure(date:Date, memo: Int, unMemo: Int) {
         dateLabel.text = date.toString()
         memorizationLabel.configure(num: "\(memo)개", text: "암기 완료")
-        unMemorizationLabel.configure(num: "\(unMemo)", text: "미암기")
+        unMemorizationLabel.configure(num: "\(unMemo)개", text: "미암기")
         
         let total = memo + unMemo
         let rate = total == 0 ? 0 : Int((Double(memo) / Double(total)) * 100)
