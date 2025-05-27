@@ -29,6 +29,7 @@ final class StudyWordCell: UITableViewCell, UIViewGuide {
     func configureAttributes() {
         
         selectionStyle = .none
+        backgroundColor = .clear
         
         wordLabel.do {
             $0.textColor = .black
