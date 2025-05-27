@@ -15,7 +15,6 @@ final class QuizViewModel {
     
     enum State {
         case quizViewInfo(QuizViewInfo)
-        case quizWords([WordEntity])
     }
     
     enum Action {
@@ -53,15 +52,15 @@ final class QuizViewModel {
                 case .answer(let isCorrect):
                     self.answerQuiz(isCorrect)
                 case .selectLevel(let level):
-                    self.fetchQuizWords(level: level)
+                    self.fetchQuizViewInfo(level: level)
                 }
             }
             .disposed(by: disposeBag)
     }
     
-    private func fetchQuizViewInfo() {
+    private func fetchQuizViewInfo(level: Level = .beginner) {
         Single.zip(
-            useCase.fetchUnsolvedWords(level: .beginner),
+            useCase.fetchUnsolvedWords(level: level),
             useCase.fetchTodayWords()
         )
         .map { [weak self] unsolvedWords, todaySolvedWords in
@@ -95,14 +94,6 @@ final class QuizViewModel {
                     print("저장 실패")
                 }
             })
-            .disposed(by: disposeBag)
-    }
-    
-    private func fetchQuizWords(level: Level) {
-        useCase.fetchUnsolvedWords(level: level)
-            .subscribe(with: self) { owner, words in
-                owner.state.accept(.quizWords(words))
-            }
             .disposed(by: disposeBag)
     }
 }

@@ -57,8 +57,6 @@ private extension QuizViewController {
                 switch state {
                 case .quizViewInfo(let quizViewInfo):
                     owner.quizView.update(with: quizViewInfo)
-                case .quizWords(let words):
-                    owner.quizView.updateQuizCardStackView(with: words)
                 }
             }
             .disposed(by: disposeBag)
