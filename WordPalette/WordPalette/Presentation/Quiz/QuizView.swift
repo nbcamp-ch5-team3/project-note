@@ -162,6 +162,7 @@ private extension QuizView {
             $0.top.equalTo(quizStatusView.snp.bottom).offset(10)
             $0.horizontalEdges.equalToSuperview().inset(16)
             $0.bottom.equalTo(safeAreaLayoutGuide).inset(10)
+            $0.height.equalTo(32)
         }
     }
     
