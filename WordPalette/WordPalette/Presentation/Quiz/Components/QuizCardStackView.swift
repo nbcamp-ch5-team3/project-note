@@ -11,10 +11,16 @@ import RxRelay
 
 final class QuizCardStackView: UIView {
     
+    // MARK: - Action
+    
+    enum Action {
+        case didSwipe(Bool)
+        case didFinishQuiz
+    }
+    
     // MARK: - Properties
     
-    let swipeResult = PublishRelay<Bool>()
-    
+    let action = PublishRelay<Action>()
     private var cardViews: [QuizCardView] = []
     
     // MARK: - Gesture
@@ -61,16 +67,16 @@ final class QuizCardStackView: UIView {
     }
     
     /// 카드 삭제 애니메이션 실행 + 다음 카드에 제스처 추가 + 결과 전파
-    private func dismissCard(_ card: UIView, toLeft: Bool) {
-        guard !cardViews.isEmpty else { return }
-        
+    private func dismissCard(_ card: UIView, toLeft: Bool) {        
         let direction: CGFloat = toLeft ? -1 : 1
         let translationX: CGFloat = direction * 1000
         let rotation: CGFloat = direction * 0.4
         
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
 
-        UIView.animate(withDuration: 0.6, animations: {
+        UIView.animate(
+            withDuration: 0.6,
+            animations: {
             card.transform = CGAffineTransform(translationX: translationX, y: 0)
                 .rotated(by: rotation)
             card.alpha = 0
@@ -78,7 +84,9 @@ final class QuizCardStackView: UIView {
             card.removeFromSuperview()
             self.cardViews.removeLast()
             self.addPanGestureToTopCard()
-            self.swipeResult.accept(toLeft)
+            
+            self.action.accept(.didSwipe(toLeft))
+            if self.cardViews.isEmpty { self.action.accept(.didFinishQuiz) }
         })
     }
     
@@ -108,7 +116,7 @@ final class QuizCardStackView: UIView {
     }
     
     /// 버튼 탭 시 스와이프처럼 카드 제거 처리
-    func answerTopCard(toLeft: Bool) {
+    func answerTopCard(with toLeft: Bool) {
         guard let topCard = cardViews.last else { return }
         dismissCard(topCard, toLeft: toLeft)
     }

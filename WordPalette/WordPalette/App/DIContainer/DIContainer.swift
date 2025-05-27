@@ -24,7 +24,7 @@ final class DIContainer {
     }
     
     /// 이미 푼 문제를 핸들링할 레포지토리
-    private var makeSoveldRepository: SolvedWordRepository {
+    private var makeSolveddRepository: SolvedWordRepository {
         SolvedWordRepositoryImpl(coredataManager: coreDataManager)
     }
     
@@ -37,7 +37,14 @@ final class DIContainer {
     
     /// 학습 기록 및 통계 유즈케이스
     private var makeStudyHistoryUseCase: StudyHistoryUseCase {
-        StudyHistoryUseCaseImpl(userRepository: makeUserRepository, solvedRepository: makeSoveldRepository)
+        StudyHistoryUseCaseImpl(userRepository: makeUserRepository, solvedRepository: makeSolveddRepository)
+    }
+    
+    private var makeQuizUseCase: QuizUseCase {
+        QuizUseCaseImpl(
+            unsolvedWordRepository: makeUnsolvedRepository,
+            solvedWordRepository: makeSolveddRepository
+        )
     }
     
 //    ///
@@ -68,7 +75,7 @@ final class DIContainer {
     }
     
     private var makeQuizViewModel: QuizViewModel {
-        QuizViewModel()
+        QuizViewModel(useCase: makeQuizUseCase)
     }
     
 //    ///

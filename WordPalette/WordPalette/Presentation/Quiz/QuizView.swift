@@ -9,15 +9,21 @@ import UIKit
 import SnapKit
 import Then
 import RxSwift
+import RxRelay
 
 final class QuizView: UIView {
     
+    // MARK: - Action
+    
+    enum Action {
+        case didSwipe(Bool)
+        case didFinishQuiz
+        case didSelectLevel(Level)
+    }
+    
     // MARK: - Properties
     
-    /// 퀴즈 정답 여부
-    var isCorrectQuiz: Observable<Bool> {
-        return quizCardStackView.swipeResult.asObservable()
-    }
+    let action = PublishRelay<Action>()
     private let disposeBag = DisposeBag()
     
     // MARK: - UI Components
@@ -63,6 +69,10 @@ final class QuizView: UIView {
     
     private let quizStatusView = QuizStatusView()
     
+    private let levelButtonView = LevelButtonView().then {
+        $0.updateButtonSelection(selected: .beginner)
+    }
+    
     // MARK: - Initailizer
     
     override init(frame: CGRect) {
@@ -78,18 +88,26 @@ final class QuizView: UIView {
     
     /// 초기 UI 업데이트
     func update(with quizInfo: QuizViewInfo) {
-        let cards = quizInfo.words.map {
-            let card = QuizCardView()
-            card.update(word: $0.word, example: $0.example, meaning: $0.meaning)
-            return card
-        }
-        quizCardStackView.setCards(cards)
+        updateQuizCardStackView(with: quizInfo.words)
         quizStatusView.update(with: quizInfo)
     }
     
     /// 퀴즈를 풀고 난 후 UI 업데이트
     func updateAfterAnswer(with isCorrect: Bool) {
         quizStatusView.updateAfterAnswer(with: isCorrect)
+    }
+    
+    func updateQuizCardStackView(with words: [WordEntity]) {
+        let cards = words.map {
+            let card = QuizCardView()
+            card.update(word: $0.word, example: $0.example, meaning: $0.meaning)
+            return card
+        }
+        quizCardStackView.setCards(cards)
+    }
+    
+    func updateLevelButtons(with level: Level) {
+        levelButtonView.updateButtonSelection(selected: level)
     }
 
 }
@@ -114,6 +132,7 @@ private extension QuizView {
             quizCardStackView,
             choiceStackView,
             quizStatusView,
+            levelButtonView
         ].forEach { addSubview($0) }
     }
     
@@ -137,21 +156,41 @@ private extension QuizView {
         quizStatusView.snp.makeConstraints {
             $0.top.greaterThanOrEqualTo(choiceStackView.snp.bottom).offset(20)
             $0.horizontalEdges.equalToSuperview().inset(20)
-            $0.bottom.equalToSuperview().inset(100)
+        }
+        
+        levelButtonView.snp.makeConstraints {
+            $0.top.equalTo(quizStatusView.snp.bottom).offset(10)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.bottom.equalTo(safeAreaLayoutGuide).inset(10)
         }
     }
     
     func setBindings() {
-        correctButton.rx.tap
-            .bind(with: self) { owner, _ in
-                owner.quizCardStackView.answerTopCard(toLeft: true)
+        Observable.merge(
+            correctButton.rx.tap.map { true },
+            incorrectButton.rx.tap.map { false }
+        )
+        .throttle(.milliseconds(1_000), scheduler: MainScheduler.instance)
+        .subscribe(with: self) { owner, isCorrect in
+            owner.quizCardStackView.answerTopCard(with: isCorrect)
+        }
+        .disposed(by: disposeBag)
+        
+        quizCardStackView.action
+            .map { stackAction -> QuizView.Action in
+                switch stackAction {
+                case .didSwipe(let isCorrect):
+                    return .didSwipe(isCorrect)
+                case .didFinishQuiz:
+                    return .didFinishQuiz
+                }
             }
+            .bind(to: action)
             .disposed(by: disposeBag)
-
-        incorrectButton.rx.tap
-            .bind(with: self) { owner, _ in
-                owner.quizCardStackView.answerTopCard(toLeft: false)
-            }
+        
+        levelButtonView.bindButtonTapped()
+            .map { QuizView.Action.didSelectLevel($0) }
+            .bind(to: action)
             .disposed(by: disposeBag)
     }
 }

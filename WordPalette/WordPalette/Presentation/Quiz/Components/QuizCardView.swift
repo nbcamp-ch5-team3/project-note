@@ -36,13 +36,6 @@ final class QuizCardView: UIView {
         $0.font = .systemFont(ofSize: 15)
     }
     
-    private let meaningLable = UILabel().then {
-        $0.textColor = .black
-        $0.textAlignment = .center
-        $0.font = .systemFont(ofSize: 32, weight: .bold)
-        $0.isHidden = true
-    }
-    
     /// 수직 스택뷰 (단어, 예문)
     private lazy var wordStackView = UIStackView(
         arrangedSubviews: [
@@ -52,6 +45,13 @@ final class QuizCardView: UIView {
     ).then {
         $0.axis = .vertical
         $0.spacing = 8
+    }
+    
+    private let meaningLable = UILabel().then {
+        $0.textColor = .black
+        $0.textAlignment = .center
+        $0.font = .systemFont(ofSize: 32, weight: .bold)
+        $0.isHidden = true
     }
     
     /// 번역 확인 버튼
@@ -72,6 +72,8 @@ final class QuizCardView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Method
+    
     private func handleCardFlip() {
         isFront.toggle()
         
@@ -79,14 +81,14 @@ final class QuizCardView: UIView {
             with: self,
             duration: 0.5,
             options: isFront ? .transitionFlipFromRight : .transitionFlipFromLeft) {
-                self.backgroundColor = self.isFront ? .white : .customMango
                 self.updateCardFace()
             }
     }
     
     private func updateCardFace() {
-        wordLabel.isHidden = !isFront   // 뒷면일때 Hidden
-        exampleLabel.isHidden = !isFront
+        backgroundColor = isFront ? .white : .customMango
+        
+        wordStackView.isHidden = !isFront   // 뒷면일때 Hidden
         meaningLable.isHidden = isFront // 앞면일때 Hidden
     }
 
