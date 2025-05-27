@@ -89,7 +89,7 @@ final class AddWordModalViewController: UIViewController {
         checkDuplicate(word) { [weak self] isDuplicate, level in
             DispatchQueue.main.async {
                 if isDuplicate {
-                    let message = level != nil ? "\(level!.rawValue)에 이미 있는 단어입니다." : "이미 등록된 단어입니다."
+                    let message = (level != nil) ? "\(level!.rawValue)에 이미 있는 단어입니다." : "이미 등록된 단어입니다."
                     self?.showAlert(message: message)
                 } else {
                     self?.showConfirmationAlert(word: word, meaning: meaning, example: example)
