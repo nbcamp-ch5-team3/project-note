@@ -56,13 +56,12 @@
 
 ## ✨ 데모 & 스크린샷
 
-| ![메인화면](이미지URL1) | ![단어추가](이미지URL2) | ![퀴즈](이미지URL3) | ![통계](이미지URL4) |
+| [메인화면] | [단어추가] | [퀴즈] | [나의학습(통계)] |
 | :--------------------: | :------------------: | :-------------------: | :-------------------: |
-| ![메인화면2](이미지URL5) | ![+버튼추가](이미지URL6) | ![암기미암기체크](이미지URL7) | ![캘린더사용](이미지URL8) |
-| ![메인화면3](이미지URL9) | ![직접추가](이미지URL10) | ![번역확인](이미지URL11) | ![날짜확인](이미지URL12) |
-| ![메인화면4](이미지URL13) | ![검색하기](이미지URL14) | ![퀴즈탭바선택](이미지URL15) | ![캘린더변화확인](이미지URL16) |
+| ![난이도확인](https://github.com/user-attachments/assets/3ccf0fb0-1c44-4fc8-9bab-af44ecc43cde) | ![+버튼추가](https://github.com/user-attachments/assets/107e19b4-1977-4ea3-9403-0763b69d8704) | ![난이도선택](https://github.com/user-attachments/assets/68e5a30b-4c2d-4b37-bd97-3c95be455f22) | ![캘린더사용](https://github.com/user-attachments/assets/7bb50ebb-2937-4e85-aa1d-9969302e25b7) |
+| ![개별삭제](https://github.com/user-attachments/assets/095b38e6-1387-47ed-b52c-4be040182d8c) | ![직접단어추가](https://github.com/user-attachments/assets/4c42e7d1-857a-4763-a503-050f867385d6) | ![암기미암기체크](https://github.com/user-attachments/assets/a1a0e717-a738-481c-b5ae-7ec476486573) | ![학습내용확인](https://github.com/user-attachments/assets/6e88555d-018d-419f-94c3-1edc12b787d8) |
+| ![전체삭제](https://github.com/user-attachments/assets/35568805-cce0-442c-94d6-f9021863600c) | ![검색하기](https://github.com/user-attachments/assets/f131bff3-8b11-4a3a-bc39-fb1b4a9478f1) | ![번역확인](https://github.com/user-attachments/assets/5e8db9e2-c170-470a-94a2-38cdf3f5c16a) | ![레벨변화](https://github.com/user-attachments/assets/d06031fd-5646-4f71-b229-74b569cac9fc) 
 
-> 이미지URL 자리에 실제 이미지 주소를 넣어주세요!
 
 ---
 
