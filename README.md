@@ -58,10 +58,9 @@
 
 | [메인화면] | [단어추가] | [퀴즈] | [나의학습(통계)] |
 | :--------------------: | :------------------: | :-------------------: | :-------------------: |
-| ![난이도확인](https://github.com/user-attachments/assets/3ccf0fb0-1c44-4fc8-9bab-af44ecc43cde) | ![+버튼추가](https://github.com/user-attachments/assets/107e19b4-1977-4ea3-9403-0763b69d8704) | ![난이도선택](https://github.com/user-attachments/assets/68e5a30b-4c2d-4b37-bd97-3c95be455f22) | ![캘린더사용](https://github.com/user-attachments/assets/7bb50ebb-2937-4e85-aa1d-9969302e25b7) |
-| ![개별삭제](https://github.com/user-attachments/assets/095b38e6-1387-47ed-b52c-4be040182d8c) | ![직접단어추가](https://github.com/user-attachments/assets/4c42e7d1-857a-4763-a503-050f867385d6) | ![암기미암기체크](https://github.com/user-attachments/assets/a1a0e717-a738-481c-b5ae-7ec476486573) | ![학습내용확인](https://github.com/user-attachments/assets/6e88555d-018d-419f-94c3-1edc12b787d8) |
-| ![전체삭제](https://github.com/user-attachments/assets/35568805-cce0-442c-94d6-f9021863600c) | ![검색하기](https://github.com/user-attachments/assets/f131bff3-8b11-4a3a-bc39-fb1b4a9478f1) | ![번역확인](https://github.com/user-attachments/assets/5e8db9e2-c170-470a-94a2-38cdf3f5c16a) | ![레벨변화](https://github.com/user-attachments/assets/d06031fd-5646-4f71-b229-74b569cac9fc) 
-
+| 난이도 확인![난이도확인](https://github.com/user-attachments/assets/3ccf0fb0-1c44-4fc8-9bab-af44ecc43cde) | +버튼추가![+버튼추가](https://github.com/user-attachments/assets/107e19b4-1977-4ea3-9403-0763b69d8704) | 레벨선택학습![난이도선택](https://github.com/user-attachments/assets/68e5a30b-4c2d-4b37-bd97-3c95be455f22) | 캘린더사용![캘린더사용](https://github.com/user-attachments/assets/7bb50ebb-2937-4e85-aa1d-9969302e25b7) |
+| 개별삭제![개별삭제](https://github.com/user-attachments/assets/095b38e6-1387-47ed-b52c-4be040182d8c) | 직접단어추가![직접단어추가](https://github.com/user-attachments/assets/4c42e7d1-857a-4763-a503-050f867385d6) | 암기미암기체크![암기미암기체크](https://github.com/user-attachments/assets/a1a0e717-a738-481c-b5ae-7ec476486573) | 학습내용확인![학습내용확인](https://github.com/user-attachments/assets/6e88555d-018d-419f-94c3-1edc12b787d8) |
+| 전체삭제![전체삭제](https://github.com/user-attachments/assets/35568805-cce0-442c-94d6-f9021863600c) | 검색하기![검색하기](https://github.com/user-attachments/assets/f131bff3-8b11-4a3a-bc39-fb1b4a9478f1) | 번역확인![번역확인](https://github.com/user-attachments/assets/5e8db9e2-c170-470a-94a2-38cdf3f5c16a) | 레벨변화![레벨변화](https://github.com/user-attachments/assets/d06031fd-5646-4f71-b229-74b569cac9fc) 
 
 ---
 
@@ -93,127 +92,6 @@
  ┣ 📂WordPaletteTests   # 단위 테스트
  ┗ 📂WordPaletteUITests # UI 테스트
 ```
-
-### 🗂️ 전체 폴더 구조
-
-```bash
-📦WordPalette  
- ┣ 📂App                # 앱 실행 및 DI, 델리게이트 등
- ┃ ┣ 📂DIContainer
- ┃ ┃ ┗ 📝 DIContainer.swift
- ┃ ┣ 📝 AppDelegate.swift
- ┃ ┗ 📝 SceneDelegate.swift
- ┣ 📂Data               # 데이터 관리 (CoreData, 로컬, 저장소 구현)
- ┃ ┣ 📂CoreData
- ┃ ┃ ┣ 📂Object
- ┃ ┃ ┃ ┣ 📝 SolvedWordObject+CoreDataClass.swift
- ┃ ┃ ┃ ┣ 📝 SolvedWordObject+CoreDataProperties.swift
- ┃ ┃ ┃ ┣ 📝 StudyObject+CoreDataClass.swift
- ┃ ┃ ┃ ┣ 📝 StudyObject+CoreDataProperties.swift
- ┃ ┃ ┃ ┣ 📝 UnsolvedWordObject+CoreDataClass.swift
- ┃ ┃ ┃ ┣ 📝 UnsolvedWordObject+CoreDataProperties.swift
- ┃ ┃ ┃ ┣ 📝 UserObject+CoreDataClass.swift
- ┃ ┃ ┃ ┗ 📝 UserObject+CoreDataProperties.swift
- ┃ ┃ ┣ 📝 CoreDataErrorType.swift
- ┃ ┃ ┣ 📝 CoreDataManager.swift
- ┃ ┃ ┣ 📝 CoreDataStack.swift
- ┃ ┃ ┣ 📝 TestCoreDataStack.swift
- ┃ ┃ ┗ 📄 WordPalette.xcdatamodeld
- ┃ ┣ 📂LocalDataSource
- ┃ ┃ ┣ 📂json
- ┃ ┃ ┣ 📝 Level+FileName.swift
- ┃ ┃ ┣ 📝 WordItem.swift
- ┃ ┃ ┗ 📝 WordLocalDataSource.swift
- ┃ ┗ 📂RepositoryImpl
- ┃   ┣ 📝 SolvedWordRepositoryImpl.swift
- ┃   ┣ 📝 UnsolvedWordRepositoryImpl.swift
- ┃   ┗ 📝 UserRepositoryImpl.swift
- ┣ 📂Domain             # 비즈니스 로직, 엔티티, 리포지토리, 유스케이스
- ┃ ┣ 📂Entity
- ┃ ┃ ┣ 📝 Level.swift
- ┃ ┃ ┣ 📝 StudyHistory.swift
- ┃ ┃ ┣ 📝 TierType.swift
- ┃ ┃ ┣ 📝 UserData.swift
- ┃ ┃ ┗ 📝 WordEntity.swift
- ┃ ┣ 📂Repository
- ┃ ┃ ┣ 📝 SolvedWordRepository.swift
- ┃ ┃ ┣ 📝 UnsolvedWordRepository.swift
- ┃ ┃ ┗ 📝 UserRepository.swift
- ┃ ┗ 📂UseCase
- ┃   ┣ 📂AddWord
- ┃   ┃ ┣ 📝 AddWordUseCase.swift
- ┃   ┃ ┗ 📝 AddWordUseCaseImpl.swift
- ┃   ┣ 📂QuizUseCase
- ┃   ┃ ┣ 📝 QuizUseCase.swift
- ┃   ┃ ┗ 📝 QuizUseCaseImpl.swift
- ┃   ┣ 📂StudyHistoryUseCase
- ┃   ┃ ┣ 📝 StudyHistoryUseCase.swift
- ┃   ┃ ┗ 📝 StudyHistoryUseCaseImpl.swift
- ┃   ┗ 📂UnsolvedMyWordUseCase
- ┃     ┣ 📝 UnsolvedMyWordUseCase.swift
- ┃     ┗ 📝 UnsolvedMyWordUseCaseImpl.swift
- ┣ 📂Presentation       # 화면(UI), 뷰모델, 뷰컨트롤러 등
- ┃ ┣ 📂AddWord
- ┃ ┃ ┣ 📂View
- ┃ ┃ ┃ ┣ 📂Cell
- ┃ ┃ ┃ ┃ ┣ 📝 AddWordModalView.swift
- ┃ ┃ ┃ ┃ ┗ 📝 AddWordView.swift
- ┃ ┃ ┣ 📂ViewController
- ┃ ┃ ┃ ┣ 📝 AddWordModalViewController.swift
- ┃ ┃ ┃ ┗ 📝 AddWordViewController.swift
- ┃ ┃ ┗ 📂ViewModel
- ┃ ┃   ┗ 📝 AddWordViewModel.swift
- ┃ ┣ 📂Home
- ┃ ┃ ┣ 📂View
- ┃ ┃ ┃ ┗ 📝 HomeView.swift
- ┃ ┃ ┣ 📂ViewController
- ┃ ┃ ┃ ┗ 📝 HomeViewController.swift
- ┃ ┃ ┗ 📂ViewModel
- ┃ ┃   ┗ 📝 HomeViewModel.swift
- ┃ ┣ 📂MyStudy
- ┃ ┃ ┣ 📂Cell
- ┃ ┃ ┃ ┗ 📝 StudyWordCell.swift
- ┃ ┃ ┣ 📂Utils
- ┃ ┃ ┃ ┣ 📂Mock
- ┃ ┃ ┃ ┃ ┣ 📝 UserDataMock.swift
- ┃ ┃ ┃ ┃ ┗ 📝 WordEntityMock.swift
- ┃ ┃ ┃ ┗ 📂Protocol
- ┃ ┃ ┃   ┣ 📝 UIViewGuide.swift
- ┃ ┃ ┃   ┗ 📝 ViewModelType.swift
- ┃ ┃ ┣ 📂View
- ┃ ┃ ┃ ┣ 📝 ProfileSectionView.swift
- ┃ ┃ ┃ ┣ 📝 StatLabel.swift
- ┃ ┃ ┃ ┣ 📝 StudyHistoryView.swift
- ┃ ┃ ┃ ┗ 📝 StudyStatisticsView.swift
- ┃ ┃ ┣ 📂ViewController
- ┃ ┃ ┃ ┣ 📝 StudyHistoryViewController.swift
- ┃ ┃ ┃ ┗ 📝 StudyStatisticsViewController.swift
- ┃ ┃ ┗ 📂ViewModel
- ┃ ┃   ┣ 📝 StudyHistoryViewModel.swift
- ┃ ┃   ┗ 📝 StudyStatisticsViewModel.swift
- ┃ ┗ 📂Quiz
- ┃   ┣ 📂Components
- ┃   ┃ ┣ 📝 QuizCardStackView.swift
- ┃   ┃ ┣ 📝 QuizCardView.swift
- ┃   ┃ ┗ 📝 QuizStatusView.swift
- ┃   ┣ 📂Model
- ┃   ┃ ┣ 📝 QuizViewInfo.swift
- ┃   ┃ ┣ 📝 QuizView.swift
- ┃   ┃ ┣ 📝 QuizViewController.swift
- ┃   ┃ ┗ 📝 QuizViewModel.swift
- ┃   ┗ 📂Shared
- ┣ 📂Resource           # 리소스(애셋, Lottie, Info 등)
- ┃ ┣ 📂Lottie
- ┃ ┃ ┣ 🎞️ CelebrationAnimation.json
- ┃ ┃ ┣ 🎞️ CoolEmojiAnimation.json
- ┃ ┃ ┗ 🎞️ RaisedEmojiAnimation.json
- ┃ ┣ 🖼️ Assets.xcassets
- ┃ ┣ 📝 Info.plist
- ┃ ┗ 📝 LaunchScreen.storyboard
- ┣ 📂WordPaletteTests   # 단위 테스트
- ┗ 📂WordPaletteUITests # UI 테스트
-```
-
 > 각 폴더 역할은 # 주석 참고해서 간단히 확인할 수 있어요!
 
 ---
